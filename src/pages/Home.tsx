@@ -4,7 +4,6 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import Metrics from '../components/Metrics';
 import Organizers from '../components/Organizers';
 import { Megaphone, FileImage, ShieldCheck, CheckSquare, Award } from 'lucide-react';
-import { Link } from 'react-router-dom';
 import erasebg from '../assets/erasebg-transformed.png';
 
 gsap.registerPlugin(ScrollTrigger);

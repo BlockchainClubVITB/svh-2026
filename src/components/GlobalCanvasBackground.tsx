@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef, useEffect } from 'react';
+import { useRef, useEffect } from 'react';
 // GlobalCanvasBackground renders a full-screen canvas with animated particles and connecting lines.
 // Colors have been adapted to match the site's orange theme (si h-orange).
 
@@ -8,10 +8,8 @@ const GlobalCanvasBackground = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
+    const canvas = canvasRef.current!;
     const ctx = canvas.getContext('2d')!;
-    if (!ctx) return;
 
     let animationFrameId: number;
     let particles: Particle[] = [];
