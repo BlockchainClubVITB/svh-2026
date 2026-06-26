@@ -2,9 +2,6 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
 import Header from './components/Header';
 import Footer from './components/Footer';
-import GlobalCanvasBackground from './components/GlobalCanvasBackground';
-
-
 
 // Pages
 import Home from './pages/Home';
@@ -16,11 +13,9 @@ import ContactUs from './pages/ContactUs';
 function App() {
   return (
     <Router>
-      <main className="min-h-screen bg-[#fce4c0] selection:bg-sih-orange/30 selection:text-sih-navy font-roboto text-sih-gray-dark flex flex-col">
-        {/* Global Canvas Background */}
-        <GlobalCanvasBackground />
+      <div className="min-h-screen bg-white font-roboto text-sih-gray-dark flex flex-col">
         {/* Sticky Header Nav */}
-        <div className="sticky top-0 z-[100] w-full shadow-md">
+        <div className="sticky top-0 z-[100] w-full">
           <Header />
         </div>
 
@@ -35,7 +30,7 @@ function App() {
         </div>
 
         <Footer />
-      </main>
+      </div>
     </Router>
   );
 }
