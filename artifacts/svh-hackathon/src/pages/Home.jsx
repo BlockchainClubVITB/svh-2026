@@ -541,8 +541,8 @@ function HeroVideo() {
 export default function Home() {
   return (
     <div className="w-full">
-      <NewsTicker />
       <HeroVideo />
+      <NewsTicker />
       <AboutHackathon />
       <ProcessFlow />
       <JrSeniorSection />
