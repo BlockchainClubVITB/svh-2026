@@ -525,14 +525,14 @@ function FooterCTA() {
 
 function HeroVideo() {
   return (
-    <div style={{ width: '100%', lineHeight: 0 }}>
+    <div style={{ width: '100%', lineHeight: 0, backgroundColor: '#000' }}>
       <video
         src="https://res.cloudinary.com/dhc0phwyg/video/upload/v1782556179/svh-hero_s5z92q.mp4"
         autoPlay
         loop
         muted
         playsInline
-        style={{ width: '100%', maxHeight: 520, objectFit: 'cover', display: 'block' }}
+        style={{ width: '100%', height: 'auto', display: 'block' }}
       />
     </div>
   );
