@@ -1,0 +1,26 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Roboto:wght@300;400;500;700&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Poppins:wght@300;400;500;600;700;800;900&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --color-sih-navy: #0f2942;
+  --color-sih-blue: #0ea5e9; /* Light blue accent */
+  --color-sih-orange: #f97316;
+  --color-sih-green: #16a34a;
+  --color-sih-gray-light: #f3f4f6;
+  --color-sih-gray-dark: #374151;
+
+  --font-inter: "Inter", sans-serif;
+  --font-roboto: "Roboto", sans-serif;
+}
+
+@layer base {
+  body {
+    @apply bg-white text-sih-gray-dark font-roboto antialiased;
+  }
+}
+
+@layer utilities {
+  .sih-card {
+    @apply bg-white border border-gray-200 rounded-lg shadow-[0_4px_6px_-1px_rgba(0,0,0,0.1),0_2px_4px_-1px_rgba(0,0,0,0.06)] hover:shadow-[0_10px_15px_-3px_rgba(0,0,0,0.1),0_4px_6px_-2px_rgba(0,0,0,0.05)] transition-shadow duration-300;
+  }
+}

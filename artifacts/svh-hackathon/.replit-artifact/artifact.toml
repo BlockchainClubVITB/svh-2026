@@ -1,0 +1,31 @@
+kind = "web"
+previewPath = "/"
+title = "Smart VIT Hackathon 2026"
+version = "1.0.0"
+id = "artifacts/svh-hackathon"
+router = "path"
+
+[[integratedSkills]]
+name = "react-vite"
+version = "1.0.0"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 23174
+
+[services.development]
+run = "pnpm --filter @workspace/svh-hackathon run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/svh-hackathon", "run", "build" ]
+publicDir = "artifacts/svh-hackathon/dist/public"
+serve = "static"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "23174"
+BASE_PATH = "/"
