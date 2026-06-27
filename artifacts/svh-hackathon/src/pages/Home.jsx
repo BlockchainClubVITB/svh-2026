@@ -526,7 +526,6 @@ function FooterCTA() {
 export default function Home() {
   return (
     <div className="w-full">
-      <HeroCarousel />
       <NewsTicker />
       <AboutHackathon />
       <ProcessFlow />
