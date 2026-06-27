@@ -1,33 +1,16 @@
 {
-  "name": "svh_hackathon",
-  "private": true,
+  "name": "workspace",
   "version": "0.0.0",
-  "type": "module",
+  "license": "MIT",
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "lint": "eslint .",
-    "preview": "vite preview"
+    "preinstall": "sh -c 'rm -f package-lock.json yarn.lock; case \"$npm_config_user_agent\" in pnpm/*) ;; *) echo \"Use pnpm instead\" >&2; exit 1 ;; esac'",
+    "build": "pnpm run typecheck && pnpm -r --if-present run build",
+    "typecheck:libs": "tsc --build",
+    "typecheck": "pnpm run typecheck:libs && pnpm -r --filter \"./artifacts/**\" --filter \"./scripts\" --if-present run typecheck"
   },
-  "dependencies": {
-    "@gsap/react": "^2.1.2",
-    "gsap": "^3.15.0",
-    "lucide-react": "^0.469.0",
-    "react": "^19.2.6",
-    "react-dom": "^19.2.6",
-    "react-router-dom": "^7.18.0"
-  },
+  "private": true,
   "devDependencies": {
-    "@eslint/js": "^10.0.1",
-    "@tailwindcss/vite": "^4.3.1",
-    "@vitejs/plugin-react": "^6.0.1",
-    "autoprefixer": "^10.5.0",
-    "eslint": "^10.3.0",
-    "eslint-plugin-react-hooks": "^7.1.1",
-    "eslint-plugin-react-refresh": "^0.5.2",
-    "globals": "^17.6.0",
-    "postcss": "^8.5.15",
-    "tailwindcss": "^4.3.1",
-    "vite": "^8.0.12"
+    "prettier": "^3.8.4",
+    "typescript": "~5.9.3"
   }
 }
