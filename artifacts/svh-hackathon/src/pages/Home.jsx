@@ -523,10 +523,26 @@ function FooterCTA() {
   );
 }
 
+function HeroVideo() {
+  return (
+    <div style={{ width: '100%', lineHeight: 0 }}>
+      <video
+        src="https://res.cloudinary.com/dhc0phwyg/video/upload/v1782556179/svh-hero_s5z92q.mp4"
+        autoPlay
+        loop
+        muted
+        playsInline
+        style={{ width: '100%', maxHeight: 520, objectFit: 'cover', display: 'block' }}
+      />
+    </div>
+  );
+}
+
 export default function Home() {
   return (
     <div className="w-full">
       <NewsTicker />
+      <HeroVideo />
       <AboutHackathon />
       <ProcessFlow />
       <JrSeniorSection />
