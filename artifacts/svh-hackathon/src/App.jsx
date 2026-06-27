@@ -14,12 +14,13 @@ function App() {
   return (
     <Router>
       <div className="min-h-screen bg-white font-roboto text-sih-gray-dark flex flex-col">
-        {/* Sticky Header Nav */}
-        <div className="sticky top-0 z-[100] w-full">
+        {/* Fixed Header Nav */}
+        <div className="fixed top-0 left-0 right-0 z-[100] w-full">
           <Header />
         </div>
 
-        <div className="flex-1 bg-white">
+        {/* pt-14 offsets the 56px fixed navbar so content is never hidden behind it */}
+        <div className="flex-1 bg-white pt-14">
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/guidelines" element={<Guidelines />} />
