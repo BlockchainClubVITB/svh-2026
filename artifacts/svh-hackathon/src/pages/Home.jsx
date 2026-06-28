@@ -553,7 +553,6 @@ export default function Home() {
   return (
     <div className="w-full">
       <HeroVideo />
-      <div style={{ height: 20 }} />
       <NewsTicker />
       <AboutHackathon />
       <ProcessFlow />
