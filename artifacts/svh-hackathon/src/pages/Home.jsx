@@ -524,7 +524,7 @@ function FooterCTA() {
 }
 
 function HeroVideo() {
-  const videoRef = React.useRef(null);
+  const videoRef = useRef(null);
 
   const handleEnded = () => {
     const v = videoRef.current;
