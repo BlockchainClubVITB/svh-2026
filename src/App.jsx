@@ -13,22 +13,17 @@ import ContactUs from './pages/ContactUs';
 function App() {
   return (
     <Router>
-      <div className="min-h-screen bg-white font-roboto text-sih-gray-dark flex flex-col">
-        {/* Sticky Header Nav */}
-        <div className="sticky top-0 z-[100] w-full">
-          <Header />
-        </div>
-
-        <div className="flex-1 bg-white">
+      <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
+        <Header />
+        <main style={{ flex: 1 }}>
           <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/guidelines" element={<Guidelines />} />
+            <Route path="/"                   element={<Home />} />
+            <Route path="/guidelines"         element={<Guidelines />} />
             <Route path="/problem-statements" element={<ProblemStatements />} />
-            <Route path="/faq" element={<FAQ />} />
-            <Route path="/contact" element={<ContactUs />} />
+            <Route path="/faq"                element={<FAQ />} />
+            <Route path="/contact"            element={<ContactUs />} />
           </Routes>
-        </div>
-
+        </main>
         <Footer />
       </div>
     </Router>

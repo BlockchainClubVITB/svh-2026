@@ -4,21 +4,27 @@ export default function Guidelines() {
   return (
     <div className="w-full min-h-screen bg-gradient-to-b from-[#fce4c0]/20 to-white pb-24">
       {/* Title Header Banner */}
-      <section className="bg-[#0f2942] text-white py-20 px-4 text-center relative overflow-hidden border-b-8 border-sih-orange">
-        <div className="absolute inset-0 z-0 opacity-20 pointer-events-none" style={{
-          backgroundImage: "radial-gradient(circle at 10% 20%, rgba(234, 88, 12, 0.4) 0%, transparent 40%), radial-gradient(circle at 90% 80%, rgba(14, 165, 233, 0.4) 0%, transparent 40%)",
-          backgroundSize: "cover"
-        }}></div>
+      <section style={{ background: 'linear-gradient(135deg, #07192c 0%, #0f2942 100%)', color: '#fff', padding: '80px 20px', textAlign: 'center', position: 'relative', overflow: 'hidden', borderBottom: '4px solid transparent', backgroundClip: 'padding-box' }}>
+        {/* Tricolour bottom */}
+        <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: 5, background: 'linear-gradient(to right, #FF9933 33.33%, #ffffff 33.33% 66.66%, #138808 66.66%)' }} />
+        {/* Saffron glow */}
+        <div style={{ position: 'absolute', top: '30%', left: '5%', width: 300, height: 300, background: 'radial-gradient(circle, rgba(255,153,51,0.07) 0%, transparent 70%)', pointerEvents: 'none' }} />
+        <div style={{ position: 'absolute', bottom: '10%', right: '5%', width: 300, height: 300, background: 'radial-gradient(circle, rgba(19,136,8,0.06) 0%, transparent 70%)', pointerEvents: 'none' }} />
         
-        <div className="max-w-4xl mx-auto relative z-10">
-          <span className="inline-block px-4 py-1.5 bg-sih-orange text-white text-xs font-black uppercase tracking-widest rounded-full mb-4">
-            SVH 2026 Official Handbook
-          </span>
-          <h1 className="text-4xl md:text-6xl font-black font-inter tracking-tight uppercase mb-4">
-            Guidelines & Event Structure
+        <div style={{ maxWidth: 900, margin: '0 auto', position: 'relative', zIndex: 10 }}>
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '6px 18px', background: 'rgba(255,153,51,0.12)', border: '1px solid rgba(255,153,51,0.3)', borderRadius: 40, marginBottom: 24 }}>
+            <span style={{ display: 'inline-flex', flexDirection: 'column', gap: 1, width: 14, flexShrink: 0 }}>
+              <span style={{ height: 3, background: '#FF9933', borderRadius: 1 }} />
+              <span style={{ height: 3, background: '#fff', borderRadius: 1 }} />
+              <span style={{ height: 3, background: '#138808', borderRadius: 1 }} />
+            </span>
+            <span style={{ color: '#FF9933', fontSize: 12, fontFamily: 'Montserrat,sans-serif', fontWeight: 700, letterSpacing: 2, textTransform: 'uppercase' }}>SVH 2026 Official Handbook</span>
+          </div>
+          <h1 style={{ fontFamily: 'Montserrat,sans-serif', fontWeight: 900, fontSize: 'clamp(32px,5vw,58px)', margin: '0 0 16px', textTransform: 'uppercase', letterSpacing: -1 }}>
+            Guidelines <span style={{ background: 'linear-gradient(90deg,#FF9933,#fff)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>&amp; Event</span> Structure
           </h1>
-          <p className="text-lg md:text-xl text-gray-300 font-medium max-w-2xl mx-auto text-justify">
-            A comprehensive guide for teams participating in the Smart VIT Bhopal Hackathon. Understand the event structure, rules, timeline, evaluation criteria, and support systems available.
+          <p style={{ color: 'rgba(255,255,255,0.7)', fontSize: 16, fontFamily: 'Poppins,sans-serif', maxWidth: 640, margin: '0 auto', lineHeight: 1.7, textAlign: 'justify' }}>
+            A comprehensive guide for teams participating in SVH 2026. Understand the event structure, rules, timeline, evaluation criteria, and support systems available.
           </p>
         </div>
       </section>

@@ -115,14 +115,20 @@ export default function ProblemStatements() {
   const categories = ['All', 'Blockchain', 'AI/ML', 'Healthcare', 'Smart Cities', 'Security', 'IoT'];
 
   return (
-    <div className="w-full min-h-screen bg-gradient-to-b from-[#fce4c0]/20 to-white pb-24">
+    <div className="w-full min-h-screen" style={{ background: '#fafafa' }}>
       {/* Header Banner */}
-      <section className="bg-[#0f2942] text-white py-16 px-4 text-center relative overflow-hidden border-b-8 border-sih-orange">
-        <div className="max-w-4xl mx-auto relative z-10">
-          <h1 className="text-4xl md:text-5xl font-black font-inter tracking-tight uppercase mb-3">
-            Problem Statements
+      <section style={{ background: 'linear-gradient(135deg, #07192c 0%, #0f2942 100%)', color: '#fff', padding: '80px 20px', textAlign: 'center', position: 'relative', overflow: 'hidden' }}>
+        <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: 5, background: 'linear-gradient(to right, #FF9933 33.33%, #ffffff 33.33% 66.66%, #138808 66.66%)' }} />
+        <div style={{ position: 'absolute', top: '30%', right: '5%', width: 300, height: 300, background: 'radial-gradient(circle, rgba(19,136,8,0.07) 0%, transparent 70%)', pointerEvents: 'none' }} />
+        <div style={{ maxWidth: 800, margin: '0 auto', position: 'relative', zIndex: 10 }}>
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '6px 18px', background: 'rgba(255,153,51,0.12)', border: '1px solid rgba(255,153,51,0.3)', borderRadius: 40, marginBottom: 24 }}>
+            <span style={{ fontSize: 14 }}>📋</span>
+            <span style={{ color: '#FF9933', fontSize: 12, fontFamily: 'Montserrat,sans-serif', fontWeight: 700, letterSpacing: 2, textTransform: 'uppercase' }}>SVH 2026 · 12 Statements</span>
+          </div>
+          <h1 style={{ fontFamily: 'Montserrat,sans-serif', fontWeight: 900, fontSize: 'clamp(32px,5vw,56px)', margin: '0 0 16px', textTransform: 'uppercase', letterSpacing: -1 }}>
+            Problem <span style={{ background: 'linear-gradient(90deg,#FF9933,#138808)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>Statements</span>
           </h1>
-          <p className="text-gray-300 max-w-xl mx-auto text-sm md:text-base text-justify font-medium">
+          <p style={{ color: 'rgba(255,255,255,0.7)', fontSize: 16, fontFamily: 'Poppins,sans-serif', maxWidth: 580, margin: '0 auto', lineHeight: 1.7 }}>
             Review the 12 official problem statements for SVH 2026. Select up to two statements to submit your technical presentation (PPT) for Round 1.
           </p>
         </div>

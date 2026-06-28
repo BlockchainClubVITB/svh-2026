@@ -1,132 +1,604 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 
-const SIH = 'https://sih.gov.in';
+import blockchainLogo from '../assets/Blockchain.png';
+import iicLogo from '../assets/IIC Logo.png';
+import swLogo from '../assets/SW Office Logo.png';
+import vitbLogo from '../assets/vitblogo.png';
 
-const slides = [
-  { img: `${SIH}/img1/slider2026/sih2026-Coming-Soon.png`,          href: '#' },
-  { img: `${SIH}/img1/slider/sih2025-slider-banner-PM-Banner2.png`, href: '#' },
-  { img: `${SIH}/img1/slider/sih2025-Statistics.png`,               href: '/problem-statements' },
-];
+/* ═══════════════════════════════════════════════
+   SHARED UTILITIES
+═══════════════════════════════════════════════ */
 
-function HeroCarousel() {
-  const [active, setActive] = useState(0);
-  const total = slides.length;
-  useEffect(() => {
-    const t = setInterval(() => setActive(a => (a + 1) % total), 5000);
-    return () => clearInterval(t);
-  }, [total]);
+/* Ashoka Chakra SVG */
+function AshokaChakra({ size = 200, opacity = 0.08, spin = true }) {
+  const spokes = Array.from({ length: 24 }, (_, i) => i);
   return (
-    <div id="demo" style={{ position: 'relative', width: '100%', overflow: 'hidden', background: '#000', minHeight: 220 }}>
-      {slides.map((s, i) => (
-        <a key={i} href={s.href} style={{ display: i === active ? 'block' : 'none' }}>
-          <img src={s.img} alt=""
-            style={{ width: '100%', objectFit: 'cover', maxHeight: 520 }}
-            onError={e => { e.currentTarget.parentElement.style.display = 'none'; }} />
-        </a>
+    <svg width={size} height={size} viewBox="0 0 200 200"
+      style={{ opacity, animation: spin ? 'spin-slow 40s linear infinite' : 'none', display: 'block', flexShrink: 0 }}>
+      <circle cx="100" cy="100" r="96" fill="none" stroke="#06038D" strokeWidth="4" />
+      <circle cx="100" cy="100" r="12" fill="#06038D" />
+      {spokes.map(i => {
+        const a = (i * 15 * Math.PI) / 180;
+        return <line key={i} x1={100 + 12 * Math.cos(a)} y1={100 + 12 * Math.sin(a)} x2={100 + 92 * Math.cos(a)} y2={100 + 92 * Math.sin(a)} stroke="#06038D" strokeWidth="1.5" />;
+      })}
+      <circle cx="100" cy="100" r="78" fill="none" stroke="#06038D" strokeWidth="1" />
+    </svg>
+  );
+}
+
+/* Floating Particles — deterministic positions, no Math.random at render */
+function FloatingParticles({ count = 18 }) {
+  const particles = useMemo(() =>
+    Array.from({ length: count }, (_, i) => ({
+      id: i,
+      left: `${(i * 37 + 11) % 95 + 2}%`,
+      size: (i % 3) + 2,
+      duration: 12 + (i % 7) * 2.5,
+      delay: -((i * 3.7) % 12),
+      color: i % 3 === 0
+        ? 'rgba(255,153,51,0.45)'
+        : i % 3 === 1
+          ? 'rgba(19,136,8,0.35)'
+          : 'rgba(255,255,255,0.2)',
+    })), [count]);
+
+  return (
+    <div style={{ position: 'absolute', inset: 0, overflow: 'hidden', pointerEvents: 'none', zIndex: 1 }}>
+      {particles.map(p => (
+        <div key={p.id} style={{
+          position: 'absolute', bottom: '-8px', left: p.left,
+          width: p.size, height: p.size, borderRadius: '50%', background: p.color,
+          animation: `particle-drift ${p.duration}s linear ${p.delay}s infinite`,
+          willChange: 'transform',
+        }} />
       ))}
-      <button onClick={() => setActive(a => (a - 1 + total) % total)}
-        style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', zIndex: 10, width: 40, height: 40, borderRadius: '50%', background: 'rgba(0,0,0,0.5)', color: '#fff', border: 'none', fontSize: 22, cursor: 'pointer' }}>‹</button>
-      <button onClick={() => setActive(a => (a + 1) % total)}
-        style={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', zIndex: 10, width: 40, height: 40, borderRadius: '50%', background: 'rgba(0,0,0,0.5)', color: '#fff', border: 'none', fontSize: 22, cursor: 'pointer' }}>›</button>
-      <div style={{ position: 'absolute', bottom: 12, left: '50%', transform: 'translateX(-50%)', display: 'flex', gap: 8, zIndex: 10 }}>
-        {slides.map((_, i) => (
-          <button key={i} onClick={() => setActive(i)}
-            style={{ width: 12, height: 12, borderRadius: '50%', border: '1px solid #fff', background: i === active ? '#f75700' : 'rgba(0,0,36,0.7)', cursor: 'pointer' }} />
+    </div>
+  );
+}
+
+/* IntersectionObserver hook — one-shot reveal */
+function useInView(threshold = 0.15) {
+  const ref = useRef(null);
+  const [inView, setInView] = useState(false);
+  useEffect(() => {
+    const obs = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting) { setInView(true); obs.disconnect(); } },
+      { threshold }
+    );
+    if (ref.current) obs.observe(ref.current);
+    return () => obs.disconnect();
+  }, [threshold]);
+  return [ref, inView];
+}
+
+/* Section heading with tricolour divider */
+function SectionHeading({ badge, badgeColor = '#FF9933', title, highlight, highlightColor = '#FF9933' }) {
+  return (
+    <div style={{ textAlign: 'center', marginBottom: 56 }}>
+      <span style={{
+        display: 'inline-block', padding: '4px 16px', borderRadius: 20, marginBottom: 14,
+        background: `${badgeColor}18`, border: `1px solid ${badgeColor}30`,
+        color: badgeColor, fontSize: 11, fontFamily: 'Montserrat,sans-serif',
+        fontWeight: 700, letterSpacing: 3, textTransform: 'uppercase',
+      }}>{badge}</span>
+      <h2 style={{ fontFamily: 'Montserrat,sans-serif', fontSize: 'clamp(28px,4vw,40px)', fontWeight: 900, color: '#0f2942', margin: 0 }}>
+        {title} {highlight && <span style={{ color: highlightColor }}>{highlight}</span>}
+      </h2>
+      <div style={{ display: 'flex', justifyContent: 'center', gap: 6, marginTop: 14 }}>
+        <div style={{ height: 3, width: 40, background: '#FF9933', borderRadius: 2 }} />
+        <div style={{ height: 3, width: 20, background: '#e8e8e8', borderRadius: 2 }} />
+        <div style={{ height: 3, width: 40, background: '#138808', borderRadius: 2 }} />
+      </div>
+    </div>
+  );
+}
+
+/* ═══════════════════════════════════════════════
+   COUNTDOWN
+═══════════════════════════════════════════════ */
+function useCountdown(targetDate) {
+  const calc = () => {
+    const diff = new Date(targetDate) - new Date();
+    if (diff <= 0) return { days: 0, hours: 0, minutes: 0, seconds: 0 };
+    return {
+      days: Math.floor(diff / 86400000),
+      hours: Math.floor((diff / 3600000) % 24),
+      minutes: Math.floor((diff / 60000) % 60),
+      seconds: Math.floor((diff / 1000) % 60),
+    };
+  };
+  const [t, setT] = useState(calc);
+  useEffect(() => { const id = setInterval(() => setT(calc()), 1000); return () => clearInterval(id); }, [targetDate]);
+  return t;
+}
+
+function CountdownTimer() {
+  const now = new Date();
+  let phase = { label: 'Registration Opens In', target: '2026-07-01T00:00:00+05:30', color: '#FF9933' };
+  if (now >= new Date('2026-07-01T00:00:00+05:30') && now < new Date('2026-08-05T23:59:00+05:30'))
+    phase = { label: 'PPT Submission Closes In', target: '2026-08-05T23:59:00+05:30', color: '#138808' };
+  else if (now >= new Date('2026-08-05T23:59:00+05:30') && now < new Date('2026-08-24T09:00:00+05:30'))
+    phase = { label: 'Grand Finale Begins In', target: '2026-08-24T09:00:00+05:30', color: '#06038D' };
+  else if (now >= new Date('2026-08-24T09:00:00+05:30'))
+    phase = { label: 'Event Ongoing', target: '2026-08-25T18:00:00+05:30', color: '#FF9933' };
+
+  const t = useCountdown(phase.target);
+  const units = [
+    { l: 'Days', v: t.days },
+    { l: 'Hours', v: t.hours },
+    { l: 'Minutes', v: t.minutes },
+    { l: 'Seconds', v: t.seconds },
+  ];
+
+  return (
+    <div style={{ textAlign: 'center' }}>
+      <p style={{ color: phase.color, fontSize: 11, fontWeight: 700, fontFamily: 'Montserrat,sans-serif', letterSpacing: 3, textTransform: 'uppercase', marginBottom: 14 }}>
+        {phase.label}
+      </p>
+      <div style={{ display: 'flex', gap: 10, justifyContent: 'center', flexWrap: 'wrap' }}>
+        {units.map((u, i) => (
+          <div key={i} style={{
+            background: 'rgba(255,255,255,0.06)', border: `1px solid ${phase.color}40`,
+            borderRadius: 12, padding: '16px 20px', minWidth: 80, backdropFilter: 'blur(8px)',
+          }}>
+            <div style={{ fontSize: 40, fontWeight: 900, fontFamily: 'Montserrat,sans-serif', color: '#fff', lineHeight: 1, textShadow: `0 0 24px ${phase.color}90` }}>
+              {String(u.v).padStart(2, '0')}
+            </div>
+            <div style={{ fontSize: 10, color: phase.color, fontWeight: 700, fontFamily: 'Montserrat,sans-serif', letterSpacing: 2, textTransform: 'uppercase', marginTop: 6 }}>
+              {u.l}
+            </div>
+          </div>
         ))}
       </div>
     </div>
   );
 }
 
+/* ═══════════════════════════════════════════════
+   HERO SECTION — Staggered fade-in + particles
+═══════════════════════════════════════════════ */
+function HeroSection() {
+  const [m, setM] = useState(false); // mounted
+  useEffect(() => { const t = setTimeout(() => setM(true), 80); return () => clearTimeout(t); }, []);
+
+  // Stagger helper
+  const a = (delay, extra = {}) => ({
+    opacity: m ? 1 : 0,
+    transform: m ? 'translateY(0)' : 'translateY(28px)',
+    transition: `opacity 0.75s ease ${delay}ms, transform 0.75s ease ${delay}ms`,
+    ...extra,
+  });
+
+  return (
+    <section style={{
+      position: 'relative', minHeight: '100vh',
+      background: 'linear-gradient(160deg, #07192c 0%, #0f2942 45%, #07192c 100%)',
+      display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+      overflow: 'hidden', padding: '90px 20px 80px',
+    }}>
+      {/* Animated particles */}
+      <FloatingParticles count={22} />
+
+      {/* Chakras */}
+      <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', pointerEvents: 'none', zIndex: 0 }}>
+        <AshokaChakra size={640} opacity={0.045} spin />
+      </div>
+      <div style={{ position: 'absolute', top: -70, right: -70, pointerEvents: 'none', zIndex: 0 }}>
+        <AshokaChakra size={240} opacity={0.055} spin />
+      </div>
+      <div style={{ position: 'absolute', bottom: -70, left: -70, pointerEvents: 'none', zIndex: 0 }}>
+        <AshokaChakra size={240} opacity={0.055} spin />
+      </div>
+
+      {/* Ambient glows */}
+      <div style={{ position: 'absolute', top: '15%', left: '5%', width: 500, height: 500, background: 'radial-gradient(circle, rgba(255,153,51,0.07) 0%, transparent 70%)', pointerEvents: 'none', zIndex: 0 }} />
+      <div style={{ position: 'absolute', bottom: '15%', right: '5%', width: 500, height: 500, background: 'radial-gradient(circle, rgba(19,136,8,0.05) 0%, transparent 70%)', pointerEvents: 'none', zIndex: 0 }} />
+
+      {/* ── CONTENT ── */}
+      <div style={{ position: 'relative', zIndex: 10, textAlign: 'center', maxWidth: 960, margin: '0 auto', width: '100%' }}>
+
+        {/* Country badge */}
+        <div style={{ ...a(80), display: 'inline-flex', alignItems: 'center', gap: 8, background: 'rgba(255,153,51,0.12)', border: '1px solid rgba(255,153,51,0.3)', borderRadius: 40, padding: '6px 20px', marginBottom: 32 }}>
+
+
+          <span style={{ color: '#FF9933', fontSize: 12, fontFamily: 'Montserrat,sans-serif', fontWeight: 700, letterSpacing: 2.5, textTransform: 'uppercase' }}>
+            Blockchain Club, VIT Bhopal
+          </span>
+        </div>
+
+        {/* Main title */}
+        <h1 style={{ ...a(220), margin: '0 0 8px', fontFamily: 'Montserrat,sans-serif', fontWeight: 900, lineHeight: 1.02 }}>
+          <span style={{ display: 'block', fontSize: 'clamp(46px, 8vw, 92px)', color: '#fff', letterSpacing: -2 }}>SMART VIT</span>
+          <span style={{
+            display: 'block', fontSize: 'clamp(46px, 8vw, 92px)', letterSpacing: -2,
+            background: 'linear-gradient(90deg, #FF9933 0%, #ffffff 50%, #138808 100%)',
+            WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text',
+          }}>HACKATHON</span>
+        </h1>
+
+        {/* Year divider */}
+        <div style={{ ...a(360), display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 14, marginBottom: 20 }}>
+          <div style={{ height: 2, width: 70, background: 'linear-gradient(to right, transparent, #FF9933)' }} />
+          <span style={{ color: '#FF9933', fontSize: 24, fontFamily: 'Montserrat,sans-serif', fontWeight: 900, letterSpacing: 8 }}>2026</span>
+          <div style={{ height: 2, width: 70, background: 'linear-gradient(to left, transparent, #138808)' }} />
+        </div>
+
+        {/* Tagline */}
+        <p style={{ ...a(460), color: 'rgba(255,255,255,0.72)', fontSize: 'clamp(14px, 2vw, 18px)', fontFamily: 'Poppins,sans-serif', lineHeight: 1.7, maxWidth: 680, margin: '0 auto 44px' }}>
+          India's most ambitious internal hackathon — inspired by Smart India Hackathon.{' '}
+          <strong style={{ color: '#fff' }}>Innovate. Build. Represent.</strong>
+        </p>
+
+        {/* Countdown */}
+        <div style={{ ...a(600), marginBottom: 46 }}>
+          <CountdownTimer />
+        </div>
+
+        {/* CTA buttons */}
+        <div style={{ ...a(760), display: 'flex', gap: 14, justifyContent: 'center', flexWrap: 'wrap' }}>
+          <Link to="/problem-statements" style={{
+            padding: '14px 38px', background: 'linear-gradient(135deg, #FF9933, #e07800)',
+            color: '#fff', borderRadius: 8, fontSize: 13, fontFamily: 'Montserrat,sans-serif',
+            fontWeight: 800, textDecoration: 'none', textTransform: 'uppercase', letterSpacing: 1.5,
+            boxShadow: '0 6px 24px rgba(255,153,51,0.4)', transition: 'all 0.25s', display: 'inline-block',
+          }}
+            onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-3px)'; e.currentTarget.style.boxShadow = '0 12px 34px rgba(255,153,51,0.55)'; }}
+            onMouseLeave={e => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = '0 6px 24px rgba(255,153,51,0.4)'; }}>
+            View Problem Statements
+          </Link>
+          <Link to="/guidelines" style={{
+            padding: '14px 38px', background: 'transparent', color: '#fff', borderRadius: 8,
+            fontSize: 13, fontFamily: 'Montserrat,sans-serif', fontWeight: 700, textDecoration: 'none',
+            textTransform: 'uppercase', letterSpacing: 1.5, border: '1.5px solid rgba(255,255,255,0.28)',
+            transition: 'all 0.25s', display: 'inline-block',
+          }}
+            onMouseEnter={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.09)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.6)'; }}
+            onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.28)'; }}>
+            Event Guidelines
+          </Link>
+        </div>
+
+        {/* Info chips */}
+        <div style={{ ...a(920), display: 'flex', gap: 10, justifyContent: 'center', flexWrap: 'wrap', marginTop: 42 }}>
+          {[
+            { icon: '📅', text: 'Registration: 1–20 July 2026' },
+            { icon: '👥', text: '6 Members / Team' },
+            { icon: '💰', text: '₹450 / Team' },
+            { icon: '🏆', text: '10 SW + 2 HW Problem Statements' },
+          ].map((chip, i) => (
+            <div key={i} style={{
+              display: 'flex', alignItems: 'center', gap: 6,
+              background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.11)',
+              borderRadius: 40, padding: '6px 16px', backdropFilter: 'blur(4px)',
+            }}>
+              <span style={{ fontSize: 14 }}>{chip.icon}</span>
+              <span style={{ color: 'rgba(255,255,255,0.8)', fontSize: 12, fontFamily: 'Poppins,sans-serif', fontWeight: 500 }}>{chip.text}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Scroll mouse indicator */}
+      <div style={{ ...a(1100, { position: 'absolute', bottom: 32, left: '50%', transform: 'translateX(-50%)' }), zIndex: 10 }}>
+        <div style={{ width: 22, height: 38, border: '2px solid rgba(255,255,255,0.25)', borderRadius: 12, display: 'flex', justifyContent: 'center', padding: '5px 0' }}>
+          <div style={{ width: 4, height: 9, background: '#FF9933', borderRadius: 4, animation: 'scroll-dot 1.8s ease-in-out infinite' }} />
+        </div>
+      </div>
+
+      {/* Tricolour footer strip */}
+      <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: 4, background: 'linear-gradient(to right, #FF9933 33.33%, #fff 33.33% 66.66%, #138808 66.66%)' }} />
+    </section>
+  );
+}
+
+/* ═══════════════════════════════════════════════
+   NEWS TICKER
+═══════════════════════════════════════════════ */
 function NewsTicker() {
   return (
-    <div style={{ background: '#000', color: '#fff', fontFamily: "'Book Antiqua',Palatino,serif", fontWeight: 'bold', padding: '10px 0 5px', overflow: 'hidden' }}>
-      <div
-        style={{ display: 'inline-block', whiteSpace: 'nowrap', animation: 'sih-marquee 40s linear infinite' }}
-        onMouseEnter={e => { e.currentTarget.style.animationPlayState = 'paused'; }}
-        onMouseLeave={e => { e.currentTarget.style.animationPlayState = 'running'; }}
-      >
-        &nbsp;&nbsp;&nbsp;
-        🔔 SVH 2026 Registration opens <strong>1–20 July 2026</strong>&nbsp;|&nbsp;
-        Teams of 6 members (min. 1 female)&nbsp;|&nbsp;
-        Registration fee: <strong>₹75/member (₹450/team)</strong>&nbsp;|&nbsp;
-        PPT Submission: <strong>20 July – 5 Aug 2026</strong>&nbsp;|&nbsp;
-        Grand Finale: <strong>24–25 Aug 2026</strong> (tentative)&nbsp;|&nbsp;
-        Organized by <strong>Blockchain Club, VIT Bhopal</strong>
-        &nbsp;&nbsp;&nbsp;
+    <div style={{ background: '#07192c', borderTop: '2px solid rgba(255,153,51,0.35)', borderBottom: '2px solid rgba(255,153,51,0.35)', padding: '10px 0', overflow: 'hidden' }}>
+      <div style={{ display: 'flex', alignItems: 'center' }}>
+        <div style={{ background: '#FF9933', padding: '4px 20px', whiteSpace: 'nowrap', fontFamily: 'Montserrat,sans-serif', fontWeight: 800, fontSize: 12, color: '#fff', letterSpacing: 1, flexShrink: 0 }}>
+          LIVE
+        </div>
+        <div style={{ overflow: 'hidden', flex: 1 }}>
+          <div style={{ display: 'inline-block', whiteSpace: 'nowrap', animation: 'sih-marquee 55s linear infinite' }}
+            onMouseEnter={e => e.currentTarget.style.animationPlayState = 'paused'}
+            onMouseLeave={e => e.currentTarget.style.animationPlayState = 'running'}>
+            <span style={{ color: 'rgba(255,255,255,0.82)', fontFamily: 'Montserrat,sans-serif', fontSize: 13, fontWeight: 500 }}>
+              &nbsp;&nbsp;&nbsp;SVH 2026 by Blockchain Club, VIT Bhopal — Inspired by Smart India Hackathon &nbsp;·&nbsp;
+              Registration: <strong style={{ color: '#FF9933' }}>1–20 July 2026</strong> &nbsp;·&nbsp;
+              PPT Submission: <strong style={{ color: '#FF9933' }}>20 July – 5 Aug 2026</strong> &nbsp;·&nbsp;
+              Team: <strong style={{ color: '#FF9933' }}>6 Members (Min. 1 Female)</strong> &nbsp;·&nbsp;
+              Fee: <strong style={{ color: '#FF9933' }}>₹75/Member · ₹450/Team</strong> &nbsp;·&nbsp;
+              Grand Finale: <strong style={{ color: '#138808' }}>24–25 Aug 2026 (Tentative)</strong> &nbsp;·&nbsp;
+              Venue: <strong style={{ color: '#138808' }}>VIT Bhopal University</strong> &nbsp;·&nbsp;
+              <strong style={{ color: '#FF9933' }}>10 Software + 2 Hardware</strong> Problem Statements &nbsp;·&nbsp;
+              blockchainclub@vitbhopal.ac.in
+              &nbsp;&nbsp;&nbsp;
+            </span>
+          </div>
+        </div>
       </div>
     </div>
   );
 }
 
-function AboutHackathon() {
+/* ═══════════════════════════════════════════════
+   EVENT ROUNDS CAROUSEL (SIH-style)
+═══════════════════════════════════════════════ */
+const rounds = [
+  {
+    num: 1, label: 'ROUND 1', title: 'PPT Submission', subtitle: 'Online Evaluation Phase',
+    date: '20 July – 5 Aug 2026', color: '#FF9933', borderColor: 'rgba(255,153,51,0.25)',
+    bgAccent: 'rgba(255,153,51,0.05)', icon: '📊',
+    description: 'Teams select up to 2 problem statements and submit a comprehensive presentation covering problem understanding, proposed solution, technical architecture, expected real-world impact, and step-by-step implementation roadmap.',
+    what: [
+      'Clear understanding of the chosen problem statement',
+      'Proposed solution approach & core value proposition',
+      'Technical architecture, tech stack & methodology',
+      'Expected real-world impact, feasibility & scale',
+      'Step-by-step implementation & execution roadmap',
+    ],
+    criteria: ['Problem Understanding', 'Innovation & Creativity', 'Feasibility', 'Technical Approach', 'Presentation Quality'],
+    outcome: 'Top 5 teams per problem statement advance to the Grand Finale (max 60 finalist teams)',
+  },
+  {
+    num: 2, label: 'ROUND 2', title: 'Grand Finale', subtitle: 'Prototype Development Phase',
+    date: '24 – 25 Aug 2026 (Tentative)', color: '#138808', borderColor: 'rgba(19,136,8,0.25)',
+    bgAccent: 'rgba(19,136,8,0.04)', icon: '🚀',
+    description: 'Shortlisted finalist teams build and demonstrate a fully functional prototype at VIT Bhopal University. A 2-day, 12-hour intensive offline hackathon. Participation subject to OD approval from the institute.',
+    what: [
+      'Build a working prototype of the proposed solution',
+      'Live demonstration to the expert evaluation panel',
+      'Technical Q&A and in-depth solution discussion',
+      '6 hours of development per day × 2 days = 12 hours total',
+      'Final pitch presentation to the judging committee',
+    ],
+    criteria: ['Technical Implementation', 'Working Prototype', 'Innovation & Scalability', 'User Experience', 'Final Demonstration'],
+    outcome: 'Winner, Runner-Up & Special Innovation Recognition Awards for top teams',
+  },
+];
+
+function EventRoundsCarousel() {
+  const [active, setActive] = useState(0);
+  const [secRef, secVisible] = useInView(0.08);
+
+  useEffect(() => {
+    const t = setInterval(() => setActive(a => (a + 1) % rounds.length), 7000);
+    return () => clearInterval(t);
+  }, []);
+
+  const r = rounds[active];
+
   return (
-    <section style={{ background: '#fff6ee', padding: '60px 0', position: 'relative' }}>
-      <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 20px' }}>
-        <div style={{ textAlign: 'center', margin: '20px 0 30px' }}>
-          <h3 style={{ fontFamily: 'Montserrat,sans-serif', color: '#f75700', fontSize: 34, fontWeight: 700, letterSpacing:'0.04em', margin: 0 }}>WHAT IS SVH?</h3>
-        </div>
-        <div style={{ display: 'flex', gap: 40, alignItems: 'flex-start', flexWrap: 'wrap', marginBottom: 30 }}>
-          <div style={{ flex: '1 1 500px' }}>
-            <p style={{ color: '#002449', fontSize: 16, lineHeight: '25px', margin: '0 0 16px', fontFamily: 'Montserrat,sans-serif', textAlign: 'justify' }}>
-              Smart VIT Hackathon (SVH) is a premier VIT Bhopal initiative designed to engage students in solving some of the most pressing challenges faced in everyday life. Launched to foster a culture of innovation and practical problem-solving, SVH provides a dynamic platform for students to develop and showcase their creative solutions to real-world problems. By encouraging participants to think critically and innovatively, the hackathon aims to bridge the gap between academic knowledge and practical application.
-            </p>
-            <p style={{ color: '#002449', fontSize: 16, lineHeight: '25px', margin: '0 0 16px', fontFamily: 'Montserrat,sans-serif', textAlign: 'justify' }}>
-              Since its inception, SVH has garnered significant success in promoting out-of-the-box thinking among young minds, particularly engineering students from across VIT Bhopal. Each edition has built on the previous one, refining its approach and expanding its impact. The hackathon not only offers students an opportunity to showcase their skills but also encourages collaboration with industry experts, government agencies, and other stakeholders.
-            </p>
-          </div>
+    <section ref={secRef} id="event-structure" style={{ background: '#fff', padding: '90px 20px', borderBottom: '1px solid #f0f0f0' }}>
+      <div style={{ maxWidth: 1200, margin: '0 auto' }}>
 
+        {/* Section heading */}
+        <div style={{
+          opacity: secVisible ? 1 : 0, transform: secVisible ? 'none' : 'translateY(20px)',
+          transition: 'all 0.6s ease',
+        }}>
+          <SectionHeading badge="How It Works" title="Event" highlight="Structure" />
         </div>
 
-        {/* Read More area — always visible */}
-        <div style={{ width: '100%' }}>
-          <div style={{ background: 'rgb(28,23,119)', borderRadius: 12, overflow: 'hidden', padding: '30px' }}>
-            <div style={{ display: 'flex', gap: 30, flexWrap: 'wrap' }}>
-              <div style={{ flex: '1 1 300px' }}>
-                <div style={{ marginBottom: 24 }}>
-                  <h4 style={{ color: '#f75700', fontFamily: 'Montserrat,sans-serif', fontSize: 18, fontWeight: 700, textTransform: 'uppercase', margin: '0 0 12px' }}>Overview</h4>
-                  <p style={{ color: 'rgba(255,255,255,.9)', fontFamily: 'Montserrat,sans-serif', fontSize: 14, lineHeight: '22px', margin: 0 }}>
-                    Smart VIT Hackathon (SVH) is a VIT Bhopal initiative to provide students a platform to solve some of the pressing problems we face in our daily lives, and thus inculcate a culture of product innovation and a mindset of problem solving.
-                  </p>
-                </div>
-                <div>
-                  <h4 style={{ color: '#f75700', fontFamily: 'Montserrat,sans-serif', fontSize: 18, fontWeight: 700, textTransform: 'uppercase', margin: '0 0 12px' }}>Who can participate?</h4>
-                  <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap' }}>
-                    <div style={{ background: 'rgba(255,255,255,.1)', borderRadius: 8, padding: '20px', flex: '1 1 140px', textAlign: 'center' }}>
-                      <h3 style={{ color: '#fff', fontFamily: 'Montserrat,sans-serif', fontSize: 16, fontWeight: 700, margin: '0 0 4px' }}>SVH Senior</h3>
-                      <p style={{ color: 'rgba(255,255,255,.7)', fontFamily: 'Montserrat,sans-serif', fontSize: 12, margin: 0 }}>All VIT Bhopal Students from all years</p>
+        {/* Round selector tabs */}
+        <div style={{
+          display: 'flex', justifyContent: 'center', gap: 14, marginBottom: 40, flexWrap: 'wrap',
+          opacity: secVisible ? 1 : 0, transform: secVisible ? 'none' : 'translateY(16px)',
+          transition: 'all 0.6s ease 0.15s',
+        }}>
+          {rounds.map((rd, i) => (
+            <button key={i} onClick={() => setActive(i)} style={{
+              padding: '11px 34px',
+              background: i === active ? `linear-gradient(135deg, ${rd.color}, ${rd.color}cc)` : 'transparent',
+              color: i === active ? '#fff' : rd.color,
+              border: `2px solid ${rd.color}`,
+              borderRadius: 50,
+              fontSize: 13, fontFamily: 'Montserrat,sans-serif', fontWeight: 800,
+              cursor: 'pointer', textTransform: 'uppercase', letterSpacing: 1,
+              transition: 'all 0.3s ease',
+              boxShadow: i === active ? `0 6px 20px ${rd.color}40` : 'none',
+            }}>
+              Round {rd.num} — {rd.title}
+            </button>
+          ))}
+        </div>
+
+        {/* Sliding carousel track */}
+        <div style={{
+          overflow: 'hidden', borderRadius: 20,
+          opacity: secVisible ? 1 : 0, transform: secVisible ? 'none' : 'translateY(24px)',
+          transition: 'all 0.6s ease 0.25s',
+        }}>
+          <div style={{
+            display: 'flex',
+            transform: `translateX(-${active * 100}%)`,
+            transition: 'transform 0.55s cubic-bezier(0.4, 0, 0.2, 1)',
+            willChange: 'transform',
+          }}>
+            {rounds.map((rd, idx) => (
+              <div key={idx} style={{ minWidth: '100%', flexShrink: 0 }}>
+                <div style={{ background: rd.bgAccent, border: `2px solid ${rd.borderColor}`, borderRadius: 20, overflow: 'hidden' }}>
+
+                  {/* Card header bar */}
+                  <div style={{
+                    background: 'linear-gradient(135deg, #0f2942, #07192c)',
+                    padding: '26px 36px',
+                    display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+                    flexWrap: 'wrap', gap: 16,
+                    borderBottom: `3px solid ${rd.color}`,
+                  }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
+                      <div style={{
+                        width: 68, height: 68, borderRadius: 16,
+                        background: `${rd.color}20`, border: `2px solid ${rd.color}45`,
+                        display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 30,
+                        flexShrink: 0,
+                      }}>{rd.icon}</div>
+                      <div>
+                        <div style={{ color: rd.color, fontSize: 11, fontFamily: 'Montserrat,sans-serif', fontWeight: 800, letterSpacing: 3, textTransform: 'uppercase', marginBottom: 4 }}>{rd.label}</div>
+                        <h3 style={{ color: '#fff', fontSize: 'clamp(20px,3vw,28px)', fontFamily: 'Montserrat,sans-serif', fontWeight: 900, margin: 0 }}>{rd.title}</h3>
+                        <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: 13, fontFamily: 'Poppins,sans-serif', marginTop: 3 }}>{rd.subtitle}</div>
+                      </div>
+                    </div>
+                    <div style={{ padding: '8px 22px', background: `${rd.color}22`, border: `1px solid ${rd.color}50`, borderRadius: 30, color: rd.color, fontSize: 13, fontFamily: 'Montserrat,sans-serif', fontWeight: 700, whiteSpace: 'nowrap' }}>
+                      {rd.date}
+                    </div>
+                  </div>
+
+                  {/* Card body */}
+                  <div style={{ padding: '32px 36px' }}>
+                    <p style={{ color: '#555', fontSize: 14, fontFamily: 'Poppins,sans-serif', lineHeight: 1.85, marginBottom: 32, textAlign: 'justify', maxWidth: 900 }}>
+                      {rd.description}
+                    </p>
+
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 32 }}>
+
+                      {/* What list */}
+                      <div>
+                        <h4 style={{ fontFamily: 'Montserrat,sans-serif', fontWeight: 800, color: '#0f2942', fontSize: 12, textTransform: 'uppercase', letterSpacing: 2, marginBottom: 16, display: 'flex', alignItems: 'center', gap: 8 }}>
+                          <div style={{ width: 4, height: 18, background: rd.color, borderRadius: 2 }} />
+                          {idx === 0 ? 'Submission Must Include' : 'What Finalists Will Do'}
+                        </h4>
+                        <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: 10 }}>
+                          {rd.what.map((item, j) => (
+                            <li key={j} style={{ display: 'flex', gap: 10, alignItems: 'flex-start' }}>
+                              <div style={{ width: 20, height: 20, borderRadius: '50%', background: `${rd.color}15`, border: `1.5px solid ${rd.color}40`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, marginTop: 2 }}>
+                                <div style={{ width: 6, height: 6, borderRadius: '50%', background: rd.color }} />
+                              </div>
+                              <span style={{ color: '#555', fontSize: 13, fontFamily: 'Poppins,sans-serif', lineHeight: 1.65 }}>{item}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+
+                      {/* Criteria + outcome */}
+                      <div>
+                        <h4 style={{ fontFamily: 'Montserrat,sans-serif', fontWeight: 800, color: '#0f2942', fontSize: 12, textTransform: 'uppercase', letterSpacing: 2, marginBottom: 16, display: 'flex', alignItems: 'center', gap: 8 }}>
+                          <div style={{ width: 4, height: 18, background: rd.color, borderRadius: 2 }} />
+                          Evaluation Criteria
+                        </h4>
+                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 24 }}>
+                          {rd.criteria.map((c, j) => (
+                            <span key={j} style={{
+                              padding: '7px 16px', background: `${rd.color}10`,
+                              color: '#0f2942', fontSize: 12, fontFamily: 'Montserrat,sans-serif',
+                              fontWeight: 700, borderRadius: 24, border: `1.5px solid ${rd.color}30`,
+                              transition: 'all 0.2s',
+                            }}
+                              onMouseEnter={e => { e.currentTarget.style.background = `${rd.color}22`; e.currentTarget.style.borderColor = rd.color; }}
+                              onMouseLeave={e => { e.currentTarget.style.background = `${rd.color}10`; e.currentTarget.style.borderColor = `${rd.color}30`; }}>
+                              {c}
+                            </span>
+                          ))}
+                        </div>
+
+                        {/* Outcome box */}
+                        <div style={{ padding: '16px 20px', background: 'linear-gradient(135deg, #0f2942, #07192c)', borderRadius: 12, border: `1.5px solid ${rd.color}30` }}>
+                          <div style={{ color: rd.color, fontSize: 10, fontFamily: 'Montserrat,sans-serif', fontWeight: 800, letterSpacing: 2, textTransform: 'uppercase', marginBottom: 6 }}>Outcome</div>
+                          <div style={{ color: '#fff', fontSize: 13, fontFamily: 'Poppins,sans-serif', fontWeight: 500, lineHeight: 1.6 }}>{rd.outcome}</div>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
-              <div style={{ flex: '1 1 300px' }}>
-                <div style={{ background: 'rgba(255,255,255,.08)', borderRadius: 8, padding: 16, textAlign: 'center' }}>
-                  <iframe width="100%" height="200" src="https://www.youtube.com/embed/0ZYG_zz2aoI" frameBorder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowFullScreen title="PM Quote"></iframe>
-                  <p style={{ color: '#fff', fontFamily: 'Montserrat,sans-serif', fontSize: 14, fontWeight: 600, margin: '12px 0 2px' }}>Dr. G. Viswanathan</p>
-                  <p style={{ color: 'rgba(255,255,255,.6)', fontFamily: 'Montserrat,sans-serif', fontSize: 12, margin: 0 }}>Founder & Chancellor, VIT</p>
+            ))}
+          </div>
+        </div>
+
+        {/* Dot navigation */}
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 14, marginTop: 28 }}>
+          <button onClick={() => setActive(a => (a - 1 + rounds.length) % rounds.length)}
+            style={{ background: 'none', border: '1.5px solid #ddd', borderRadius: '50%', width: 36, height: 36, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#aaa', fontSize: 18, transition: 'all 0.2s', lineHeight: 1 }}
+            onMouseEnter={e => { e.currentTarget.style.borderColor = '#FF9933'; e.currentTarget.style.color = '#FF9933'; }}
+            onMouseLeave={e => { e.currentTarget.style.borderColor = '#ddd'; e.currentTarget.style.color = '#aaa'; }}>‹</button>
+
+          <div style={{ display: 'flex', gap: 8 }}>
+            {rounds.map((rd, i) => (
+              <button key={i} onClick={() => setActive(i)} style={{
+                width: i === active ? 34 : 8, height: 8, borderRadius: 4,
+                background: i === active ? rd.color : '#ddd',
+                border: 'none', cursor: 'pointer', transition: 'all 0.35s ease',
+              }} />
+            ))}
+          </div>
+
+          <button onClick={() => setActive(a => (a + 1) % rounds.length)}
+            style={{ background: 'none', border: '1.5px solid #ddd', borderRadius: '50%', width: 36, height: 36, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#aaa', fontSize: 18, transition: 'all 0.2s', lineHeight: 1 }}
+            onMouseEnter={e => { e.currentTarget.style.borderColor = '#138808'; e.currentTarget.style.color = '#138808'; }}
+            onMouseLeave={e => { e.currentTarget.style.borderColor = '#ddd'; e.currentTarget.style.color = '#aaa'; }}>›</button>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ═══════════════════════════════════════════════
+   ABOUT SVH
+═══════════════════════════════════════════════ */
+function AboutSection() {
+  const [ref, visible] = useInView(0.1);
+  return (
+    <section ref={ref} style={{ background: 'linear-gradient(135deg, #07192c 0%, #0f2942 100%)', padding: '90px 20px', position: 'relative', overflow: 'hidden' }}>
+      <div style={{ position: 'absolute', right: -80, top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none', zIndex: 0 }}>
+        <AshokaChakra size={520} opacity={0.04} spin />
+      </div>
+      <div style={{ maxWidth: 1200, margin: '0 auto', position: 'relative', zIndex: 1 }}>
+        <div style={{
+          display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(440px, 1fr))', gap: 60, alignItems: 'center',
+          opacity: visible ? 1 : 0, transform: visible ? 'none' : 'translateY(30px)',
+          transition: 'all 0.7s ease',
+        }}>
+          <div>
+            <span style={{ display: 'inline-block', padding: '4px 16px', background: 'rgba(255,153,51,0.15)', color: '#FF9933', fontSize: 11, fontFamily: 'Montserrat,sans-serif', fontWeight: 700, letterSpacing: 3, textTransform: 'uppercase', borderRadius: 20, marginBottom: 20, border: '1px solid rgba(255,153,51,0.25)' }}>
+              About the Event
+            </span>
+            <h2 style={{ fontFamily: 'Montserrat,sans-serif', fontSize: 'clamp(28px,4vw,42px)', fontWeight: 900, color: '#fff', margin: '0 0 20px', lineHeight: 1.1 }}>
+              What is <span style={{ color: '#FF9933' }}>SVH 2026</span>?
+            </h2>
+            <p style={{ color: 'rgba(255,255,255,0.75)', fontSize: 16, lineHeight: 1.85, fontFamily: 'Poppins,sans-serif', marginBottom: 20, textAlign: 'justify' }}>
+              Smart VIT Hackathon (SVH) 2026 is an internal hackathon organized by the{' '}
+              <strong style={{ color: '#FF9933' }}>Blockchain Club, VIT Bhopal</strong>, inspired by the structure and methodology of the Smart India Hackathon (SIH).
+            </p>
+            <p style={{ color: 'rgba(255,255,255,0.62)', fontSize: 15, lineHeight: 1.85, fontFamily: 'Poppins,sans-serif', textAlign: 'justify', marginBottom: 28 }}>
+              The event provides students with a realistic SIH-like experience — exposing them to problem-statement-based innovation, proposal development, pitching, and rapid prototype creation. Through two rigorous rounds and expert mentorship, participants solve real-world challenges.
+            </p>
+            <div style={{ display: 'flex', gap: 20, flexWrap: 'wrap' }}>
+              {[
+                { text: 'SIH-Inspired Format', color: '#FF9933' },
+                { text: 'Expert Mentorship', color: '#138808' },
+                { text: 'Real-world Problems', color: 'rgba(255,255,255,0.6)' },
+              ].map((tag, i) => (
+                <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 8, color: tag.color, fontSize: 13, fontFamily: 'Montserrat,sans-serif', fontWeight: 700 }}>
+                  <span style={{ width: 8, height: 8, borderRadius: '50%', background: tag.color, display: 'inline-block' }} />
+                  {tag.text}
                 </div>
-              </div>
+              ))}
             </div>
           </div>
 
-          <div style={{ textAlign: 'center', margin: '20px 0 30px' }}>
-            <h3 style={{ fontFamily: 'Montserrat,sans-serif', color: '#f75700', fontSize: 34, fontWeight: 700, letterSpacing:'0.04em', margin: 0 }}>Why join SVH 2026?</h3>
-          </div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 24, marginBottom: 30 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
             {[
-              { img: `${SIH}/img1/innovative-solutions.png`, title: 'Innovative Solutions', desc: 'Get innovative solutions to your problems in cost effective ways Opportunity to be a part of Campus Innovation and to brand your company.' },
-              { img: `${SIH}/img1/recognition.png`, title: 'Recognition and visibility', desc: 'Recognition and visibility for your organisation across VIT Bhopal and partner institutions' },
-              { img: `${SIH}/img1/out-of-box.png`, title: 'Out-of-the-box solutions', desc: 'Talented students from across VIT Bhopal offer out-of-the-box solutions to your problems' },
-              { img: `${SIH}/img1/opportunity.png`, title: 'Innovation Movement Opportunity', desc: "Be part of VIT's Open Innovation Movement and work with some of the best talents across the university" },
-            ].map((b, i) => (
-              <div key={i} style={{ textAlign: 'center', borderBottom: '3px solid rgb(216,82,23)', height: 280 }}>
-                <div style={{ padding: '20px 16px' }}>
-                  <img src={b.img} alt={b.title} style={{ height: '25%', margin: '0 auto', display: 'block', objectFit: 'contain' }}
-                    onError={e => { e.currentTarget.style.display = 'none'; }} />
-                  <h4 style={{ fontFamily: 'Montserrat,sans-serif', color: 'rgb(0,48,120)', fontSize: 22, fontWeight: 700, margin: '20px 0 10px', textTransform:'capitalize' }}>{b.title}</h4>
-                  <p style={{ fontFamily: 'Montserrat,sans-serif', color: '#002449', fontSize: 15, lineHeight: '20px', margin: '0 0 30px' }}>{b.desc}</p>
-                </div>
+              { label: '2 Rounds', sub: 'PPT Submission + Prototype', icon: '🎯', color: '#FF9933' },
+              { label: '10+2 PSs', sub: '10 Software · 2 Hardware', icon: '📋', color: '#138808' },
+              { label: 'Venue', sub: 'VIT Bhopal University', icon: '🏛️', color: '#06038D' },
+              { label: 'Certificates', sub: 'Participation & Shortlisting', icon: '🏆', color: '#FF9933' },
+            ].map((c, i) => (
+              <div key={i} style={{
+                background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)',
+                borderRadius: 14, padding: '24px 18px', transition: 'all 0.25s',
+                opacity: visible ? 1 : 0, transform: visible ? 'none' : 'translateY(20px)',
+                transitionDelay: `${0.2 + i * 0.09}s`,
+              }}
+                onMouseEnter={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.1)'; e.currentTarget.style.borderColor = `${c.color}55`; e.currentTarget.style.transform = 'translateY(-3px)'; }}
+                onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.06)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)'; e.currentTarget.style.transform = 'none'; }}>
+                <div style={{ fontSize: 28, marginBottom: 10 }}>{c.icon}</div>
+                <div style={{ color: c.color, fontSize: 17, fontWeight: 800, fontFamily: 'Montserrat,sans-serif', marginBottom: 4 }}>{c.label}</div>
+                <div style={{ color: 'rgba(255,255,255,0.52)', fontSize: 12, fontFamily: 'Poppins,sans-serif' }}>{c.sub}</div>
               </div>
             ))}
           </div>
@@ -136,269 +608,192 @@ function AboutHackathon() {
   );
 }
 
-/* ─────────────────────────────────────────────
-   JR / SENIOR SECTION (video + hackathon process)
-   ───────────────────────────────────────────── */
-function JrSeniorSection() {
-  return (
-    <section style={{ background: '#fff', padding: '70px 20px', position: 'relative', overflow: 'hidden' }}>
-      <div style={{ position:'absolute', top:80, left:0, width:182, height:500, background:`url(${SIH}/img1/participate-overview-left.png) left top no-repeat`, backgroundSize:'100%', zIndex:0, pointerEvents:'none' }} />
-      <div style={{ position:'absolute', top:80, right:0, width:182, height:500, background:`url(${SIH}/img1/participate-overview-right.png) left top no-repeat`, backgroundSize:'100%', zIndex:0, pointerEvents:'none' }} />
-      <div style={{ maxWidth: 1200, margin: '0 auto', display: 'flex', gap: 40, flexWrap: 'wrap', alignItems: 'center', position:'relative', zIndex:11 }}>
-        <div style={{ flex: '1 1 500px', position:'relative', zIndex:11 }}>
-          <div style={{ position:'absolute', left:0, top:-13, width:223, height:176, background:`url(${SIH}/img1/video-left-top.png) left top no-repeat`, backgroundSize:'100% 100%', zIndex:-1, pointerEvents:'none' }} />
-          <div style={{ position:'absolute', right:0, bottom:0, width:223, height:176, background:`url(${SIH}/img1/video-left-bottom.png) right top no-repeat`, backgroundSize:'100% 100%', zIndex:-1, pointerEvents:'none' }} />
-          <iframe width="100%" height="470" src="https://www.youtube.com/embed/znMbKz6ZPno" frameBorder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowFullScreen title="SVH Video"
-            style={{ borderRadius:20 }} />
-        </div>
-        <div style={{ flex: '1 1 400px', textAlign: 'center', position:'relative', zIndex:11 }}>
-          <img src={`${SIH}/img1/hackathon-process-logo.png`} alt="Hackathon Process"
-            style={{ maxWidth:'100%', height:'auto' }}
-            onError={e => { e.currentTarget.style.display = 'none'; }} />
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/* ─────────────────────────────────────────────
-   PROCESS FLOW
-   ───────────────────────────────────────────── */
-const processSteps = [
-  { num: 1, title: 'Problem Statement Publication',        text: 'SVH releases curated problem statements across domains. Teams review and select up to 2 of interest from the published list.' },
-  { num: 2, title: 'Registration (1–20 July 2026)',         text: 'Teams of 6 register. Min. 1 female member mandatory. Fee: ₹75/member (₹450/team).' },
-  { num: 3, title: 'Round 1: PPT Submission (20 Jul–5 Aug)', text: 'Teams submit a presentation covering problem, solution, technical architecture, impact, and roadmap.' },
-  { num: 4, title: 'Round 1: PPT Evaluation (5–10 Aug)',    text: 'Internal panel reviews submissions. Top 5 teams per problem statement advance to the Grand Finale.' },
-  { num: 5, title: 'Results Announcement',                  text: 'Shortlisted finalists are officially announced across internal channels and notice boards.' },
-  { num: 6, title: 'Round 2: Grand Finale (24–25 Aug)',     text: 'Finalists build and demo a functional prototype. 2-day, 12-hour hackathon. Subject to OD approvals.' },
-];
-const stepImgs = Array.from({ length: 6 }, (_, i) => `${SIH}/img1/process/step${i + 1}.png`);
-
-function ProcessStep({ s, img, showArrow }) {
-  return (
-    <div style={{ textAlign: 'center', padding: '0 20px', position: 'relative', borderRight: showArrow ? '1px dashed #ccc' : 'none' }}>
-      <img src={img} alt={s.title}
-        style={{ width: 80, height: 80, margin: '0 auto 16px', display: 'block', objectFit: 'contain' }}
-        onError={e => { e.currentTarget.style.display = 'none'; }} />
-      <div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: 34, height: 34, borderRadius: '50%', background: '#f75700', color: '#fff', fontFamily: 'Montserrat,sans-serif', fontWeight: 700, fontSize: 14, marginBottom: 10 }}>
-        {s.num}
-      </div>
-      <h4 style={{ fontFamily: 'Montserrat,sans-serif', color: '#002449', fontSize: 15, fontWeight: 700, margin: '0 0 8px', textTransform: 'none' }}>{s.title}</h4>
-      <p style={{ color: '#002449', fontFamily: 'Montserrat,sans-serif', fontSize: 13, lineHeight: '18px', textAlign: 'center', margin: 0 }}>{s.text}</p>
-      {showArrow && (
-        <div style={{ position: 'absolute', right: -7, top: 40, width: 0, height: 0, borderTop: '8px solid transparent', borderBottom: '8px solid transparent', borderLeft: '14px solid #676767' }} />
-      )}
-    </div>
-  );
-}
-
-function ProcessFlow() {
-  return (
-    <section style={{ background: '#fff', padding: '80px 20px' }}>
-      <div style={{ maxWidth: 1200, margin: '0 auto' }}>
-        <div style={{ textAlign: 'center', marginBottom: 50 }}>
-          <p style={{ margin: 0, fontWeight: 700, color: '#f75700', fontSize: 18, fontFamily: 'Montserrat,sans-serif' }}>SVH Software Edition</p>
-          <h3 style={{ fontFamily: 'Montserrat,sans-serif', fontSize: 36, margin: 0, color: '#002449', textTransform: 'uppercase', fontWeight: 700 }}>Process Flow</h3>
-        </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 0, marginBottom: 60 }}>
-          {processSteps.slice(0, 3).map((s, i) => (
-            <ProcessStep key={i} s={s} img={stepImgs[i]} showArrow={i < 2} />
-          ))}
-        </div>
-        <div style={{ borderBottom: '2px dotted #676767', margin: '0 0 60px', position: 'relative', textAlign: 'center' }}>
-          <span style={{ background: '#fff', padding: '0 16px', position: 'relative', top: 12, fontFamily: 'Montserrat,sans-serif', color: '#676767', fontSize: 14, letterSpacing: 4 }}>▼ CONTINUED ▼</span>
-        </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 0 }}>
-          {processSteps.slice(3).map((s, i) => (
-            <ProcessStep key={i} s={s} img={stepImgs[i + 3]} showArrow={i < 2} />
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/* ─────────────────────────────────────────────
-   THEMES CAROUSEL
-   ───────────────────────────────────────────── */
-const themes = [
-  { icon: `${SIH}/img/icon_communication.png`, title: 'Smart Automation',              desc: 'Ideas focused on the intelligent use of resources for transforming and advancements of technology with combining the artificial intelligence to explore more various sources and get valuable insights.' },
-  { icon: `${SIH}/img/icon_sport.png`,         title: 'Fitness & Sports',              desc: 'Ideas that can boost fitness activities and assist in keeping fit.' },
-  { icon: `${SIH}/img/icon_drone.png`,         title: 'Space Technology',              desc: 'For use in travel or activities beyond Earth\'s atmosphere, for purposes such as spaceflight or space exploration.' },
-  { icon: `${SIH}/img/icon_heritage.png`,      title: 'Heritage & Culture',            desc: 'Ideas that showcase the rich cultural heritage and traditions of India.' },
-  { icon: `${SIH}/img/icon_healthcare.png`,    title: 'MedTech/BioTech/ HealthTech',   desc: 'Cutting-edge technology in these sectors continues to be in demand. Recent shifts in healthcare trends, growing populations also present an array of opportunities for innovation.' },
-  { icon: `${SIH}/img/icon_technology.png`,    title: 'Agriculture, FoodTech & Rural Development', desc: 'Developing solutions, keeping in mind the need to enhance the primary sector of India - Agriculture and to manage and process our agriculture produce.' },
-  { icon: `${SIH}/img/icon_automobiles.png`,   title: 'Smart Vehicles',                desc: 'Creating intelligent devices to improve commutation sector.' },
-  { icon: `${SIH}/img/icon_agriculture.png`,   title: 'Transportation & Logistics',    desc: 'Submit your ideas to address the growing pressures on the city\'s resources, transport networks, and logistic infrastructure.' },
-  { icon: `${SIH}/img/icon_drone.png`,         title: 'Robotics and Drones',           desc: 'There is a need to design drones and robots that can solve some of the pressing challenges of India such as handling medical emergencies, search and rescue operations, etc.' },
-  { icon: `${SIH}/img/icon_waste.png`,         title: 'Clean & Green Technology',      desc: 'Solutions could be in the form of waste segregation, disposal, and improve sanitization system.' },
-  { icon: `${SIH}/img/icon_tourism.png`,       title: 'Tourism',                       desc: 'A solution/idea that can boost the current situation of the tourism industries including hotels, travel and others.' },
-  { icon: `${SIH}/img/icon_renewable.png`,     title: 'Renewable/ Sustainable Energy', desc: 'Innovative ideas that help manage and generate renewable /sustainable sources more efficiently.' },
-  { icon: `${SIH}/img/icon_security.png`,      title: 'Blockchain & Cybersecurity',    desc: 'Provide ideas in a decentralized and distributed ledger technology used to store digital information that powers cryptocurrencies and NFTs and can radically change multiple sectors.' },
-  { icon: `${SIH}/img/smart-education.png`,    title: 'Smart Education',               desc: 'Smart education, a concept that describes learning in digital age. It enables learners to learn more effectively, efficiently, flexibly and comfortably.' },
-  { icon: `${SIH}/img/disaster-management.png`, title: 'Disaster Management',           desc: 'Disaster management includes ideas related to risk mitigation, Planning and management before, after or during a disaster.' },
-  { icon: `${SIH}/img/toys-theme.png`,         title: 'Games & Toys',                  desc: 'Challenge your creative mind to conceptualize and develop unique toys and games based on our civilization, history, and culture etc.' },
-  { icon: `${SIH}/img/icon_education.png`,     title: 'Miscellaneous',                 desc: 'Technology ideas in tertiary sectors like Hospitality, Entertainment and Retail.' },
-  { icon: `${SIH}/img/icon_education.png`,     title: 'Fintech',                       desc: 'Challenges related to the financial services.' },
+/* ═══════════════════════════════════════════════
+   TIMELINE — Each item animates in on scroll
+═══════════════════════════════════════════════ */
+const timelinePhases = [
+  { num: 1, title: 'Registration', date: '1 – 20 July 2026', desc: 'Teams of 6 register online. Minimum 1 female member mandatory. Fee: ₹75/member (₹450/team). Register through the official portal.', icon: '✍️', color: '#FF9933' },
+  { num: 2, title: 'PPT Submission', date: '20 July – 5 Aug 2026', desc: 'Submit a comprehensive presentation covering problem understanding, proposed solution, technical architecture, expected impact & implementation roadmap.', icon: '📊', color: '#138808' },
+  { num: 3, title: 'PPT Evaluation', date: '5 – 10 Aug 2026', desc: 'Internal panel evaluates all submissions. Top 5 teams per problem statement shortlisted. Max 60 finalist teams across all 12 PSs.', icon: '⚖️', color: '#06038D' },
+  { num: 4, title: 'Results', date: 'Post 10 Aug 2026', desc: 'Shortlisted finalist teams officially announced. Teams notified through internal college channels and official platforms.', icon: '📢', color: '#FF9933' },
+  { num: 5, title: 'Grand Finale', date: '24 – 25 Aug 2026', desc: 'Finalists build a functional prototype at VIT Bhopal. 2-day, 12-hr offline format. Subject to OD approval from the institute.', icon: '🚀', color: '#138808' },
 ];
 
-function ThemeCard({ theme }) {
-  const [imgFailed, setImgFailed] = useState(false);
-  return (
-    <Link to="/problem-statements" style={{ textDecoration: 'none', display: 'block', textAlign: 'center', padding: '30px', background: 'rgb(255, 248, 237)', borderRadius: 9, height: 370, border: '1.20762px solid rgb(246, 121, 11)', boxShadow: 'rgba(255,255,255,0.44) -6.44062px -7.24569px 11.2711px, rgba(0,0,0,0.07) 7.24569px 6.44062px 24.9574px' }}>
-      {imgFailed ? (
-        <div style={{ fontSize: 48, marginBottom: 12, color: '#ccc' }}>⚙️</div>
-      ) : (
-        <img src={theme.icon} alt={theme.title}
-          style={{ width: '40%', margin: '0 auto', padding: '0 0 30px', display: 'block' }}
-          onError={() => setImgFailed(true)} />
-      )}
-      <h3 style={{ fontFamily: 'Montserrat,sans-serif', fontSize: 15, color: 'rgb(0,48,120)', margin: '0 0 8px', fontWeight: 700 }}>{theme.title}</h3>
-      <p style={{ fontFamily: 'Montserrat,sans-serif', color: '#002449', fontSize: 15, lineHeight: '22px', margin: 0 }}>{theme.desc}</p>
-    </Link>
-  );
-}
-
-function ThemesSection() {
-  const scrollRef = useRef(null);
-  const [canScrollLeft, setCanScrollLeft] = useState(false);
-  const [canScrollRight, setCanScrollRight] = useState(true);
-  const checkScroll = () => {
-    if (!scrollRef.current) return;
-    const el = scrollRef.current;
-    setCanScrollLeft(el.scrollLeft > 4);
-    setCanScrollRight(el.scrollLeft < el.scrollWidth - el.clientWidth - 4);
-  };
-  useEffect(() => {
-    checkScroll();
-    const el = scrollRef.current;
-    if (el) {
-      el.addEventListener('scroll', checkScroll);
-      return () => el.removeEventListener('scroll', checkScroll);
-    }
-  }, []);
-  const scroll = (dir) => {
-    if (!scrollRef.current) return;
-    const cardW = 280 + 20;
-    scrollRef.current.scrollBy({ left: dir * cardW * 2, behavior: 'smooth' });
-    setTimeout(checkScroll, 350);
-  };
-  return (
-    <section id="sihthemes" style={{ backgroundImage: `url(${SIH}/img1/theme-bg.png)`, backgroundSize: '100% 100%', padding: '50px 20px 0', position: 'relative' }}>
-      <div style={{ maxWidth: 1200, margin: '0 auto' }}>
-        <div style={{ textAlign: 'center', marginBottom: 50 }}>
-          <h2 style={{ fontFamily: 'Montserrat,sans-serif', fontSize: 34, margin: '0 0 8px', color: '#002449', textTransform: 'uppercase', fontWeight: 700 }}>THEMES</h2>
-          <span style={{ fontFamily: 'Montserrat,sans-serif', fontSize: 16, color: '#333', display: 'block', fontWeight: 700 }}>No problem is too big... No idea is too small</span>
-        </div>
-        <div style={{ position: 'relative', marginBottom: 24 }}>
-          {canScrollLeft && (
-            <button onClick={() => scroll(-1)}
-              style={{ position: 'absolute', left: -16, top: '50%', transform: 'translateY(-50%)', zIndex: 10, width: 40, height: 40, borderRadius: '50%', background: '#f75700', color: '#fff', border: 'none', fontSize: 22, cursor: 'pointer', boxShadow: '0 4px 12px rgba(0,0,0,.2)' }}>‹</button>
-          )}
-          {canScrollRight && (
-            <button onClick={() => scroll(1)}
-              style={{ position: 'absolute', right: -16, top: '50%', transform: 'translateY(-50%)', zIndex: 10, width: 40, height: 40, borderRadius: '50%', background: '#f75700', color: '#fff', border: 'none', fontSize: 22, cursor: 'pointer', boxShadow: '0 4px 12px rgba(0,0,0,.2)' }}>›</button>
-          )}
-          <div ref={scrollRef}
-            style={{ display: 'flex', gap: 20, overflowX: 'auto', scrollSnapType: 'x mandatory', WebkitOverflowScrolling: 'touch', scrollbarWidth: 'none', msOverflowStyle: 'none', padding: '4px 0' }}>
-            {themes.map((t, i) => (
-              <div key={i} style={{ flex: '0 0 300px', scrollSnapAlign: 'start' }}>
-                <ThemeCard theme={t} />
-              </div>
-            ))}
-          </div>
-        </div>
-        <div style={{ background: '#f75700', padding: '16px 40px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12 }}>
-          <p style={{ margin: 0, fontFamily: 'Montserrat,sans-serif', color: '#fff', fontSize: 22 }}>Explore all SVH themes and problem statements</p>
-          <Link to="/problem-statements"
-            style={{ background: '#fff', padding: '14px 60px', borderRadius: 50, fontFamily: 'Montserrat,sans-serif', fontWeight: 700, color: '#002449', fontSize: 14, letterSpacing: 1, border: '1px solid #fff', textDecoration: 'none' }}>
-            VIEW THEMES
-          </Link>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/* ─────────────────────────────────────────────
-   TIMELINE
-   ───────────────────────────────────────────── */
-function TimelineSection() {
-  return (
-    <section id="process-timeline" style={{ background: '#fff', padding: '50px 20px', borderBottom: '1px solid #e9ecef' }}>
-      <div style={{ maxWidth: 1200, margin: '0 auto', textAlign: 'center' }}>
-        <div style={{ marginBottom: 30 }}>
-          <h3 style={{ fontFamily: 'Montserrat,sans-serif', color: '#002449', fontSize: 28, fontWeight: 700, margin: 0 }}>SVH process flow and Timeline</h3>
-        </div>
-        <img src={`${SIH}/img1/SIH26_Process_Flow.png`} alt="SVH Process Flow"
-          style={{ maxWidth: '100%', height: 'auto' }}
-          onError={e => { e.currentTarget.style.display = 'none'; }} />
-      </div>
-    </section>
-  );
-}
-
-/* ─────────────────────────────────────────────
-   WHY SVH IS IMPORTANT (second benefits section)
-   ───────────────────────────────────────────── */
-const benefits2 = [
-  { img: `${SIH}/img/inovative-solution-1.png`, title: 'Innovative Solutions', desc: 'Get innovative solutions to your problems in cost effective ways Opportunity to be a part of Campus Innovation and to brand your company.' },
-  { img: `${SIH}/img/recog-visiblity-1.png`, title: 'Recognition and visibility', desc: 'Recognition and visibility for your organisation across VIT Bhopal and partner institutions' },
-  { img: `${SIH}/img/out-of-box-solution-1.png`, title: 'Out-of-the-box solutions', desc: 'Talented students from across VIT Bhopal offer out-of-the-box solutions to your problems' },
-  { img: `${SIH}/img/inno-move-opert-1.png`, title: 'Innovation Movement Opportunity', desc: 'Be part of World\'s biggest Open Innovation Movement Opportunity to work with some of the best talents in the country' },
-];
-
-function BenefitsSection2() {
-  return (
-    <section style={{ background: '#f8f9fa', padding: '50px 20px', borderBottom: '1px solid #e9ecef' }}>
-      <div style={{ maxWidth: 1200, margin: '0 auto' }}>
-        <div style={{ textAlign: 'center', marginBottom: 40 }}>
-          <h3 style={{ fontFamily: 'Montserrat,sans-serif', color: '#002449', fontSize: 28, fontWeight: 700, margin: 0 }}>Why SVH is important for Government department and Corporate department</h3>
-        </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 24 }}>
-          {benefits2.map((b, i) => (
-            <div key={i} style={{ textAlign: 'center', background: '#fff', borderRadius: 8, padding: '30px 16px', boxShadow: '0 2px 12px rgba(0,0,0,.06)' }}>
-              <img src={b.img} alt={b.title} style={{ height: 60, marginBottom: 16, objectFit: 'contain' }}
-                onError={e => { e.currentTarget.style.display = 'none'; }} />
-              <h4 style={{ fontFamily: 'Montserrat,sans-serif', color: '#002449', fontSize: 16, fontWeight: 700, margin: '0 0 8px' }}>{b.title}</h4>
-              <p style={{ fontFamily: 'Montserrat,sans-serif', color: '#666', fontSize: 13, lineHeight: '18px', margin: 0 }}>{b.desc}</p>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/* ─────────────────────────────────────────────
-   COUNTER / MILESTONES
-   ───────────────────────────────────────────── */
-function CounterSection() {
+function TimelineItem({ phase, index }) {
   const ref = useRef(null);
-  const [inView, setInView] = useState(false);
+  const [visible, setVisible] = useState(false);
+  const isLeft = index % 2 === 0;
+
   useEffect(() => {
-    const obs = new IntersectionObserver(([e]) => { if (e.isIntersecting) setInView(true); }, { threshold: .3 });
+    const obs = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting) { setVisible(true); obs.disconnect(); } },
+      { threshold: 0.22 }
+    );
     if (ref.current) obs.observe(ref.current);
     return () => obs.disconnect();
   }, []);
-  const counters = [
-    { val: '18,04,218+', label: 'Participating Students' },
-    { val: '12,800+',    label: 'SVH Alumni Network' },
-    { val: '9,406',      label: 'Participating Institutes' },
-    { val: '3,158',      label: 'Total Problem Statements' },
-    { val: '150+',       label: 'Startups Details Submitted' },
-  ];
+
   return (
-    <section ref={ref} style={{ background: '#002449', padding: '50px 20px' }}>
-      <div style={{ maxWidth: 1200, margin: '0 auto', textAlign: 'center' }}>
-        <h3 style={{ fontFamily: 'Montserrat,sans-serif', color: '#f75700', fontSize: 28, fontWeight: 700, textTransform: 'uppercase', margin: '0 0 30px' }}>SVH Milestones</h3>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 20 }}>
-          {counters.map((c, i) => (
-            <div key={i} style={{ background: 'rgba(255,255,255,.06)', borderRadius: 8, padding: '20px 10px', border: '1px solid rgba(255,255,255,.08)' }}>
-              <h4 style={{ color: '#fff', fontSize: 28, fontWeight: 700, margin: '0 0 6px', fontFamily: 'Montserrat,sans-serif' }}>
-                {inView ? c.val : '0'}
-              </h4>
-              <p style={{ color: 'rgba(255,255,255,.8)', fontSize: 14, lineHeight: '18px', fontWeight: 300, fontFamily: 'Montserrat,sans-serif', margin: 0 }}>{c.label}</p>
+    <div ref={ref} style={{
+      display: 'flex', alignItems: 'flex-start', gap: 0, marginBottom: 44,
+      flexDirection: isLeft ? 'row' : 'row-reverse',
+      opacity: visible ? 1 : 0,
+      transform: visible ? 'none' : `translateX(${isLeft ? -52 : 52}px)`,
+      transition: `opacity 0.65s ease ${index * 0.1}s, transform 0.65s ease ${index * 0.1}s`,
+    }}>
+      {/* Content card */}
+      <div style={{ flex: 1, padding: isLeft ? '0 44px 0 0' : '0 0 0 44px' }}>
+        <div style={{
+          background: '#fff', border: `2px solid ${phase.color}22`, borderRadius: 16, padding: '24px',
+          boxShadow: '0 4px 22px rgba(0,0,0,0.07)', transition: 'all 0.28s',
+        }}
+          onMouseEnter={e => { e.currentTarget.style.borderColor = phase.color; e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = `0 10px 32px ${phase.color}22`; }}
+          onMouseLeave={e => { e.currentTarget.style.borderColor = `${phase.color}22`; e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = '0 4px 22px rgba(0,0,0,0.07)'; }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 10 }}>
+            <span style={{ fontSize: 20 }}>{phase.icon}</span>
+            <h3 style={{ fontFamily: 'Montserrat,sans-serif', fontWeight: 800, color: '#0f2942', fontSize: 16, margin: 0 }}>{phase.title}</h3>
+          </div>
+          <div style={{ display: 'inline-block', padding: '3px 12px', background: `${phase.color}14`, color: phase.color, fontSize: 11, fontFamily: 'Montserrat,sans-serif', fontWeight: 700, borderRadius: 20, marginBottom: 10, border: `1px solid ${phase.color}28` }}>
+            {phase.date}
+          </div>
+          <p style={{ color: '#666', fontSize: 13, fontFamily: 'Poppins,sans-serif', lineHeight: 1.72, margin: 0, textAlign: 'justify' }}>{phase.desc}</p>
+        </div>
+      </div>
+
+      {/* Center circle node */}
+      <div style={{ position: 'relative', zIndex: 10, flexShrink: 0 }}>
+        <div style={{
+          width: 54, height: 54,
+          background: `linear-gradient(135deg, ${phase.color}, ${phase.color}bb)`,
+          borderRadius: '50%',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          fontSize: 15, fontWeight: 900, color: '#fff', fontFamily: 'Montserrat,sans-serif',
+          boxShadow: `0 4px 18px ${phase.color}55`, border: '3px solid #fff',
+          transition: 'transform 0.3s ease, box-shadow 0.3s ease',
+        }}
+          onMouseEnter={e => { e.currentTarget.style.transform = 'scale(1.18)'; e.currentTarget.style.boxShadow = `0 8px 28px ${phase.color}70`; }}
+          onMouseLeave={e => { e.currentTarget.style.transform = 'scale(1)'; e.currentTarget.style.boxShadow = `0 4px 18px ${phase.color}55`; }}>
+          {phase.num}
+        </div>
+      </div>
+
+      <div style={{ flex: 1 }} />
+    </div>
+  );
+}
+
+function MobileTimelineItem({ phase, index, isLast }) {
+  const ref = useRef(null);
+  const [visible, setVisible] = useState(false);
+  useEffect(() => {
+    const obs = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting) { setVisible(true); obs.disconnect(); } },
+      { threshold: 0.2 }
+    );
+    if (ref.current) obs.observe(ref.current);
+    return () => obs.disconnect();
+  }, []);
+
+  return (
+    <div ref={ref} style={{
+      display: 'flex', gap: 14, marginBottom: 20,
+      opacity: visible ? 1 : 0, transform: visible ? 'none' : 'translateY(24px)',
+      transition: `all 0.55s ease ${index * 0.08}s`,
+    }}>
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flexShrink: 0 }}>
+        <div style={{ width: 42, height: 42, background: `linear-gradient(135deg, ${phase.color}, ${phase.color}bb)`, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 14, fontWeight: 900, color: '#fff', fontFamily: 'Montserrat,sans-serif', boxShadow: `0 4px 12px ${phase.color}50`, border: '2px solid #fff', flexShrink: 0 }}>
+          {phase.num}
+        </div>
+        {!isLast && <div style={{ width: 2, flex: 1, background: `linear-gradient(to bottom, ${phase.color}, ${timelinePhases[Math.min(index + 1, timelinePhases.length - 1)].color})`, minHeight: 24, marginTop: 4 }} />}
+      </div>
+      <div style={{ background: '#fff', border: `1.5px solid ${phase.color}22`, borderRadius: 12, padding: '16px', boxShadow: '0 2px 14px rgba(0,0,0,0.06)', flex: 1, marginBottom: 4 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
+          <span style={{ fontSize: 16 }}>{phase.icon}</span>
+          <h3 style={{ fontFamily: 'Montserrat,sans-serif', fontWeight: 800, color: '#0f2942', fontSize: 14, margin: 0 }}>{phase.title}</h3>
+        </div>
+        <div style={{ display: 'inline-block', padding: '2px 10px', background: `${phase.color}14`, color: phase.color, fontSize: 11, fontFamily: 'Montserrat,sans-serif', fontWeight: 700, borderRadius: 20, marginBottom: 8 }}>{phase.date}</div>
+        <p style={{ color: '#666', fontSize: 12, fontFamily: 'Poppins,sans-serif', lineHeight: 1.65, margin: 0, textAlign: 'justify' }}>{phase.desc}</p>
+      </div>
+    </div>
+  );
+}
+
+function TimelineSection() {
+  const [headerRef, headerVisible] = useInView(0.2);
+
+  return (
+    <section id="process-flow" style={{ background: '#fff', padding: '90px 20px' }}>
+      <div style={{ maxWidth: 1020, margin: '0 auto' }}>
+        <div ref={headerRef} style={{
+          textAlign: 'center', marginBottom: 64,
+          opacity: headerVisible ? 1 : 0, transform: headerVisible ? 'none' : 'translateY(22px)',
+          transition: 'all 0.6s ease',
+        }}>
+          <span style={{ display: 'inline-block', padding: '4px 16px', background: 'rgba(19,136,8,0.08)', color: '#138808', fontSize: 11, fontFamily: 'Montserrat,sans-serif', fontWeight: 700, letterSpacing: 3, textTransform: 'uppercase', borderRadius: 20, marginBottom: 14, border: '1px solid rgba(19,136,8,0.2)' }}>
+            Timeline
+          </span>
+          <h2 style={{ fontFamily: 'Montserrat,sans-serif', fontSize: 'clamp(28px,4vw,40px)', fontWeight: 900, color: '#0f2942', margin: 0 }}>Event Process Flow</h2>
+          <div style={{ display: 'flex', justifyContent: 'center', gap: 6, marginTop: 14 }}>
+            <div style={{ height: 3, width: 40, background: '#FF9933', borderRadius: 2 }} />
+            <div style={{ height: 3, width: 20, background: '#e8e8e8', borderRadius: 2 }} />
+            <div style={{ height: 3, width: 40, background: '#138808', borderRadius: 2 }} />
+          </div>
+        </div>
+
+        {/* Desktop alternating */}
+        <div style={{ position: 'relative' }} className="hidden md:block">
+          <div style={{ position: 'absolute', left: '50%', top: 0, bottom: 0, width: 2, background: 'linear-gradient(to bottom, #FF9933, #06038D, #138808)', transform: 'translateX(-50%)', zIndex: 0 }} />
+          {timelinePhases.map((p, i) => <TimelineItem key={i} phase={p} index={i} />)}
+        </div>
+
+        {/* Mobile vertical */}
+        <div className="md:hidden">
+          {timelinePhases.map((p, i) => <MobileTimelineItem key={i} phase={p} index={i} isLast={i === timelinePhases.length - 1} />)}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ═══════════════════════════════════════════════
+   WHY JOIN SVH — Staggered card reveal
+═══════════════════════════════════════════════ */
+const benefits = [
+  { icon: '🧠', title: 'SIH Simulation', desc: 'Realistic Smart India Hackathon experience with identical structure, evaluation criteria, and real problem statements.', color: '#FF9933' },
+  { icon: '🏆', title: 'Certificates', desc: 'Earn Participation, Shortlisting, Winner, and Special Innovation certificates. Stand out on your resume and LinkedIn.', color: '#138808' },
+  { icon: '🤝', title: 'Expert Mentorship', desc: 'Guided by senior club members, SIH nationals participants, faculty, and domain experts throughout the hackathon.', color: '#06038D' },
+  { icon: '💡', title: 'Real Problem Solving', desc: 'Work on 12 curated real-world problem statements spanning Blockchain, AI/ML, IoT, Smart Cities, Healthcare & more.', color: '#FF9933' },
+  { icon: '🔗', title: 'Team Building', desc: 'Collaborate in diverse teams of 6. Learn to pitch, build prototypes, and perform under competitive pressure.', color: '#138808' },
+  { icon: '🚀', title: 'Career Readiness', desc: 'Build practical skills and competitive confidence for SIH and other national-level innovation competitions.', color: '#06038D' },
+];
+
+function WhySVHSection() {
+  const [ref, visible] = useInView(0.07);
+  return (
+    <section ref={ref} style={{ background: 'linear-gradient(180deg, #fafafa 0%, #fff 100%)', padding: '90px 20px' }}>
+      <div style={{ maxWidth: 1200, margin: '0 auto' }}>
+        <div style={{ opacity: visible ? 1 : 0, transform: visible ? 'none' : 'translateY(20px)', transition: 'all 0.6s ease' }}>
+          <SectionHeading badge="Benefits" title="Why Join" highlight="SVH 2026?" />
+        </div>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 22 }}>
+          {benefits.map((b, i) => (
+            <div key={i} style={{
+              background: '#fff', border: '1.5px solid #f0f0f0', borderRadius: 18, padding: '28px 24px',
+              display: 'flex', gap: 18, alignItems: 'flex-start',
+              boxShadow: '0 2px 14px rgba(0,0,0,0.05)',
+              transition: `all 0.28s, opacity 0.55s ease ${i * 0.07}s, transform 0.55s ease ${i * 0.07}s`,
+              opacity: visible ? 1 : 0,
+              transform: visible ? 'none' : 'translateY(28px)',
+            }}
+              onMouseEnter={e => { e.currentTarget.style.borderColor = b.color; e.currentTarget.style.transform = 'translateY(-4px)'; e.currentTarget.style.boxShadow = `0 10px 30px ${b.color}22`; }}
+              onMouseLeave={e => { e.currentTarget.style.borderColor = '#f0f0f0'; e.currentTarget.style.transform = visible ? 'none' : 'translateY(28px)'; e.currentTarget.style.boxShadow = '0 2px 14px rgba(0,0,0,0.05)'; }}>
+              <div style={{ width: 54, height: 54, borderRadius: 14, background: `${b.color}10`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 24, flexShrink: 0, border: `1px solid ${b.color}22` }}>
+                {b.icon}
+              </div>
+              <div>
+                <h3 style={{ fontFamily: 'Montserrat,sans-serif', fontWeight: 800, color: '#0f2942', fontSize: 15, margin: '0 0 8px' }}>{b.title}</h3>
+                <p style={{ color: '#666', fontSize: 13, fontFamily: 'Poppins,sans-serif', lineHeight: 1.72, margin: 0, textAlign: 'justify' }}>{b.desc}</p>
+              </div>
             </div>
           ))}
         </div>
@@ -407,142 +802,185 @@ function CounterSection() {
   );
 }
 
-/* ─────────────────────────────────────────────
-   COMMITTEE
-   ───────────────────────────────────────────── */
-const committeeMembers = [
-  { img: `${SIH}/img/people/3.jpg`,                name: 'Dr. G. Viswanathan',     role: 'Founder & Chancellor, VIT',                     section: 'patron' },
-  { img: `${SIH}/img/people/m1_new.png`,            name: 'Dr. G. R. C. Reddy',      role: 'Vice Chancellor, VIT Bhopal',                   section: 'patron' },
-  { img: `${SIH}/img/people/Dr-Sukanta-Majumdar.jpg`, name: 'Dr. M. Sivakumar',       role: 'Registrar, VIT Bhopal',                         section: 'copatron' },
-  { img: `${SIH}/img/people/Jayant-Chaudhary.jpg`,  name: 'Dr. Sanjeev Shrivastava', role: 'Dean Academic Affairs',                         section: 'copatron' },
-  { img: `${SIH}/img/people/Vineet-Joshi.jpg`,      name: 'Dr. S. S. Mahapatra',     role: 'Dean Research & Innovation',                    section: 'copatron' },
-  { img: `${SIH}/img/people/Abhay-Jere.jpg`,         name: 'Dr. Hemraj Lamkuche',     role: 'Coordinator, Blockchain Club',                   section: 'executive' },
-  { img: `${SIH}/img/people/Rajive-Kumar.jpg`,       name: 'Prof. A. K. Saxena',      role: 'Head, School of CSE',                           section: 'executive' },
-  { img: `${SIH}/img/people/Gaurav-Singh.jpg`,       name: 'Dr. R. K. Sharma',        role: 'Dean Student Welfare',                          section: 'executive' },
-  { img: `${SIH}/img/people/Yogesh-Brahmankar.jpg`,  name: 'Blockchain Club Core',    role: 'Event Organization & Management',                section: 'executive' },
-  { img: `${SIH}/img/people/Pratap-Sanap.jpg`,       name: 'Technical Committee',     role: 'Problem Statement Curation',                    section: 'executive' },
-  { img: `${SIH}/img/people/Puneet-Sharma.jpg`,      name: 'Evaluation Panel',        role: 'Faculty & Industry Experts',                    section: 'executive' },
-  { img: `${SIH}/img/people/Pradeep-Dhage.jpg`,      name: 'Mentorship Board',        role: 'Senior Club Members & Alumni',                  section: 'executive' },
-  { img: `${SIH}/img/people/Ankush-Sharma.jpg`,      name: 'Logistics Team',          role: 'Club Coordinators & Volunteers',                section: 'executive' },
-  { img: `${SIH}/img/people/Sarim-Moin.jpg`,         name: 'Media & Outreach',        role: 'Design & Communications Team',                  section: 'executive' },
-  { img: `${SIH}/img/people/Sourabh-Nirmale.jpg`,    name: 'Sponsorship Team',        role: 'Industry Relations Team',                       section: 'executive' },
-];
-
-function CommitteeMember({ m }) {
-  const [failed, setFailed] = useState(false);
+/* ═══════════════════════════════════════════════
+   EVALUATION CRITERIA
+═══════════════════════════════════════════════ */
+function EvaluationSection() {
+  const [ref, visible] = useInView(0.08);
+  const evalRounds = [
+    {
+      round: 'Round 1', sub: 'PPT Submission', date: '20 Jul – 5 Aug 2026', color: '#FF9933', bg: 'rgba(255,153,51,0.06)',
+      criteria: ['Problem Understanding', 'Innovation & Creativity', 'Feasibility of Solution', 'Technical Approach', 'Presentation Quality'],
+      desc: 'Teams submit a comprehensive presentation covering their solution approach, technical architecture, impact, and implementation roadmap.',
+    },
+    {
+      round: 'Round 2', sub: 'Grand Finale — Prototype', date: '24–25 Aug 2026', color: '#138808', bg: 'rgba(19,136,8,0.06)',
+      criteria: ['Technical Implementation', 'Functionality & Working Prototype', 'Innovation & Scalability', 'User Experience', 'Final Demonstration'],
+      desc: 'Shortlisted teams build and demonstrate a functional prototype. A 2-day, 12-hour hands-on development sprint.',
+    },
+  ];
   return (
-    <div style={{ textAlign: 'center', padding: '20px 10px' }}>
-      <div style={{ width: 120, height: 120, borderRadius: '50%', overflow: 'hidden', margin: '0 auto 12px', border: '3px solid #13768f', background: '#e0e0e0' }}>
-        {failed ? (
-          <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20, color: '#666', fontWeight: 700, fontFamily: 'Montserrat,sans-serif' }}>
-            {m.name.split(' ').filter(n => !n.includes('.')).map(n => n.charAt(0)).join('').substring(0, 2).toUpperCase()}
-          </div>
-        ) : (
-          <img src={m.img} alt={m.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-            onError={() => setFailed(true)} />
-        )}
+    <section ref={ref} style={{ background: '#0f2942', padding: '90px 20px', position: 'relative', overflow: 'hidden' }}>
+      <div style={{ position: 'absolute', left: -100, top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none' }}>
+        <AshokaChakra size={400} opacity={0.04} spin />
       </div>
-      <h4 style={{ fontFamily: 'Montserrat,sans-serif', color: '#002449', fontSize: 14, fontWeight: 700, margin: '0 0 4px' }}>{m.name}</h4>
-      <p style={{ fontFamily: 'Montserrat,sans-serif', color: '#666', fontSize: 12, margin: 0 }}>{m.role}</p>
-    </div>
-  );
-}
-
-function CommitteeSection() {
-  const [tab, setTab] = useState('organizing');
-  const executive = committeeMembers.filter(m => m.section === 'executive');
-  return (
-    <section style={{ background: '#f8f9fa', padding: '50px 20px' }}>
-      <div style={{ maxWidth: 1200, margin: '0 auto' }}>
-        <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 30px', display: 'flex', justifyContent: 'center', gap: 4, borderBottom: '1px solid #dee2e6' }}>
-          <li style={{ margin: 0 }}>
-            <button onClick={() => setTab('organizing')}
-              style={{ padding: '10px 24px', fontFamily: 'Montserrat,sans-serif', fontSize: 14, fontWeight: 600, background: 'none', color: tab === 'organizing' ? '#f75700' : '#002449', border: 'none', borderBottom: tab === 'organizing' ? '3px solid #f75700' : '3px solid transparent', cursor: 'pointer' }}>
-              Organizing Committee
-            </button>
-          </li>
-          <li style={{ margin: 0, display: 'none' }}>
-            <button onClick={() => setTab('executive')}
-              style={{ padding: '10px 24px', fontFamily: 'Montserrat,sans-serif', fontSize: 14, fontWeight: 600, background: 'none', color: tab === 'executive' ? '#f75700' : '#002449', border: 'none', borderBottom: tab === 'executive' ? '3px solid #f75700' : '3px solid transparent', cursor: 'pointer' }}>
-              Executive Committee
-            </button>
-          </li>
-        </ul>
-
-        {tab === 'organizing' && (
-          <>
-            <div style={{ borderBottom: '1px solid #dee2e6', marginBottom: 24 }}>
-              <h3 style={{ fontFamily: 'Montserrat,sans-serif', color: '#f75700', fontSize: 18, fontWeight: 700, textTransform: 'uppercase', textAlign: 'center', margin: '0 0 16px' }}>Patron</h3>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 10 }}>
-                {committeeMembers.filter(m => m.section === 'patron').map((m, i) => (
-                  <CommitteeMember key={i} m={m} />
-                ))}
-              </div>
+      <div style={{ maxWidth: 1200, margin: '0 auto', position: 'relative', zIndex: 1 }}>
+        <div style={{ opacity: visible ? 1 : 0, transform: visible ? 'none' : 'translateY(20px)', transition: 'all 0.6s ease' }}>
+          <div style={{ textAlign: 'center', marginBottom: 52 }}>
+            <span style={{ display: 'inline-block', padding: '4px 16px', background: 'rgba(255,153,51,0.15)', color: '#FF9933', fontSize: 11, fontFamily: 'Montserrat,sans-serif', fontWeight: 700, letterSpacing: 3, textTransform: 'uppercase', borderRadius: 20, marginBottom: 14, border: '1px solid rgba(255,153,51,0.25)' }}>Judging</span>
+            <h2 style={{ fontFamily: 'Montserrat,sans-serif', fontSize: 'clamp(28px,4vw,40px)', fontWeight: 900, color: '#fff', margin: 0 }}>Evaluation Criteria</h2>
+            <div style={{ display: 'flex', justifyContent: 'center', gap: 6, marginTop: 14 }}>
+              <div style={{ height: 3, width: 40, background: '#FF9933', borderRadius: 2 }} />
+              <div style={{ height: 3, width: 20, background: 'rgba(255,255,255,0.15)', borderRadius: 2 }} />
+              <div style={{ height: 3, width: 40, background: '#138808', borderRadius: 2 }} />
             </div>
-            <div>
-              <h3 style={{ fontFamily: 'Montserrat,sans-serif', color: '#f75700', fontSize: 18, fontWeight: 700, textTransform: 'uppercase', textAlign: 'center', margin: '0 0 16px' }}>Co-Patrons</h3>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 10 }}>
-                {committeeMembers.filter(m => m.section === 'copatron').map((m, i) => (
-                  <CommitteeMember key={i} m={m} />
-                ))}
-              </div>
-            </div>
-          </>
-        )}
-
-        {tab === 'executive' && (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 10 }}>
-            {executive.map((m, i) => (
-              <CommitteeMember key={i} m={m} />
-            ))}
           </div>
-        )}
+        </div>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(440px, 1fr))', gap: 24 }}>
+          {evalRounds.map((r, i) => (
+            <div key={i} style={{
+              background: r.bg, border: `1.5px solid ${r.color}30`, borderRadius: 20, padding: '32px',
+              opacity: visible ? 1 : 0,
+              transform: visible ? 'none' : `translateX(${i === 0 ? -30 : 30}px)`,
+              transition: `all 0.65s ease ${0.15 + i * 0.15}s`,
+            }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 20, flexWrap: 'wrap', gap: 10 }}>
+                <div>
+                  <div style={{ color: r.color, fontSize: 11, fontFamily: 'Montserrat,sans-serif', fontWeight: 800, letterSpacing: 2, textTransform: 'uppercase', marginBottom: 4 }}>{r.round}</div>
+                  <h3 style={{ color: '#fff', fontSize: 22, fontFamily: 'Montserrat,sans-serif', fontWeight: 900, margin: 0 }}>{r.sub}</h3>
+                </div>
+                <div style={{ padding: '4px 14px', background: `${r.color}20`, color: r.color, fontSize: 11, fontFamily: 'Montserrat,sans-serif', fontWeight: 700, borderRadius: 20, border: `1px solid ${r.color}40`, whiteSpace: 'nowrap' }}>{r.date}</div>
+              </div>
+              <p style={{ color: 'rgba(255,255,255,0.62)', fontSize: 13, fontFamily: 'Poppins,sans-serif', lineHeight: 1.75, marginBottom: 22, textAlign: 'justify' }}>{r.desc}</p>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+                {r.criteria.map((c, j) => (
+                  <span key={j} style={{ padding: '5px 14px', background: 'rgba(255,255,255,0.08)', color: '#fff', fontSize: 12, fontFamily: 'Montserrat,sans-serif', fontWeight: 600, borderRadius: 20, border: `1px solid ${r.color}28` }}>{c}</span>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     </section>
   );
 }
 
-/* ─────────────────────────────────────────────
-   FOOTER CTA
-   ───────────────────────────────────────────── */
-function FooterCTA() {
-  const [hov, setHov] = useState(false);
+/* ═══════════════════════════════════════════════
+   ORGANIZERS
+═══════════════════════════════════════════════ */
+function OrganizersSection() {
+  const [ref, visible] = useInView(0.08);
+  const orgs = [
+    { src: blockchainLogo, name: 'Blockchain Club VITB', desc: 'Event Organizer', bg: 'rgba(255,153,51,0.07)', border: 'rgba(255,153,51,0.2)' },
+    { src: iicLogo, name: 'IIC VIT Bhopal', desc: "Institution's Innovation Council", bg: 'rgba(6,3,141,0.06)', border: 'rgba(6,3,141,0.15)' },
+    { src: swLogo, name: 'SW Office', desc: 'Student Welfare Office', bg: 'rgba(19,136,8,0.06)', border: 'rgba(19,136,8,0.2)' },
+    { src: vitbLogo, name: 'VIT Bhopal', desc: 'VIT Bhopal University', bg: 'rgba(255,153,51,0.07)', border: 'rgba(255,153,51,0.2)' },
+  ];
   return (
-    <div style={{ background: '#002449', padding: '60px 20px', textAlign: 'center' }}>
-      <h2 style={{ fontFamily: 'Montserrat,sans-serif', color: '#fff', fontSize: 36, margin: '0 0 40px', fontWeight: 300, textTransform: 'none' }}>
-        Ready to innovate?{' '}
-        <span style={{ fontFamily: 'Montserrat,sans-serif', fontWeight: 700, color: '#f75700' }}>Register for SVH 2026</span>
-      </h2>
-      <Link to="/guidelines"
-        onMouseEnter={() => setHov(true)}
-        onMouseLeave={() => setHov(false)}
-        style={{ background: hov ? '#f75700' : '#fff', padding: '14px 70px', borderRadius: 50, textTransform: 'uppercase', fontFamily: 'Montserrat,sans-serif', fontWeight: 700, color: hov ? '#fff' : '#002449', fontSize: 14, letterSpacing: 2, border: `1px solid ${hov ? '#f75700' : '#fff'}`, textDecoration: 'none', display: 'inline-block', transition: 'all .2s' }}>
-        Download Guidelines
-      </Link>
-    </div>
+    <section ref={ref} id="organizers" style={{ background: '#fff', padding: '80px 20px', borderTop: '1px solid #f0f0f0' }}>
+      <div style={{ maxWidth: 1200, margin: '0 auto' }}>
+        <div style={{ opacity: visible ? 1 : 0, transform: visible ? 'none' : 'translateY(20px)', transition: 'all 0.6s ease' }}>
+          <SectionHeading badge="Supporters" title="Organized &" highlight="Supported By" />
+        </div>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 22 }}>
+          {orgs.map((org, i) => (
+            <div key={i} style={{
+              background: org.bg, border: `1.5px solid ${org.border}`, borderRadius: 18,
+              padding: '32px 24px', textAlign: 'center', transition: 'all 0.28s',
+              opacity: visible ? 1 : 0, transform: visible ? 'none' : 'translateY(22px) scale(0.96)',
+              transitionDelay: `${0.1 + i * 0.1}s`,
+            }}
+              onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-5px)'; e.currentTarget.style.boxShadow = `0 14px 36px ${org.border}`; }}
+              onMouseLeave={e => { e.currentTarget.style.transform = visible ? 'none' : 'translateY(22px) scale(0.96)'; e.currentTarget.style.boxShadow = 'none'; }}>
+              <div style={{ height: 72, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 18 }}>
+                <img src={org.src} alt={org.name} style={{ maxHeight: 66, maxWidth: '100%', objectFit: 'contain' }} />
+              </div>
+              <h3 style={{ fontFamily: 'Montserrat,sans-serif', fontWeight: 800, color: '#0f2942', fontSize: 14, margin: '0 0 5px' }}>{org.name}</h3>
+              <p style={{ color: '#999', fontSize: 12, fontFamily: 'Poppins,sans-serif', margin: 0 }}>{org.desc}</p>
+            </div>
+          ))}
+        </div>
+
+        {/* Faculty card */}
+        <div style={{
+          marginTop: 36, background: 'linear-gradient(135deg, #0f2942, #07192c)', borderRadius: 18,
+          padding: '26px 32px', display: 'flex', alignItems: 'center', gap: 22, flexWrap: 'wrap',
+          border: '1px solid rgba(255,153,51,0.2)',
+          opacity: visible ? 1 : 0, transform: visible ? 'none' : 'translateY(16px)',
+          transition: 'all 0.6s ease 0.5s',
+        }}>
+          <div style={{ width: 56, height: 56, borderRadius: '50%', background: 'rgba(255,153,51,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 22, border: '2px solid rgba(255,153,51,0.4)', flexShrink: 0 }}>
+            👨‍🏫
+          </div>
+          <div>
+            <div style={{ color: 'rgba(255,153,51,0.7)', fontSize: 10, fontFamily: 'Montserrat,sans-serif', fontWeight: 700, letterSpacing: 2, textTransform: 'uppercase', marginBottom: 4 }}>Faculty Coordinator</div>
+            <div style={{ color: '#fff', fontSize: 20, fontFamily: 'Montserrat,sans-serif', fontWeight: 900 }}>Dr. Hemraj Lamkuche</div>
+            <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: 13, fontFamily: 'Poppins,sans-serif', marginTop: 2 }}>Blockchain Club Coordinator · VIT Bhopal University</div>
+          </div>
+        </div>
+      </div>
+    </section>
   );
 }
 
+/* ═══════════════════════════════════════════════
+   REGISTRATION CTA
+═══════════════════════════════════════════════ */
+function RegistrationCTA() {
+  const [ref, visible] = useInView(0.1);
+  return (
+    <section ref={ref} style={{ background: 'linear-gradient(135deg, #0f2942 0%, #07192c 100%)', padding: '80px 20px', textAlign: 'center', position: 'relative', overflow: 'hidden' }}>
+      <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 4, background: 'linear-gradient(to right, #FF9933 33.33%, #fff 33.33% 66.66%, #138808 66.66%)' }} />
+      <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', pointerEvents: 'none', zIndex: 0 }}>
+        <AshokaChakra size={500} opacity={0.04} spin />
+      </div>
+      <div style={{
+        position: 'relative', zIndex: 1, maxWidth: 720, margin: '0 auto',
+        opacity: visible ? 1 : 0, transform: visible ? 'none' : 'scale(0.96) translateY(20px)',
+        transition: 'all 0.7s ease',
+      }}>
+        <div style={{ fontSize: 52, marginBottom: 14, animation: 'float 3s ease-in-out infinite' }}>🚀</div>
+        <h2 style={{ fontFamily: 'Montserrat,sans-serif', fontWeight: 900, color: '#fff', fontSize: 'clamp(28px,5vw,48px)', margin: '0 0 16px', lineHeight: 1.1 }}>
+          Ready to{' '}
+          <span style={{ background: 'linear-gradient(90deg, #FF9933, #fff)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>Innovate</span>
+          {' '}&amp; Build?
+        </h2>
+        <p style={{ color: 'rgba(255,255,255,0.68)', fontSize: 16, fontFamily: 'Poppins,sans-serif', lineHeight: 1.75, marginBottom: 36 }}>
+          Registration opens <strong style={{ color: '#FF9933' }}>1 July 2026</strong>. Form your team of 6, pick a problem statement, and take your first step towards Smart India Hackathon glory.
+        </p>
+        <div style={{ display: 'flex', gap: 14, justifyContent: 'center', flexWrap: 'wrap' }}>
+          <Link to="/guidelines" style={{ padding: '14px 40px', background: 'linear-gradient(135deg, #FF9933, #e07800)', color: '#fff', borderRadius: 8, fontSize: 13, fontFamily: 'Montserrat,sans-serif', fontWeight: 800, textDecoration: 'none', textTransform: 'uppercase', letterSpacing: 1.5, boxShadow: '0 6px 24px rgba(255,153,51,0.4)', transition: 'all 0.25s', display: 'inline-block' }}
+            onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 12px 34px rgba(255,153,51,0.6)'; }}
+            onMouseLeave={e => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = '0 6px 24px rgba(255,153,51,0.4)'; }}>
+            View Guidelines
+          </Link>
+          <Link to="/problem-statements" style={{ padding: '14px 40px', background: 'transparent', color: '#fff', borderRadius: 8, fontSize: 13, fontFamily: 'Montserrat,sans-serif', fontWeight: 700, textDecoration: 'none', textTransform: 'uppercase', letterSpacing: 1.5, border: '1.5px solid rgba(255,255,255,0.28)', transition: 'all 0.25s', display: 'inline-block' }}
+            onMouseEnter={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.08)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.6)'; }}
+            onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.28)'; }}>
+            Explore Problem Statements
+          </Link>
+        </div>
+      </div>
+      <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: 4, background: 'linear-gradient(to right, #FF9933 33.33%, #fff 33.33% 66.66%, #138808 66.66%)' }} />
+    </section>
+  );
+}
+
+/* ═══════════════════════════════════════════════
+   HOME PAGE
+═══════════════════════════════════════════════ */
 export default function Home() {
   return (
-    <div className="w-full">
-      <HeroCarousel />
+    <div style={{ width: '100%' }}>
+      <HeroSection />
       <NewsTicker />
-      <AboutHackathon />
-      <ProcessFlow />
-      <JrSeniorSection />
-      <ThemesSection />
+      <EventRoundsCarousel />
+      <AboutSection />
       <TimelineSection />
-      <BenefitsSection2 />
-      <CounterSection />
-      <CommitteeSection />
-      <FooterCTA />
-      <style>{`
-        @keyframes sih-marquee {
-          from { transform: translateX(100vw); }
-          to   { transform: translateX(-100%); }
-        }
-      `}</style>
+      <WhySVHSection />
+      <EvaluationSection />
+      <OrganizersSection />
+      <RegistrationCTA />
     </div>
   );
 }

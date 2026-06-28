@@ -1,235 +1,234 @@
-import { useState, useRef, useEffect } from 'react';
-import { NavLink, useLocation, Link } from 'react-router-dom';
-import svhLogo from '../assets/svh_logo.png';
+import { useState, useEffect } from 'react';
+import { NavLink, Link } from 'react-router-dom';
 
+import blockchainLogo from '../assets/Blockchain.png';
+import iicLogo from '../assets/IIC Logo.png';
+import swLogo from '../assets/SW Office Logo.png';
+import vitbLogo from '../assets/vitblogo.png';
+import svhLogo from '../assets/svh.jpeg';
 
 export default function Header() {
-  const { hash, pathname } = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [openDropdown, setOpenDropdown] = useState(null);
-  const [openSubDropdown, setOpenSubDropdown] = useState(null);
+  const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
-    if (hash) {
-      const element = document.getElementById(hash.replace('#', ''));
-      if (element) element.scrollIntoView({ behavior: 'smooth' });
-    } else if (pathname !== '/') {
-      window.scrollTo(0, 0);
-    }
-  }, [hash, pathname]);
+    const onScroll = () => setScrolled(window.scrollY > 10);
+    window.addEventListener('scroll', onScroll);
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
 
-  // Close dropdowns when clicking outside
-  const navRef = useRef(null);
   useEffect(() => {
     const handler = (e) => {
-      if (navRef.current && !navRef.current.contains(e.target)) {
-        setOpenDropdown(null);
-        setOpenSubDropdown(null);
-      }
+      if (!e.target.closest('#svh-nav')) { setOpenDropdown(null); setMobileOpen(false); }
     };
     document.addEventListener('mousedown', handler);
     return () => document.removeEventListener('mousedown', handler);
   }, []);
 
-  const pastEditions = [
-    { label: 'SVH 2026', path: '/' },
+  const navLinks = [
+    { label: 'Home', to: '/', end: true },
+    { label: 'Guidelines', to: '/guidelines' },
+    { label: 'Problem Statements', to: '/problem-statements' },
+    { label: 'FAQs', to: '/faq' },
+    { label: 'Contact Us', to: '/contact' },
   ];
 
-  const guidelinesItems = [
-    { label: 'For Institutes/Universities', path: '/guidelines' },
-    { label: 'Idea PPT Template', path: '/guidelines' },
-  ];
-
-  const aboutItems = [
-    { label: 'SVH Process Flow', path: '/#process-timeline' },
-    { label: 'SVH Themes', path: '/#sihthemes' },
-    { label: 'Implementation Team', path: '/contact' },
+  const aboutDropdown = [
+    { label: 'SVH Process Flow', href: '/#process-flow' },
+    { label: 'Event Structure', href: '/#event-structure' },
+    { label: 'Organizers', href: '/#organizers' },
   ];
 
   return (
-    <>
-      {/* ── MAIN NAVBAR (mimics SIH's #main_navbar) ── */}
-      <header
-        ref={navRef}
-        className="w-full bg-white border-b border-gray-200 relative z-50 shadow-sm"
-        style={{ fontFamily: "'Poppins', 'Montserrat', sans-serif" }}
-      >
-        <div className="max-w-[1600px] mx-auto px-4 flex items-center justify-between h-14">
-          {/* Logo */}
-          <Link to="/" className="flex items-center gap-2 shrink-0">
-            <img src={svhLogo} alt="SVH Logo" className="h-10 w-10 object-contain" />
-            <div className="hidden sm:flex flex-col leading-none">
-              <span className="text-[11px] font-black text-[#0f2942] uppercase tracking-tight">Smart VIT Hackathon</span>
-              <span className="text-[10px] font-bold text-[#f97316] uppercase tracking-widest">2026</span>
+    <header id="svh-nav" style={{ position: 'sticky', top: 0, zIndex: 1000 }}>
+
+
+
+      {/* ── MAIN NAV ── */}
+      <nav style={{
+        background: scrolled ? 'rgba(7,25,44,0.97)' : '#0f2942',
+        backdropFilter: scrolled ? 'blur(14px)' : 'none',
+        borderBottom: '1px solid rgba(255,153,51,0.18)',
+        transition: 'all 0.3s ease',
+        boxShadow: scrolled ? '0 4px 24px rgba(0,0,0,0.35)' : 'none',
+      }}>
+        <div style={{ maxWidth: 1400, margin: '0 auto', padding: '0 20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: 60 }}>
+
+          {/* Brand */}
+          <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: 10, textDecoration: 'none' }}>
+            <img src={svhLogo} alt="SVH 2026" style={{ height: 38, width: 38, borderRadius: '50%', objectFit: 'cover', border: '2px solid #FF9933' }} />
+            <div style={{ lineHeight: 1.15 }}>
+              <div style={{ color: '#fff', fontSize: 13, fontFamily: 'Montserrat,sans-serif', fontWeight: 800, letterSpacing: 1, textTransform: 'uppercase' }}>
+                Smart VIT Hackathon
+              </div>
+              <div style={{ display: 'flex', gap: 4, alignItems: 'center' }}>
+                <span style={{ width: 8, height: 3, background: '#FF9933', borderRadius: 1 }} />
+                <span style={{ color: '#FF9933', fontSize: 10, fontFamily: 'Montserrat,sans-serif', fontWeight: 700, letterSpacing: 3 }}>SVH 2026</span>
+                <span style={{ width: 8, height: 3, background: '#138808', borderRadius: 1 }} />
+              </div>
             </div>
           </Link>
 
-          {/* Desktop Nav */}
-          <nav className="hidden lg:flex items-center gap-0">
-            {/* Home */}
-            <NavLink
-              to="/"
-              end
-              className={({ isActive }) =>
-                `nav-item px-4 py-4 text-[13px] font-semibold transition-colors border-b-2 ${isActive ? 'border-[#f97316] text-[#f97316]' : 'border-transparent text-[#0f2942] hover:text-[#f97316] hover:border-[#f97316]'}`
-              }
-            >
-              Home
-            </NavLink>
-
-            {/* About SVH dropdown */}
-            <div className="relative group">
+          {/* Desktop nav */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 2 }} className="hidden lg:flex">
+            {/* About dropdown */}
+            <div style={{ position: 'relative' }}>
               <button
-                className="nav-item px-4 py-4 text-[13px] font-semibold text-[#0f2942] hover:text-[#f97316] transition-colors border-b-2 border-transparent hover:border-[#f97316] flex items-center gap-1"
                 onClick={() => setOpenDropdown(openDropdown === 'about' ? null : 'about')}
+                style={{
+                  background: 'none', border: 'none', cursor: 'pointer',
+                  padding: '20px 14px', color: openDropdown === 'about' ? '#FF9933' : 'rgba(255,255,255,0.85)',
+                  fontSize: 13, fontFamily: 'Montserrat,sans-serif', fontWeight: 600,
+                  display: 'flex', alignItems: 'center', gap: 4, transition: 'color 0.2s',
+                  borderBottom: openDropdown === 'about' ? '2px solid #FF9933' : '2px solid transparent',
+                }}
+                onMouseEnter={e => e.currentTarget.style.color = '#FF9933'}
+                onMouseLeave={e => e.currentTarget.style.color = openDropdown === 'about' ? '#FF9933' : 'rgba(255,255,255,0.85)'}
               >
                 About SVH
-                <svg className="w-3 h-3 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"
+                  style={{ transform: openDropdown === 'about' ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }}>
+                  <path d="M19 9l-7 7-7-7" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
               </button>
               {openDropdown === 'about' && (
-                <div className="absolute top-full left-0 bg-white border border-gray-200 rounded shadow-lg py-1 min-w-[200px] z-50">
-                  {aboutItems.map((item, i) => (
-                    <a
-                      key={i}
-                      href={item.path}
-                      className="block px-4 py-2 text-sm text-[#0f2942] hover:bg-[#f97316] hover:text-white transition-colors"
-                      onClick={() => setOpenDropdown(null)}
-                    >
+                <div style={{ position: 'absolute', top: '100%', left: 0, background: '#0a1d35', border: '1px solid rgba(255,153,51,0.2)', borderRadius: 10, minWidth: 200, overflow: 'hidden', boxShadow: '0 16px 40px rgba(0,0,0,0.4)', zIndex: 200 }}>
+                  {aboutDropdown.map((item, i) => (
+                    <a key={i} href={item.href} onClick={() => setOpenDropdown(null)}
+                      style={{ display: 'block', padding: '10px 18px', color: 'rgba(255,255,255,0.8)', fontSize: 13, fontFamily: 'Montserrat,sans-serif', fontWeight: 600, textDecoration: 'none', borderBottom: i < aboutDropdown.length - 1 ? '1px solid rgba(255,255,255,0.05)' : 'none', transition: 'all 0.15s' }}
+                      onMouseEnter={e => { e.currentTarget.style.background = 'rgba(255,153,51,0.12)'; e.currentTarget.style.color = '#FF9933'; e.currentTarget.style.paddingLeft = '24px'; }}
+                      onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'rgba(255,255,255,0.8)'; e.currentTarget.style.paddingLeft = '18px'; }}>
                       {item.label}
                     </a>
                   ))}
-                  {/* Past Editions sub-dropdown */}
-                  <div className="relative">
-                    <button
-                      className="w-full flex items-center justify-between px-4 py-2 text-sm text-[#0f2942] hover:bg-[#f97316] hover:text-white transition-colors"
-                      onClick={() => setOpenSubDropdown(openSubDropdown === 'past' ? null : 'past')}
-                    >
-                      SVH Past Editions
-                      <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                      </svg>
-                    </button>
-                    {openSubDropdown === 'past' && (
-                      <div className="absolute left-full top-0 bg-white border border-gray-200 rounded shadow-lg py-1 min-w-[160px] z-50">
-                        {pastEditions.map((e, i) => (
-                          <Link
-                            key={i}
-                            to={e.path}
-                            className="block px-4 py-2 text-sm text-[#0f2942] hover:bg-[#f97316] hover:text-white transition-colors"
-                            onClick={() => { setOpenDropdown(null); setOpenSubDropdown(null); }}
-                          >
-                            {e.label}
-                          </Link>
-                        ))}
-                      </div>
-                    )}
-                  </div>
                 </div>
               )}
             </div>
 
-            {/* Guidelines dropdown */}
-            <div className="relative">
-              <button
-                className="nav-item px-4 py-4 text-[13px] font-semibold text-[#0f2942] hover:text-[#f97316] transition-colors border-b-2 border-transparent hover:border-[#f97316] flex items-center gap-1"
-                onClick={() => setOpenDropdown(openDropdown === 'guidelines' ? null : 'guidelines')}
+            {navLinks.slice(1).map((link, i) => (
+              <NavLink key={i} to={link.to} end={link.end}
+                style={({ isActive }) => ({
+                  padding: '20px 14px',
+                  color: isActive ? '#FF9933' : 'rgba(255,255,255,0.85)',
+                  fontSize: 13, fontFamily: 'Montserrat,sans-serif', fontWeight: 600,
+                  textDecoration: 'none', transition: 'all 0.2s',
+                  borderBottom: isActive ? '2px solid #FF9933' : '2px solid transparent',
+                  display: 'block',
+                })}
+                onMouseEnter={e => { e.currentTarget.style.color = '#FF9933'; }}
+                onMouseLeave={e => { }}
               >
-                Guidelines
-                <svg className="w-3 h-3 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                </svg>
-              </button>
-              {openDropdown === 'guidelines' && (
-                <div className="absolute top-full left-0 bg-white border border-gray-200 rounded shadow-lg py-1 min-w-[240px] z-50">
-                  {guidelinesItems.map((item, i) => (
-                    <Link
-                      key={i}
-                      to={item.path}
-                      className="block px-4 py-2 text-sm text-[#0f2942] hover:bg-[#f97316] hover:text-white transition-colors"
-                      onClick={() => setOpenDropdown(null)}
-                    >
-                      {item.label}
-                    </Link>
-                  ))}
-                </div>
-              )}
-            </div>
+                {link.label}
+              </NavLink>
+            ))}
+          </div>
 
-            {/* Problem Statements */}
-            <NavLink
-              to="/problem-statements"
-              className={({ isActive }) =>
-                `nav-item px-4 py-4 text-[13px] font-semibold transition-colors border-b-2 ${isActive ? 'border-[#f97316] text-[#f97316]' : 'border-transparent text-[#0f2942] hover:text-[#f97316] hover:border-[#f97316]'}`
-              }
-            >
-              Problem Statements
-            </NavLink>
+          {/* Right buttons */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
 
-            {/* FAQs */}
-            <NavLink
-              to="/faq"
-              className={({ isActive }) =>
-                `nav-item px-4 py-4 text-[13px] font-semibold transition-colors border-b-2 ${isActive ? 'border-[#f97316] text-[#f97316]' : 'border-transparent text-[#0f2942] hover:text-[#f97316] hover:border-[#f97316]'}`
-              }
+            {/* Login */}
+            <Link to="/contact"
+              style={{
+                padding: '7px 18px',
+                background: 'transparent',
+                color: 'rgba(255,255,255,0.85)',
+                borderRadius: 6,
+                fontSize: 12,
+                fontFamily: 'Montserrat,sans-serif',
+                fontWeight: 700,
+                textDecoration: 'none',
+                textTransform: 'uppercase',
+                letterSpacing: 1,
+                border: '1.5px solid rgba(255,255,255,0.28)',
+                transition: 'all 0.2s',
+                display: 'block',
+              }}
+              onMouseEnter={e => { e.currentTarget.style.borderColor = '#FF9933'; e.currentTarget.style.color = '#FF9933'; e.currentTarget.style.background = 'rgba(255,153,51,0.08)'; }}
+              onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.28)'; e.currentTarget.style.color = 'rgba(255,255,255,0.85)'; e.currentTarget.style.background = 'transparent'; }}
+              className="hidden sm:block"
             >
-              FAQs
-            </NavLink>
-
-            {/* Contact */}
-            <NavLink
-              to="/contact"
-              className={({ isActive }) =>
-                `nav-item px-4 py-4 text-[13px] font-semibold transition-colors border-b-2 ${isActive ? 'border-[#f97316] text-[#f97316]' : 'border-transparent text-[#0f2942] hover:text-[#f97316] hover:border-[#f97316]'}`
-              }
-            >
-              Contact Us
-            </NavLink>
-          </nav>
-
-          {/* Right: Login button */}
-          <div className="flex items-center gap-3 ml-4">
-            <Link
-              to="/contact"
-              className="hidden sm:flex items-center gap-1.5 text-xs font-black px-5 py-2 bg-[#f97316] text-white rounded hover:bg-[#ea6b10] transition-colors uppercase tracking-wider shadow-sm"
-            >
-              <img src="https://sih.gov.in/img1/login.png" alt="" className="w-4 h-4 rounded-full" />
-              SVH Login
+              Login
             </Link>
 
-            {/* Hamburger for mobile */}
+            {/* Register Now */}
+            <Link to="/guidelines"
+              style={{
+                padding: '8px 20px',
+                background: 'linear-gradient(135deg, #FF9933, #e07800)',
+                color: '#fff',
+                borderRadius: 6,
+                fontSize: 12,
+                fontFamily: 'Montserrat,sans-serif',
+                fontWeight: 800,
+                textDecoration: 'none',
+                textTransform: 'uppercase',
+                letterSpacing: 1,
+                boxShadow: '0 4px 14px rgba(255,153,51,0.35)',
+                transition: 'all 0.2s',
+                display: 'block',
+              }}
+              onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-1px)'; e.currentTarget.style.boxShadow = '0 6px 20px rgba(255,153,51,0.5)'; }}
+              onMouseLeave={e => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = '0 4px 14px rgba(255,153,51,0.35)'; }}
+              className="hidden sm:block"
+            >
+              Register Now
+            </Link>
+
+            {/* Hamburger */}
             <button
-              className="lg:hidden p-2 text-[#0f2942]"
+              className="lg:hidden"
               onClick={() => setMobileOpen(v => !v)}
+              style={{ background: 'none', border: 'none', color: '#fff', cursor: 'pointer', padding: 4 }}
               aria-label="Toggle menu"
             >
-              <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 {mobileOpen
-                  ? <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                  : <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                  ? <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                  : <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
                 }
               </svg>
             </button>
           </div>
         </div>
 
-        {/* Mobile Nav */}
+        {/* Mobile Menu */}
         {mobileOpen && (
-          <div className="lg:hidden bg-white border-t border-gray-200 shadow-lg">
-            <div className="flex flex-col py-2">
-              <Link to="/" className="px-6 py-3 text-sm font-semibold text-[#0f2942] hover:bg-gray-50 border-b border-gray-100" onClick={() => setMobileOpen(false)}>Home</Link>
-              <a href="/#process-timeline" className="px-6 py-3 text-sm font-semibold text-[#0f2942] hover:bg-gray-50 border-b border-gray-100" onClick={() => setMobileOpen(false)}>SVH Process Flow</a>
-              <a href="/#sihthemes" className="px-6 py-3 text-sm font-semibold text-[#0f2942] hover:bg-gray-50 border-b border-gray-100" onClick={() => setMobileOpen(false)}>SVH Themes</a>
-              <Link to="/guidelines" className="px-6 py-3 text-sm font-semibold text-[#0f2942] hover:bg-gray-50 border-b border-gray-100" onClick={() => setMobileOpen(false)}>Guidelines</Link>
-              <Link to="/problem-statements" className="px-6 py-3 text-sm font-semibold text-[#0f2942] hover:bg-gray-50 border-b border-gray-100" onClick={() => setMobileOpen(false)}>Problem Statements</Link>
-              <Link to="/faq" className="px-6 py-3 text-sm font-semibold text-[#0f2942] hover:bg-gray-50 border-b border-gray-100" onClick={() => setMobileOpen(false)}>FAQs</Link>
-              <Link to="/contact" className="px-6 py-3 text-sm font-semibold text-[#0f2942] hover:bg-gray-50 border-b border-gray-100" onClick={() => setMobileOpen(false)}>Contact Us</Link>
-              <Link to="/contact" className="mx-6 my-3 text-center text-sm font-black px-5 py-2.5 bg-[#f97316] text-white rounded hover:bg-[#ea6b10] transition-colors uppercase tracking-wider" onClick={() => setMobileOpen(false)}>SVH Login</Link>
+          <div style={{ background: '#07192c', borderTop: '1px solid rgba(255,153,51,0.15)', padding: '8px 0' }} className="lg:hidden">
+            <Link to="/" onClick={() => setMobileOpen(false)} style={mobileNavStyle}>Home</Link>
+            {aboutDropdown.map((item, i) => (
+              <a key={i} href={item.href} onClick={() => setMobileOpen(false)} style={mobileNavStyle}>{item.label}</a>
+            ))}
+            <Link to="/guidelines" onClick={() => setMobileOpen(false)} style={mobileNavStyle}>Guidelines</Link>
+            <Link to="/problem-statements" onClick={() => setMobileOpen(false)} style={mobileNavStyle}>Problem Statements</Link>
+            <Link to="/faq" onClick={() => setMobileOpen(false)} style={mobileNavStyle}>FAQs</Link>
+            <Link to="/contact" onClick={() => setMobileOpen(false)} style={mobileNavStyle}>Contact Us</Link>
+            <div style={{ padding: '10px 20px', display: 'flex', gap: 8 }}>
+              <Link to="/contact" onClick={() => setMobileOpen(false)} style={{ flex: 1, textAlign: 'center', padding: '10px', background: 'transparent', color: 'rgba(255,255,255,0.85)', border: '1.5px solid rgba(255,255,255,0.28)', borderRadius: 6, fontSize: 12, fontFamily: 'Montserrat,sans-serif', fontWeight: 700, textDecoration: 'none', textTransform: 'uppercase', letterSpacing: 1 }}>
+                Login
+              </Link>
+              <Link to="/guidelines" onClick={() => setMobileOpen(false)} style={{ flex: 1, textAlign: 'center', padding: '10px', background: 'linear-gradient(135deg,#FF9933,#e07800)', color: '#fff', borderRadius: 6, fontSize: 12, fontFamily: 'Montserrat,sans-serif', fontWeight: 800, textDecoration: 'none', textTransform: 'uppercase', letterSpacing: 1 }}>
+                Register
+              </Link>
             </div>
           </div>
         )}
-      </header>
-    </>
+      </nav>
+
+      {/* ── BOTTOM TRICOLOUR STRIP ── */}
+      <div style={{ height: 3, background: 'linear-gradient(to right, #FF9933 33.33%, rgba(255,255,255,0.25) 33.33% 66.66%, #138808 66.66%)' }} />
+    </header>
   );
 }
+
+const mobileNavStyle = {
+  display: 'block',
+  padding: '12px 24px',
+  color: 'rgba(255,255,255,0.85)',
+  fontSize: 14,
+  fontFamily: 'Montserrat,sans-serif',
+  fontWeight: 600,
+  textDecoration: 'none',
+  borderBottom: '1px solid rgba(255,255,255,0.05)',
+  transition: 'color 0.2s',
+};
