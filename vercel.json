@@ -1,0 +1,11 @@
+{
+  "buildCommand": "pnpm --filter @workspace/svh-hackathon run build",
+  "outputDirectory": "artifacts/svh-hackathon/dist/public",
+  "installCommand": "pnpm install",
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
+}
