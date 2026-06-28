@@ -524,14 +524,25 @@ function FooterCTA() {
 }
 
 function HeroVideo() {
+  const videoRef = React.useRef(null);
+
+  const handleEnded = () => {
+    const v = videoRef.current;
+    if (v) {
+      v.currentTime = v.duration - 0.001;
+      v.pause();
+    }
+  };
+
   return (
     <div style={{ width: '100%', lineHeight: 0, backgroundColor: '#000' }}>
       <video
+        ref={videoRef}
         src="https://res.cloudinary.com/dhc0phwyg/video/upload/v1782556179/svh-hero_s5z92q.mp4"
         autoPlay
-        loop
         muted
         playsInline
+        onEnded={handleEnded}
         style={{ width: '100%', height: 'auto', display: 'block' }}
       />
     </div>
