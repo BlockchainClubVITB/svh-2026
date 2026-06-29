@@ -128,7 +128,7 @@ export default function Header() {
           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
 
             {/* Login */}
-            <Link to="/contact"
+            <Link to="/login"
               style={{
                 padding: '7px 18px',
                 background: 'transparent',
@@ -204,7 +204,7 @@ export default function Header() {
             <Link to="/faq" onClick={() => setMobileOpen(false)} style={mobileNavStyle}>FAQs</Link>
             <Link to="/contact" onClick={() => setMobileOpen(false)} style={mobileNavStyle}>Contact Us</Link>
             <div style={{ padding: '10px 20px', display: 'flex', gap: 8 }}>
-              <Link to="/contact" onClick={() => setMobileOpen(false)} style={{ flex: 1, textAlign: 'center', padding: '10px', background: 'transparent', color: 'rgba(255,255,255,0.85)', border: '1.5px solid rgba(255,255,255,0.28)', borderRadius: 6, fontSize: 12, fontFamily: 'Montserrat,sans-serif', fontWeight: 700, textDecoration: 'none', textTransform: 'uppercase', letterSpacing: 1 }}>
+              <Link to="/login" onClick={() => setMobileOpen(false)} style={{ flex: 1, textAlign: 'center', padding: '10px', background: 'transparent', color: 'rgba(255,255,255,0.85)', border: '1.5px solid rgba(255,255,255,0.28)', borderRadius: 6, fontSize: 12, fontFamily: 'Montserrat,sans-serif', fontWeight: 700, textDecoration: 'none', textTransform: 'uppercase', letterSpacing: 1 }}>
                 Login
               </Link>
               <Link to="/guidelines" onClick={() => setMobileOpen(false)} style={{ flex: 1, textAlign: 'center', padding: '10px', background: 'linear-gradient(135deg,#FF9933,#e07800)', color: '#fff', borderRadius: 6, fontSize: 12, fontFamily: 'Montserrat,sans-serif', fontWeight: 800, textDecoration: 'none', textTransform: 'uppercase', letterSpacing: 1 }}>
