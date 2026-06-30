@@ -231,21 +231,55 @@ export default function ContactUs() {
               </p>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
                 <ContactRow
-                  icon="📧" label="Email Address"
-                  value="blockchainclub@vitbhopal.ac.in"
-                  link="mailto:blockchainclub@vitbhopal.ac.in"
-                  color="#FF9933" delay={0.1} visible={leftVisible}
-                />
-                <ContactRow
-                  icon="📍" label="Location"
-                  value={<>VIT Bhopal University, Kothri Kalan,<br />Sehore, Madhya Pradesh – 466114</>}
-                  color="#138808" delay={0.2} visible={leftVisible}
-                />
-                <ContactRow
-                  icon="👨‍🏫" label="Faculty Coordinator"
-                  value={<><strong style={{ display: 'block' }}>Dr. Hemraj Lamkuche</strong><span style={{ fontSize: 12, color: '#aaa' }}>Blockchain Club · VIT Bhopal University</span></>}
-                  color="#06038D" delay={0.3} visible={leftVisible}
-                />
+  icon="📧"
+  label="Email Address"
+  value="blockchainclub@vitbhopal.ac.in"
+  link="mailto:blockchainclub@vitbhopal.ac.in"
+  color="#FF9933"
+  delay={0.1}
+  visible={leftVisible}
+/>
+
+<ContactRow
+  icon="💬"
+  label="WhatsApp Group"
+  value="Join Official SVH WhatsApp Group"
+  link="https://chat.whatsapp.com/L7lXF9VZQRDCx0aXXwBhGw?s=sw&p=a&mlu=2"
+  color="#25D366"
+  delay={0.15}
+  visible={leftVisible}
+/>
+
+<ContactRow
+  icon="📍"
+  label="Location"
+  value={
+    <>
+      VIT Bhopal University, Kothri Kalan,
+      <br />
+      Sehore, Madhya Pradesh – 466114
+    </>
+  }
+  color="#138808"
+  delay={0.2}
+  visible={leftVisible}
+/>
+
+<ContactRow
+  icon="👨‍🏫"
+  label="Faculty Coordinator"
+  value={
+    <>
+      <strong style={{ display: 'block' }}>Dr. Hemraj Lamkuche</strong>
+      <span style={{ fontSize: 12, color: '#aaa' }}>
+        Blockchain Club · VIT Bhopal University
+      </span>
+    </>
+  }
+  color="#06038D"
+  delay={0.3}
+  visible={leftVisible}
+/>
               </div>
             </div>
           </div>
