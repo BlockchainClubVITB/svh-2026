@@ -56,6 +56,7 @@ export default function Login() {
   const [m, setM] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [role, setRole] = useState('team_leader');
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
@@ -126,6 +127,25 @@ export default function Login() {
                 {error}
               </div>
             )}
+            <div>
+              <label style={{ display: 'block', color: 'rgba(255,255,255,0.85)', fontSize: 12, fontFamily: 'Montserrat,sans-serif', fontWeight: 700, marginBottom: 8, textTransform: 'uppercase', letterSpacing: 1 }}>User Role</label>
+              <select
+                value={role}
+                onChange={(e) => setRole(e.target.value)}
+                style={{
+                  width: '100%', padding: '14px 16px', borderRadius: 8, border: '1px solid rgba(255,255,255,0.1)',
+                  background: 'rgba(0,0,0,0.2)', color: '#fff', fontSize: 14, fontFamily: 'Poppins,sans-serif',
+                  outline: 'none', transition: 'all 0.2s',
+                  cursor: 'pointer'
+                }}
+                onFocus={(e) => { e.target.style.borderColor = '#FF9933'; e.target.style.background = 'rgba(0,0,0,0.3)'; }}
+                onBlur={(e) => { e.target.style.borderColor = 'rgba(255,255,255,0.1)'; e.target.style.background = 'rgba(0,0,0,0.2)'; }}
+              >
+                <option value="team_leader" style={{ background: '#0f2942', color: '#fff' }}>Team Leader</option>
+                <option value="evaluator" style={{ background: '#0f2942', color: '#fff' }}>Evaluator</option>
+                <option value="superadmin" style={{ background: '#0f2942', color: '#fff' }}>Superadmin</option>
+              </select>
+            </div>
             <div>
               <label style={{ display: 'block', color: 'rgba(255,255,255,0.85)', fontSize: 12, fontFamily: 'Montserrat,sans-serif', fontWeight: 700, marginBottom: 8, textTransform: 'uppercase', letterSpacing: 1 }}>Email Address</label>
               <input
