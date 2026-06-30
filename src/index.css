@@ -152,3 +152,105 @@
   .animate-fade-in    { animation: fade-in 0.5s ease forwards; }
   .animate-pulse-glow { animation: pulse-glow 2s ease-in-out infinite; }
 }
+
+/* ── GLOBAL MOBILE RESPONSIVENESS ───────────── */
+
+/* Prevent horizontal overflow */
+html, body {
+  overflow-x: hidden;
+  max-width: 100vw;
+}
+
+/* Ensure images never overflow */
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Mobile-friendly touch targets */
+button, a {
+  touch-action: manipulation;
+}
+
+/* ── RESPONSIVE GRID BREAKPOINTS ─────────────── */
+@media (max-width: 640px) {
+  /* Home hero title */
+  h1 { word-break: break-word; }
+
+  /* Countdown timer */
+  .countdown-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+
+  /* Hide desktop timeline on mobile */
+  .hidden.md\:block { display: none !important; }
+  .md\:hidden { display: block !important; }
+
+  /* Evaluation grid full width on mobile */
+  [style*="minmax(440px"] {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Round selector tabs wrap properly */
+  .carousel-tabs {
+    justify-content: flex-start !important;
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    padding-bottom: 8px;
+    -webkit-overflow-scrolling: touch;
+  }
+  .carousel-tabs::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Carousel card responsiveness */
+  .carousel-card-header {
+    padding: 20px !important;
+  }
+  .carousel-card-body {
+    padding: 20px !important;
+  }
+  .carousel-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+@media (max-width: 768px) {
+  /* Section padding reduction */
+  section[style*="padding: '90px"] {
+    padding-top: 52px !important;
+    padding-bottom: 52px !important;
+  }
+
+  /* About section grid */
+  [style*="minmax(440px, 1fr)"] {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* Scrollbar styles for mobile menu */
+.mobile-menu::-webkit-scrollbar {
+  width: 4px;
+}
+.mobile-menu::-webkit-scrollbar-track {
+  background: transparent;
+}
+.mobile-menu::-webkit-scrollbar-thumb {
+  background: rgba(255,153,51,0.3);
+  border-radius: 2px;
+}
+
+/* FAQ category filter scroll */
+.faq-filter-scroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.faq-filter-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+/* Smooth scroll */
+html {
+  scroll-behavior: smooth;
+}
+

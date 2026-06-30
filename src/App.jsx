@@ -9,6 +9,7 @@ import Guidelines from './pages/Guidelines';
 import ProblemStatements from './pages/ProblemStatements';
 import FAQ from './pages/FAQ';
 import ContactUs from './pages/ContactUs';
+import Login from './pages/Login';
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
             <Route path="/problem-statements" element={<ProblemStatements />} />
             <Route path="/faq"                element={<FAQ />} />
             <Route path="/contact"            element={<ContactUs />} />
+            <Route path="/login"              element={<Login />} />
           </Routes>
         </main>
         <Footer />

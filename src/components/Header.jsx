@@ -1,16 +1,14 @@
 import { useState, useEffect } from 'react';
-import { NavLink, Link } from 'react-router-dom';
+import { NavLink, Link, useNavigate } from 'react-router-dom';
 
-import blockchainLogo from '../assets/Blockchain.png';
-import iicLogo from '../assets/IIC Logo.png';
-import swLogo from '../assets/SW Office Logo.png';
-import vitbLogo from '../assets/vitblogo.png';
 import svhLogo from '../assets/svh.jpeg';
 
 export default function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [openDropdown, setOpenDropdown] = useState(null);
+  const [mobileExpanded, setMobileExpanded] = useState(null); // for mobile accordion
   const [scrolled, setScrolled] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 10);
@@ -18,21 +16,40 @@ export default function Header() {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
+  // Close dropdowns on outside click
   useEffect(() => {
     const handler = (e) => {
-      if (!e.target.closest('#svh-nav')) { setOpenDropdown(null); setMobileOpen(false); }
+      if (!e.target.closest('#svh-nav')) {
+        setOpenDropdown(null);
+        setMobileOpen(false);
+        setMobileExpanded(null);
+      }
     };
     document.addEventListener('mousedown', handler);
     return () => document.removeEventListener('mousedown', handler);
   }, []);
 
-  const navLinks = [
-    { label: 'Home', to: '/', end: true },
-    { label: 'Guidelines', to: '/guidelines' },
-    { label: 'Problem Statements', to: '/problem-statements' },
-    { label: 'FAQs', to: '/faq' },
-    { label: 'Contact Us', to: '/contact' },
-  ];
+  // Close mobile menu on resize to desktop
+  useEffect(() => {
+    const handler = () => {
+      if (window.innerWidth >= 1024) {
+        setMobileOpen(false);
+        setMobileExpanded(null);
+      }
+    };
+    window.addEventListener('resize', handler);
+    return () => window.removeEventListener('resize', handler);
+  }, []);
+
+  // Prevent body scroll when mobile menu open
+  useEffect(() => {
+    if (mobileOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => { document.body.style.overflow = ''; };
+  }, [mobileOpen]);
 
   const aboutDropdown = [
     { label: 'SVH Process Flow', href: '/#process-flow' },
@@ -40,195 +57,391 @@ export default function Header() {
     { label: 'Organizers', href: '/#organizers' },
   ];
 
+  const guidelinesDropdown = [
+    { label: 'General Rules', href: '/guidelines#general-rules' },
+    { label: 'PPT Submission Guidelines', href: '/guidelines#ppt-submission' },
+  ];
+
+  const handleAnchorNav = (href) => {
+    setOpenDropdown(null);
+    setMobileOpen(false);
+    setMobileExpanded(null);
+    const [path, hash] = href.split('#');
+    navigate(path || '/');
+    if (hash) {
+      setTimeout(() => {
+        const el = document.getElementById(hash);
+        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 100);
+    }
+  };
+
+  const navLinks = [
+    { label: 'Problem Statements', to: '/problem-statements' },
+    { label: 'FAQs', to: '/faq' },
+    { label: 'Contact Us', to: '/contact' },
+  ];
+
+  const dropdownStyle = {
+    position: 'absolute',
+    top: '100%',
+    left: 0,
+    background: '#0a1d35',
+    border: '1px solid rgba(255,153,51,0.2)',
+    borderRadius: 10,
+    minWidth: 220,
+    overflow: 'hidden',
+    boxShadow: '0 16px 40px rgba(0,0,0,0.4)',
+    zIndex: 200,
+    animation: 'fadeInDown 0.18s ease',
+  };
+
   return (
-    <header id="svh-nav" style={{ position: 'sticky', top: 0, zIndex: 1000 }}>
+    <>
+      <style>{`
+        @keyframes fadeInDown {
+          from { opacity: 0; transform: translateY(-8px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes mobileSlideDown {
+          from { opacity: 0; transform: translateY(-10px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        .nav-link-hover:hover { color: #FF9933 !important; }
+        .dropdown-item:hover { background: rgba(255,153,51,0.12) !important; color: #FF9933 !important; padding-left: 24px !important; }
+      `}</style>
 
+      <header id="svh-nav" style={{ position: 'sticky', top: 0, zIndex: 1000 }}>
 
+        {/* ── MAIN NAV ── */}
+        <nav style={{
+          background: scrolled ? 'rgba(7,25,44,0.97)' : '#0f2942',
+          backdropFilter: scrolled ? 'blur(14px)' : 'none',
+          borderBottom: '1px solid rgba(255,153,51,0.18)',
+          transition: 'all 0.3s ease',
+          boxShadow: scrolled ? '0 4px 24px rgba(0,0,0,0.35)' : 'none',
+        }}>
+          <div style={{
+            maxWidth: 1400, margin: '0 auto',
+            padding: '0 16px',
+            display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+            height: 60,
+          }}>
 
-      {/* ── MAIN NAV ── */}
-      <nav style={{
-        background: scrolled ? 'rgba(7,25,44,0.97)' : '#0f2942',
-        backdropFilter: scrolled ? 'blur(14px)' : 'none',
-        borderBottom: '1px solid rgba(255,153,51,0.18)',
-        transition: 'all 0.3s ease',
-        boxShadow: scrolled ? '0 4px 24px rgba(0,0,0,0.35)' : 'none',
-      }}>
-        <div style={{ maxWidth: 1400, margin: '0 auto', padding: '0 20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: 60 }}>
-
-          {/* Brand */}
-          <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: 10, textDecoration: 'none' }}>
-            <img src={svhLogo} alt="SVH 2026" style={{ height: 38, width: 38, borderRadius: '50%', objectFit: 'cover', border: '2px solid #FF9933' }} />
-            <div style={{ lineHeight: 1.15 }}>
-              <div style={{ color: '#fff', fontSize: 13, fontFamily: 'Montserrat,sans-serif', fontWeight: 800, letterSpacing: 1, textTransform: 'uppercase' }}>
-                Smart VIT Hackathon
-              </div>
-              <div style={{ display: 'flex', gap: 4, alignItems: 'center' }}>
-                <span style={{ width: 8, height: 3, background: '#FF9933', borderRadius: 1 }} />
-                <span style={{ color: '#FF9933', fontSize: 10, fontFamily: 'Montserrat,sans-serif', fontWeight: 700, letterSpacing: 3 }}>SVH 2026</span>
-                <span style={{ width: 8, height: 3, background: '#138808', borderRadius: 1 }} />
-              </div>
-            </div>
-          </Link>
-
-          {/* Desktop nav */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: 2 }} className="hidden lg:flex">
-            {/* About dropdown */}
-            <div style={{ position: 'relative' }}>
-              <button
-                onClick={() => setOpenDropdown(openDropdown === 'about' ? null : 'about')}
-                style={{
-                  background: 'none', border: 'none', cursor: 'pointer',
-                  padding: '20px 14px', color: openDropdown === 'about' ? '#FF9933' : 'rgba(255,255,255,0.85)',
-                  fontSize: 13, fontFamily: 'Montserrat,sans-serif', fontWeight: 600,
-                  display: 'flex', alignItems: 'center', gap: 4, transition: 'color 0.2s',
-                  borderBottom: openDropdown === 'about' ? '2px solid #FF9933' : '2px solid transparent',
-                }}
-                onMouseEnter={e => e.currentTarget.style.color = '#FF9933'}
-                onMouseLeave={e => e.currentTarget.style.color = openDropdown === 'about' ? '#FF9933' : 'rgba(255,255,255,0.85)'}
-              >
-                About SVH
-                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"
-                  style={{ transform: openDropdown === 'about' ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }}>
-                  <path d="M19 9l-7 7-7-7" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
-              </button>
-              {openDropdown === 'about' && (
-                <div style={{ position: 'absolute', top: '100%', left: 0, background: '#0a1d35', border: '1px solid rgba(255,153,51,0.2)', borderRadius: 10, minWidth: 200, overflow: 'hidden', boxShadow: '0 16px 40px rgba(0,0,0,0.4)', zIndex: 200 }}>
-                  {aboutDropdown.map((item, i) => (
-                    <a key={i} href={item.href} onClick={() => setOpenDropdown(null)}
-                      style={{ display: 'block', padding: '10px 18px', color: 'rgba(255,255,255,0.8)', fontSize: 13, fontFamily: 'Montserrat,sans-serif', fontWeight: 600, textDecoration: 'none', borderBottom: i < aboutDropdown.length - 1 ? '1px solid rgba(255,255,255,0.05)' : 'none', transition: 'all 0.15s' }}
-                      onMouseEnter={e => { e.currentTarget.style.background = 'rgba(255,153,51,0.12)'; e.currentTarget.style.color = '#FF9933'; e.currentTarget.style.paddingLeft = '24px'; }}
-                      onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'rgba(255,255,255,0.8)'; e.currentTarget.style.paddingLeft = '18px'; }}>
-                      {item.label}
-                    </a>
-                  ))}
+            {/* Brand */}
+            <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: 10, textDecoration: 'none', flexShrink: 0 }}>
+              <img src={svhLogo} alt="SVH 2026" style={{ height: 36, width: 36, borderRadius: '50%', objectFit: 'cover', border: '2px solid #FF9933' }} />
+              <div style={{ lineHeight: 1.15 }}>
+                <div style={{ color: '#fff', fontSize: 12, fontFamily: 'Montserrat,sans-serif', fontWeight: 800, letterSpacing: 1, textTransform: 'uppercase', whiteSpace: 'nowrap' }}>
+                  Smart VIT Hackathon
                 </div>
-              )}
+                <div style={{ display: 'flex', gap: 4, alignItems: 'center' }}>
+                  <span style={{ width: 8, height: 3, background: '#FF9933', borderRadius: 1 }} />
+                  <span style={{ color: '#FF9933', fontSize: 9, fontFamily: 'Montserrat,sans-serif', fontWeight: 700, letterSpacing: 3 }}>SVH 2026</span>
+                  <span style={{ width: 8, height: 3, background: '#138808', borderRadius: 1 }} />
+                </div>
+              </div>
+            </Link>
+
+            {/* Desktop nav */}
+            <div style={{ display: 'none', alignItems: 'center', gap: 2 }} className="desktop-nav">
+
+              {/* About SVH dropdown */}
+              <DesktopDropdown
+                label="About SVH"
+                items={aboutDropdown}
+                isOpen={openDropdown === 'about'}
+                onToggle={() => setOpenDropdown(openDropdown === 'about' ? null : 'about')}
+                onItemClick={handleAnchorNav}
+              />
+
+              {/* Guidelines dropdown */}
+              <DesktopDropdown
+                label="Guidelines"
+                items={guidelinesDropdown}
+                isOpen={openDropdown === 'guidelines'}
+                onToggle={() => setOpenDropdown(openDropdown === 'guidelines' ? null : 'guidelines')}
+                onItemClick={handleAnchorNav}
+              />
+
+              {navLinks.map((link, i) => (
+                <NavLink key={i} to={link.to}
+                  style={({ isActive }) => ({
+                    padding: '20px 14px',
+                    color: isActive ? '#FF9933' : 'rgba(255,255,255,0.85)',
+                    fontSize: 13, fontFamily: 'Montserrat,sans-serif', fontWeight: 600,
+                    textDecoration: 'none', transition: 'all 0.2s',
+                    borderBottom: isActive ? '2px solid #FF9933' : '2px solid transparent',
+                    display: 'block', whiteSpace: 'nowrap',
+                  })}
+                  className="nav-link-hover"
+                >
+                  {link.label}
+                </NavLink>
+              ))}
             </div>
 
-            {navLinks.slice(1).map((link, i) => (
-              <NavLink key={i} to={link.to} end={link.end}
-                style={({ isActive }) => ({
-                  padding: '20px 14px',
-                  color: isActive ? '#FF9933' : 'rgba(255,255,255,0.85)',
-                  fontSize: 13, fontFamily: 'Montserrat,sans-serif', fontWeight: 600,
-                  textDecoration: 'none', transition: 'all 0.2s',
-                  borderBottom: isActive ? '2px solid #FF9933' : '2px solid transparent',
-                  display: 'block',
-                })}
-                onMouseEnter={e => { e.currentTarget.style.color = '#FF9933'; }}
-                onMouseLeave={e => { }}
+            {/* Right buttons + Hamburger */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+
+              {/* Login — hidden on mobile */}
+              <Link to="/login"
+                style={{
+                  padding: '7px 16px',
+                  background: 'transparent',
+                  color: 'rgba(255,255,255,0.85)',
+                  borderRadius: 6,
+                  fontSize: 11,
+                  fontFamily: 'Montserrat,sans-serif',
+                  fontWeight: 700,
+                  textDecoration: 'none',
+                  textTransform: 'uppercase',
+                  letterSpacing: 1,
+                  border: '1.5px solid rgba(255,255,255,0.28)',
+                  transition: 'all 0.2s',
+                  whiteSpace: 'nowrap',
+                }}
+                className="desktop-btn"
+                onMouseEnter={e => { e.currentTarget.style.borderColor = '#FF9933'; e.currentTarget.style.color = '#FF9933'; }}
+                onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.28)'; e.currentTarget.style.color = 'rgba(255,255,255,0.85)'; }}
               >
-                {link.label}
-              </NavLink>
-            ))}
-          </div>
-
-          {/* Right buttons */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-
-            {/* Login */}
-            <Link to="/contact"
-              style={{
-                padding: '7px 18px',
-                background: 'transparent',
-                color: 'rgba(255,255,255,0.85)',
-                borderRadius: 6,
-                fontSize: 12,
-                fontFamily: 'Montserrat,sans-serif',
-                fontWeight: 700,
-                textDecoration: 'none',
-                textTransform: 'uppercase',
-                letterSpacing: 1,
-                border: '1.5px solid rgba(255,255,255,0.28)',
-                transition: 'all 0.2s',
-                display: 'block',
-              }}
-              onMouseEnter={e => { e.currentTarget.style.borderColor = '#FF9933'; e.currentTarget.style.color = '#FF9933'; e.currentTarget.style.background = 'rgba(255,153,51,0.08)'; }}
-              onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.28)'; e.currentTarget.style.color = 'rgba(255,255,255,0.85)'; e.currentTarget.style.background = 'transparent'; }}
-              className="hidden sm:block"
-            >
-              Login
-            </Link>
-
-            {/* Register Now */}
-            <Link to="/guidelines"
-              style={{
-                padding: '8px 20px',
-                background: 'linear-gradient(135deg, #FF9933, #e07800)',
-                color: '#fff',
-                borderRadius: 6,
-                fontSize: 12,
-                fontFamily: 'Montserrat,sans-serif',
-                fontWeight: 800,
-                textDecoration: 'none',
-                textTransform: 'uppercase',
-                letterSpacing: 1,
-                boxShadow: '0 4px 14px rgba(255,153,51,0.35)',
-                transition: 'all 0.2s',
-                display: 'block',
-              }}
-              onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-1px)'; e.currentTarget.style.boxShadow = '0 6px 20px rgba(255,153,51,0.5)'; }}
-              onMouseLeave={e => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = '0 4px 14px rgba(255,153,51,0.35)'; }}
-              className="hidden sm:block"
-            >
-              Register Now
-            </Link>
-
-            {/* Hamburger */}
-            <button
-              className="lg:hidden"
-              onClick={() => setMobileOpen(v => !v)}
-              style={{ background: 'none', border: 'none', color: '#fff', cursor: 'pointer', padding: 4 }}
-              aria-label="Toggle menu"
-            >
-              <svg width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                {mobileOpen
-                  ? <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-                  : <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
-                }
-              </svg>
-            </button>
-          </div>
-        </div>
-
-        {/* Mobile Menu */}
-        {mobileOpen && (
-          <div style={{ background: '#07192c', borderTop: '1px solid rgba(255,153,51,0.15)', padding: '8px 0' }} className="lg:hidden">
-            <Link to="/" onClick={() => setMobileOpen(false)} style={mobileNavStyle}>Home</Link>
-            {aboutDropdown.map((item, i) => (
-              <a key={i} href={item.href} onClick={() => setMobileOpen(false)} style={mobileNavStyle}>{item.label}</a>
-            ))}
-            <Link to="/guidelines" onClick={() => setMobileOpen(false)} style={mobileNavStyle}>Guidelines</Link>
-            <Link to="/problem-statements" onClick={() => setMobileOpen(false)} style={mobileNavStyle}>Problem Statements</Link>
-            <Link to="/faq" onClick={() => setMobileOpen(false)} style={mobileNavStyle}>FAQs</Link>
-            <Link to="/contact" onClick={() => setMobileOpen(false)} style={mobileNavStyle}>Contact Us</Link>
-            <div style={{ padding: '10px 20px', display: 'flex', gap: 8 }}>
-              <Link to="/contact" onClick={() => setMobileOpen(false)} style={{ flex: 1, textAlign: 'center', padding: '10px', background: 'transparent', color: 'rgba(255,255,255,0.85)', border: '1.5px solid rgba(255,255,255,0.28)', borderRadius: 6, fontSize: 12, fontFamily: 'Montserrat,sans-serif', fontWeight: 700, textDecoration: 'none', textTransform: 'uppercase', letterSpacing: 1 }}>
                 Login
               </Link>
-              <Link to="/guidelines" onClick={() => setMobileOpen(false)} style={{ flex: 1, textAlign: 'center', padding: '10px', background: 'linear-gradient(135deg,#FF9933,#e07800)', color: '#fff', borderRadius: 6, fontSize: 12, fontFamily: 'Montserrat,sans-serif', fontWeight: 800, textDecoration: 'none', textTransform: 'uppercase', letterSpacing: 1 }}>
+
+              {/* Register Now — hidden on mobile */}
+              <Link to="/guidelines"
+                style={{
+                  padding: '8px 18px',
+                  background: 'linear-gradient(135deg, #FF9933, #e07800)',
+                  color: '#fff',
+                  borderRadius: 6,
+                  fontSize: 11,
+                  fontFamily: 'Montserrat,sans-serif',
+                  fontWeight: 800,
+                  textDecoration: 'none',
+                  textTransform: 'uppercase',
+                  letterSpacing: 1,
+                  boxShadow: '0 4px 14px rgba(255,153,51,0.35)',
+                  transition: 'all 0.2s',
+                  whiteSpace: 'nowrap',
+                }}
+                className="desktop-btn"
+                onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-1px)'; e.currentTarget.style.boxShadow = '0 6px 20px rgba(255,153,51,0.5)'; }}
+                onMouseLeave={e => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = '0 4px 14px rgba(255,153,51,0.35)'; }}
+              >
                 Register
               </Link>
+
+              {/* Hamburger — shown only on mobile */}
+              <button
+                className="hamburger-btn"
+                onClick={() => { setMobileOpen(v => !v); setMobileExpanded(null); }}
+                style={{ background: 'none', border: 'none', color: '#fff', cursor: 'pointer', padding: '4px', display: 'none', alignItems: 'center', justifyContent: 'center' }}
+                aria-label="Toggle menu"
+              >
+                <svg width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                  {mobileOpen
+                    ? <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    : <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+                  }
+                </svg>
+              </button>
             </div>
           </div>
-        )}
-      </nav>
 
-      {/* ── BOTTOM TRICOLOUR STRIP ── */}
-      <div style={{ height: 3, background: 'linear-gradient(to right, #FF9933 33.33%, rgba(255,255,255,0.25) 33.33% 66.66%, #138808 66.66%)' }} />
-    </header>
+          {/* ── MOBILE MENU ── */}
+          {mobileOpen && (
+            <div style={{
+              background: '#07192c',
+              borderTop: '1px solid rgba(255,153,51,0.18)',
+              maxHeight: 'calc(100vh - 64px)',
+              overflowY: 'auto',
+              animation: 'mobileSlideDown 0.22s ease',
+            }} className="mobile-menu">
+
+              {/* About SVH mobile accordion */}
+              <MobileAccordion
+                label="About SVH"
+                items={aboutDropdown}
+                isOpen={mobileExpanded === 'about'}
+                onToggle={() => setMobileExpanded(mobileExpanded === 'about' ? null : 'about')}
+                onItemClick={handleAnchorNav}
+              />
+
+              {/* Guidelines mobile accordion */}
+              <MobileAccordion
+                label="Guidelines"
+                items={guidelinesDropdown}
+                isOpen={mobileExpanded === 'guidelines'}
+                onToggle={() => setMobileExpanded(mobileExpanded === 'guidelines' ? null : 'guidelines')}
+                onItemClick={handleAnchorNav}
+              />
+
+              {navLinks.map((link, i) => (
+                <NavLink key={i} to={link.to}
+                  onClick={() => setMobileOpen(false)}
+                  style={({ isActive }) => ({
+                    ...mobileNavStyle,
+                    color: isActive ? '#FF9933' : 'rgba(255,255,255,0.85)',
+                    borderLeft: isActive ? '3px solid #FF9933' : '3px solid transparent',
+                    paddingLeft: isActive ? 20 : 22,
+                  })}
+                >
+                  {link.label}
+                </NavLink>
+              ))}
+
+              {/* Mobile CTA buttons */}
+              <div style={{ padding: '12px 16px', display: 'flex', gap: 10, borderTop: '1px solid rgba(255,255,255,0.05)' }}>
+                <Link to="/login" onClick={() => setMobileOpen(false)}
+                  style={{ flex: 1, textAlign: 'center', padding: '11px 10px', background: 'transparent', color: 'rgba(255,255,255,0.85)', border: '1.5px solid rgba(255,255,255,0.28)', borderRadius: 7, fontSize: 12, fontFamily: 'Montserrat,sans-serif', fontWeight: 700, textDecoration: 'none', textTransform: 'uppercase', letterSpacing: 1 }}>
+                  Login
+                </Link>
+                <Link to="/guidelines" onClick={() => setMobileOpen(false)}
+                  style={{ flex: 1, textAlign: 'center', padding: '11px 10px', background: 'linear-gradient(135deg,#FF9933,#e07800)', color: '#fff', borderRadius: 7, fontSize: 12, fontFamily: 'Montserrat,sans-serif', fontWeight: 800, textDecoration: 'none', textTransform: 'uppercase', letterSpacing: 1, boxShadow: '0 4px 12px rgba(255,153,51,0.35)' }}>
+                  Register
+                </Link>
+              </div>
+            </div>
+          )}
+        </nav>
+
+        {/* Tricolour strip */}
+        <div style={{ height: 3, background: 'linear-gradient(to right, #FF9933 33.33%, rgba(255,255,255,0.25) 33.33% 66.66%, #138808 66.66%)' }} />
+
+        {/* Responsive CSS */}
+        <style>{`
+          @media (min-width: 1024px) {
+            .desktop-nav { display: flex !important; }
+            .desktop-btn { display: block !important; }
+            .hamburger-btn { display: none !important; }
+            .mobile-menu { display: none !important; }
+          }
+          @media (max-width: 1023px) {
+            .desktop-nav { display: none !important; }
+            .desktop-btn { display: none !important; }
+            .hamburger-btn { display: flex !important; }
+          }
+        `}</style>
+      </header>
+    </>
+  );
+}
+
+/* Desktop dropdown component */
+function DesktopDropdown({ label, items, isOpen, onToggle, onItemClick }) {
+  return (
+    <div style={{ position: 'relative' }}>
+      <button
+        onClick={onToggle}
+        style={{
+          background: 'none', border: 'none', cursor: 'pointer',
+          padding: '20px 14px',
+          color: isOpen ? '#FF9933' : 'rgba(255,255,255,0.85)',
+          fontSize: 13, fontFamily: 'Montserrat,sans-serif', fontWeight: 600,
+          display: 'flex', alignItems: 'center', gap: 4, transition: 'color 0.2s',
+          borderBottom: isOpen ? '2px solid #FF9933' : '2px solid transparent',
+          whiteSpace: 'nowrap',
+        }}
+        onMouseEnter={e => e.currentTarget.style.color = '#FF9933'}
+        onMouseLeave={e => e.currentTarget.style.color = isOpen ? '#FF9933' : 'rgba(255,255,255,0.85)'}
+      >
+        {label}
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"
+          style={{ transform: isOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }}>
+          <path d="M19 9l-7 7-7-7" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      </button>
+      {isOpen && (
+        <div style={{
+          position: 'absolute', top: '100%', left: 0,
+          background: '#0a1d35',
+          border: '1px solid rgba(255,153,51,0.2)',
+          borderRadius: 10, minWidth: 220, overflow: 'hidden',
+          boxShadow: '0 16px 40px rgba(0,0,0,0.4)', zIndex: 200,
+          animation: 'fadeInDown 0.18s ease',
+        }}>
+          {items.map((item, i) => (
+            <button key={i}
+              onClick={() => onItemClick(item.href)}
+              style={{
+                display: 'block', width: '100%', textAlign: 'left',
+                padding: '10px 18px',
+                color: 'rgba(255,255,255,0.8)',
+                fontSize: 13, fontFamily: 'Montserrat,sans-serif', fontWeight: 600,
+                textDecoration: 'none', background: 'transparent', border: 'none', cursor: 'pointer',
+                borderBottom: i < items.length - 1 ? '1px solid rgba(255,255,255,0.05)' : 'none',
+                transition: 'all 0.15s',
+              }}
+              onMouseEnter={e => { e.currentTarget.style.background = 'rgba(255,153,51,0.12)'; e.currentTarget.style.color = '#FF9933'; e.currentTarget.style.paddingLeft = '24px'; }}
+              onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'rgba(255,255,255,0.8)'; e.currentTarget.style.paddingLeft = '18px'; }}
+            >
+              {item.label}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* Mobile accordion item */
+function MobileAccordion({ label, items, isOpen, onToggle, onItemClick }) {
+  return (
+    <div>
+      <button
+        onClick={onToggle}
+        style={{
+          ...mobileNavStyle,
+          width: '100%', background: 'none', border: 'none', cursor: 'pointer',
+          display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+          borderLeft: isOpen ? '3px solid #FF9933' : '3px solid transparent',
+          paddingLeft: isOpen ? 20 : 22,
+          color: isOpen ? '#FF9933' : 'rgba(255,255,255,0.85)',
+        }}
+      >
+        <span>{label}</span>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"
+          style={{ transform: isOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s', flexShrink: 0, marginRight: 4 }}>
+          <path d="M19 9l-7 7-7-7" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      </button>
+      {isOpen && (
+        <div style={{ background: 'rgba(255,153,51,0.04)', borderTop: '1px solid rgba(255,255,255,0.04)' }}>
+          {items.map((item, i) => (
+            <button key={i}
+              onClick={() => onItemClick(item.href)}
+              style={{
+                display: 'block', width: '100%', textAlign: 'left',
+                padding: '10px 16px 10px 34px',
+                color: 'rgba(255,255,255,0.7)',
+                fontSize: 13, fontFamily: 'Montserrat,sans-serif', fontWeight: 500,
+                background: 'transparent', border: 'none', cursor: 'pointer',
+                borderBottom: i < items.length - 1 ? '1px solid rgba(255,255,255,0.04)' : 'none',
+                transition: 'all 0.15s',
+              }}
+              onMouseEnter={e => { e.currentTarget.style.color = '#FF9933'; e.currentTarget.style.paddingLeft = '40px'; }}
+              onMouseLeave={e => { e.currentTarget.style.color = 'rgba(255,255,255,0.7)'; e.currentTarget.style.paddingLeft = '34px'; }}
+            >
+              <span style={{ marginRight: 8, color: '#FF9933', fontSize: 10 }}>›</span>
+              {item.label}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
   );
 }
 
 const mobileNavStyle = {
   display: 'block',
-  padding: '12px 24px',
+  padding: '13px 22px',
   color: 'rgba(255,255,255,0.85)',
   fontSize: 14,
   fontFamily: 'Montserrat,sans-serif',
   fontWeight: 600,
   textDecoration: 'none',
   borderBottom: '1px solid rgba(255,255,255,0.05)',
-  transition: 'color 0.2s',
+  transition: 'all 0.18s',
+  borderLeft: '3px solid transparent',
 };

@@ -385,7 +385,7 @@ function EventRoundsCarousel() {
         </div>
 
         {/* Round selector tabs */}
-        <div style={{
+        <div className="carousel-tabs" style={{
           display: 'flex', justifyContent: 'center', gap: 14, marginBottom: 40, flexWrap: 'wrap',
           opacity: secVisible ? 1 : 0, transform: secVisible ? 'none' : 'translateY(16px)',
           transition: 'all 0.6s ease 0.15s',
@@ -401,6 +401,7 @@ function EventRoundsCarousel() {
               cursor: 'pointer', textTransform: 'uppercase', letterSpacing: 1,
               transition: 'all 0.3s ease',
               boxShadow: i === active ? `0 6px 20px ${rd.color}40` : 'none',
+              whiteSpace: 'nowrap',
             }}>
               Round {rd.num} — {rd.title}
             </button>
@@ -408,7 +409,7 @@ function EventRoundsCarousel() {
         </div>
 
         {/* Sliding carousel track */}
-        <div style={{
+        <div className="carousel-track-container" style={{
           overflow: 'hidden', borderRadius: 20,
           opacity: secVisible ? 1 : 0, transform: secVisible ? 'none' : 'translateY(24px)',
           transition: 'all 0.6s ease 0.25s',
@@ -420,11 +421,11 @@ function EventRoundsCarousel() {
             willChange: 'transform',
           }}>
             {rounds.map((rd, idx) => (
-              <div key={idx} style={{ minWidth: '100%', flexShrink: 0 }}>
+              <div key={idx} className="carousel-slide" style={{ width: '100%', flexShrink: 0 }}>
                 <div style={{ background: rd.bgAccent, border: `2px solid ${rd.borderColor}`, borderRadius: 20, overflow: 'hidden' }}>
 
                   {/* Card header bar */}
-                  <div style={{
+                  <div className="carousel-card-header" style={{
                     background: 'linear-gradient(135deg, #0f2942, #07192c)',
                     padding: '26px 36px',
                     display: 'flex', justifyContent: 'space-between', alignItems: 'center',
@@ -450,12 +451,12 @@ function EventRoundsCarousel() {
                   </div>
 
                   {/* Card body */}
-                  <div style={{ padding: '32px 36px' }}>
+                  <div className="carousel-card-body" style={{ padding: '32px 36px' }}>
                     <p style={{ color: '#555', fontSize: 14, fontFamily: 'Poppins,sans-serif', lineHeight: 1.85, marginBottom: 32, textAlign: 'justify', maxWidth: 900 }}>
                       {rd.description}
                     </p>
 
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 32 }}>
+                    <div className="carousel-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 32 }}>
 
                       {/* What list */}
                       <div>
