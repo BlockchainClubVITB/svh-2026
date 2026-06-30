@@ -65,6 +65,7 @@ const faqCategories = [
       },
     ],
   },
+
   {
     id: 'registration',
     label: 'Registration',
@@ -73,18 +74,19 @@ const faqCategories = [
     faqs: [
       {
         q: 'What is the registration period?',
-        a: 'Registration is open from 1 July to 20 July 2026 — a 20-day window. Make sure to register before the deadline as late registrations will not be accepted.',
+        a: 'Registration is open from July 1st to July 20th, 2026.',
       },
       {
-        q: 'What is the registration fee?',
-        a: 'The registration fee is ₹75 per participant, which translates to ₹450 per team of six members. The fee is non-refundable once submitted.',
+        q: 'Is there a participation fee?',
+        a: 'Yes, there is a fee of ₹75 per person, totaling ₹450 per team, required to confirm your slot.',
       },
       {
-        q: 'How do I register?',
-        a: 'Teams must register through the official SVH 2026 portal. All 6 team members must be listed at the time of registration. Look out for the official registration link announcement on the Blockchain Club social media handles.',
+        q: 'What information is required to register?',
+        a: 'The team leader must submit the team name, as well as the names, genders, email addresses, and phone numbers for all 6 team members via the official Google form.',
       },
     ],
   },
+
   {
     id: 'team',
     label: 'Team Composition',
@@ -92,67 +94,75 @@ const faqCategories = [
     color: '#06038D',
     faqs: [
       {
-        q: 'What is the required team size?',
-        a: 'Each team must consist of exactly 6 members. Teams with fewer or more members will not be accepted.',
+        q: 'What are the team size requirements?',
+        a: 'Teams must consist of exactly 6 members to be eligible; otherwise, the team will be disqualified.',
       },
       {
-        q: 'Is there a gender diversity requirement?',
-        a: 'Yes. Aligning strictly with Smart India Hackathon norms, a minimum of 1 female team member is mandatory for all teams. Teams without at least one female member will be disqualified.',
-      },
-      {
-        q: 'Can I change team members after registration?',
-        a: 'Team composition changes after registration are generally not permitted. Any exceptional circumstances will need to be communicated to the organizing team at blockchainclub@vitbhopal.ac.in before the PPT submission deadline.',
+        q: 'Are there specific gender requirements for registration?',
+        a: 'Yes, at least one team member must be female.',
       },
     ],
   },
+
   {
-    id: 'rounds',
-    label: 'Event Rounds',
-    icon: '🏁',
+    id: 'problem-statements',
+    label: 'Problem Statements & Submissions',
+    icon: '💡',
     color: '#FF9933',
     faqs: [
       {
-        q: 'Can a team apply for more than one problem statement?',
-        a: 'Yes. Teams are permitted to select and submit PPT proposals for up to 2 different problem statements. However, if qualified, a team will build a prototype for only one chosen problem statement in the Grand Finale.',
+        q: 'How many problem statements can I choose from?',
+        a: 'Participants can select from 10 problem statements: 8 software and 2 hardware.',
       },
       {
-        q: 'What should the Round 1 PPT submission include?',
-        a: 'Your PPT must cover: (1) Clear understanding of the problem statement, (2) Proposed solution approach and core value proposition, (3) Technical architecture, tech stack, and methodology, (4) Expected real-world impact, feasibility, and scale, and (5) Step-by-step implementation roadmap.',
+        q: 'When and where should we submit our ideas?',
+        a: 'Idea submissions must be done on the official SVH website between July 20th and August 5th.',
       },
       {
-        q: 'What is the structure of the Grand Finale?',
-        a: 'The Grand Finale is a two-day offline prototype development sprint at VIT Bhopal. Unlike the standard 36-hour SIH format, SVH runs a compressed 12-hour format: 6 hours of development per day × 2 days. Teams build a functional prototype and present it to an expert panel.',
-      },
-      {
-        q: 'How many teams qualify for the Grand Finale?',
-        a: 'An expert panel evaluates all PPT submissions. The top 5 teams from each of the 12 problem statements qualify — a maximum of 60 finalist teams in total. The PPT evaluation period is 5–10 August 2026.',
-      },
-      {
-        q: 'Are On-Duty (OD) permissions provided?',
-        a: 'The prototype development Grand Finale is subject to institutional approval for official On-Duty (OD) permissions. Detailed announcements regarding OD policies will be made closer to the event. Coordinate with your faculty advisor in advance.',
+        q: 'What are the PPT submission rules for Round 1?',
+        a: 'Length: Maximum 6 slides, including the title slide. Format: Must be saved and exported as a PDF; standard .pptx or .docx formats are not accepted. Use the official presentation deck from the portal and do not alter pre-defined titles or pointers. Use brief bullet points and visuals rather than long paragraphs.',
       },
     ],
   },
+
   {
     id: 'evaluation',
-    label: 'Evaluation & Results',
+    label: 'Evaluation & Rounds',
     icon: '⚖️',
     color: '#138808',
     faqs: [
       {
-        q: 'What are the evaluation criteria for Round 1?',
-        a: 'PPT submissions are judged on: Problem Understanding, Innovation & Creativity, Feasibility of Solution, Technical Approach, and Presentation Quality. Each criterion carries equal weight.',
+        q: 'How are teams shortlisted?',
+        a: 'Selection is based on innovation, technical approach, and presentation quality. Only the top 5 teams per problem statement will qualify for the final round.',
       },
       {
-        q: 'What are the evaluation criteria for the Grand Finale?',
-        a: 'Prototypes are judged on: Technical Implementation, Functionality & Working Prototype, Innovation & Scalability, User Experience, and Final Demonstration & Presentation.',
+        q: 'What happens in Round 2 (Grand Finale)?',
+        a: 'Qualifiers must develop a functional working prototype. The finale involves 12 development hours over 2 days, tentatively scheduled for August 24–25.',
       },
       {
-        q: 'When will results be announced?',
-        a: 'Round 1 results will be announced shortly after the PPT evaluation period (5–10 August 2026). Shortlisted teams will be notified through the official SVH portal and Blockchain Club social media channels.',
+        q: 'How will we be notified of results?',
+        a: 'Results will be available on the team dashboard on the website and sent via email to the team leader.',
       },
     ],
   },
+
+  {
+    id: 'support',
+    label: 'Support & Contact',
+    icon: '📞',
+    color: '#FF9933',
+    faqs: [
+      {
+        q: 'Where can I get event updates?',
+        a: 'Join the official WhatsApp group for announcements, submission instructions, and important updates.',
+      },
+      {
+        q: 'Who can I contact for help?',
+        a: 'You can reach out to the event coordinators: Ayush Tiwari (8962301907), Priya Jha (9234729992), or Ishan Singh (6289016069).',
+      },
+    ],
+  },
+
   {
     id: 'certificates',
     label: 'Certificates & Awards',
@@ -356,19 +366,6 @@ export default function FAQ() {
             Got questions about SVH 2026? We've got answers. Browse by category or scroll through all {totalFAQs} questions below.
           </p>
 
-          {/* Stats bar */}
-          <div style={{ ...a(480), display: 'flex', gap: 20, justifyContent: 'center', flexWrap: 'wrap' }}>
-            {[
-              { val: totalFAQs, label: 'Questions' },
-              { val: faqCategories.length, label: 'Categories' },
-              { val: '1 min', label: 'Read time each' },
-            ].map((s, i) => (
-              <div key={i} style={{ padding: '10px 20px', background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 10, backdropFilter: 'blur(6px)' }}>
-                <div style={{ color: '#FF9933', fontSize: 22, fontWeight: 900, fontFamily: 'Montserrat,sans-serif' }}>{s.val}</div>
-                <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: 11, fontFamily: 'Poppins,sans-serif' }}>{s.label}</div>
-              </div>
-            ))}
-          </div>
         </div>
       </section>
 
