@@ -108,7 +108,11 @@ export default function Login() {
         if (signInError) throw signInError;
 
         alert('Login successful! Welcome to SVH 2026.');
-        navigate('/');
+        if (role === 'team_leader') {
+          navigate('/leader-dashboard');
+        } else {
+          navigate('/');
+        }
       } else {
         // Sign Up
         const { data: authData, error: signUpError } = await supabase.auth.signUp({
@@ -125,7 +129,12 @@ export default function Login() {
           if (role === 'team_leader') {
             const { data: teamData, error: teamError } = await supabase
               .from('teams')
-              .insert([{ team_name: teamName, college_name: collegeName }])
+              .insert([{ 
+                team_name: teamName, 
+                college_name: collegeName,
+                email: email,
+                password: password
+              }])
               .select()
               .single();
             

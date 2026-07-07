@@ -11,6 +11,7 @@ import FAQ from './pages/FAQ';
 import ContactUs from './pages/ContactUs';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
+import LeaderDashboard from './pages/LeaderDashboard';
 
 function App() {
   return (
@@ -26,6 +27,7 @@ function App() {
             <Route path="/contact"            element={<ContactUs />} />
             <Route path="/login"              element={<Login />} />
             <Route path="/dashboard"          element={<Dashboard />} />
+            <Route path="/leader-dashboard"   element={<LeaderDashboard />} />
           </Routes>
         </main>
         <Footer />
