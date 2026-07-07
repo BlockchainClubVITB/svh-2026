@@ -162,11 +162,7 @@ export default function Footer() {
         <p style={{ color: 'rgba(255,255,255,0.35)', fontSize: 12, fontFamily: 'Poppins,sans-serif', margin: 0 }}>
           © {year} Smart VIT Hackathon · Blockchain Club, VIT Bhopal University. All rights reserved.
         </p>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <span style={{ width: 30, height: 3, background: '#FF9933', borderRadius: 2 }} />
-          <span style={{ color: 'rgba(255,255,255,0.3)', fontSize: 11, fontFamily: 'Montserrat,sans-serif', fontWeight: 600 }}>BHARAT</span>
-          <span style={{ width: 30, height: 3, background: '#138808', borderRadius: 2 }} />
-        </div>
+
       </div>
 
       {/* Tricolour bottom */}

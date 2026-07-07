@@ -8,7 +8,7 @@ import vitbLogo from '../assets/vitblogo.png';
 
 /* ═══════════════════════════════════════════════
    SHARED UTILITIES
-═══════════════════════════════════════════════ */
+   ═══════════════════════════════════════════════ */
 
 /* Ashoka Chakra SVG */
 function AshokaChakra({ size = 200, opacity = 0.08, spin = true }) {
@@ -96,7 +96,7 @@ function SectionHeading({ badge, badgeColor = '#FF9933', title, highlight, highl
 
 /* ═══════════════════════════════════════════════
    COUNTDOWN
-═══════════════════════════════════════════════ */
+   ═══════════════════════════════════════════════ */
 function useCountdown(targetDate) {
   const calc = () => {
     const diff = new Date(targetDate) - new Date();
@@ -115,13 +115,24 @@ function useCountdown(targetDate) {
 
 function CountdownTimer() {
   const now = new Date();
+  const opens = new Date('2026-07-01T00:00:00+05:30');
+  const regCloses = new Date('2026-07-20T23:59:59+05:30');
+  const pptCloses = new Date('2026-08-05T23:59:59+05:30');
+  const finaleStarts = new Date('2026-08-24T09:00:00+05:30');
+
   let phase = { label: 'Registration Opens In', target: '2026-07-01T00:00:00+05:30', color: '#FF9933' };
-  if (now >= new Date('2026-07-01T00:00:00+05:30') && now < new Date('2026-08-05T23:59:00+05:30'))
-    phase = { label: 'PPT Submission Closes In', target: '2026-08-05T23:59:00+05:30', color: '#138808' };
-  else if (now >= new Date('2026-08-05T23:59:00+05:30') && now < new Date('2026-08-24T09:00:00+05:30'))
+
+  if (now < opens) {
+    phase = { label: 'Registration Opens In', target: '2026-07-01T00:00:00+05:30', color: '#FF9933' };
+  } else if (now >= opens && now < regCloses) {
+    phase = { label: 'Registration Closes In', target: '2026-07-20T23:59:59+05:30', color: '#FF9933' };
+  } else if (now >= regCloses && now < pptCloses) {
+    phase = { label: 'PPT Submission Closes In', target: '2026-08-05T23:59:59+05:30', color: '#138808' };
+  } else if (now >= pptCloses && now < finaleStarts) {
     phase = { label: 'Grand Finale Begins In', target: '2026-08-24T09:00:00+05:30', color: '#06038D' };
-  else if (now >= new Date('2026-08-24T09:00:00+05:30'))
+  } else {
     phase = { label: 'Event Ongoing', target: '2026-08-25T18:00:00+05:30', color: '#FF9933' };
+  }
 
   const t = useCountdown(phase.target);
   const units = [
@@ -157,10 +168,13 @@ function CountdownTimer() {
 
 /* ═══════════════════════════════════════════════
    HERO SECTION — Staggered fade-in + particles
-═══════════════════════════════════════════════ */
+   ═══════════════════════════════════════════════ */
 function HeroSection() {
   const [m, setM] = useState(false); // mounted
   useEffect(() => { const t = setTimeout(() => setM(true), 80); return () => clearTimeout(t); }, []);
+
+  const now = new Date();
+  const isRegistrationOpen = now >= new Date('2026-07-01T00:00:00+05:30') && now < new Date('2026-07-20T23:59:59+05:30');
 
   // Stagger helper
   const a = (delay, extra = {}) => ({
@@ -199,16 +213,14 @@ function HeroSection() {
       <div style={{ position: 'relative', zIndex: 10, textAlign: 'center', maxWidth: 960, margin: '0 auto', width: '100%' }}>
 
         {/* Country badge */}
-        <div style={{ ...a(80), display: 'inline-flex', alignItems: 'center', gap: 8, background: 'rgba(255,153,51,0.12)', border: '1px solid rgba(255,153,51,0.3)', borderRadius: 40, padding: '6px 20px', marginBottom: 32 }}>
-
-
+        <div style={{ ...a(80), display: 'inline-flex', alignItems: 'center', gap: 8, background: 'rgba(255,153,51,0.12)', border: '1px solid rgba(255,153,51,0.3)', borderRadius: 40, padding: '6px 20px', marginBottom: 28 }}>
           <span style={{ color: '#FF9933', fontSize: 12, fontFamily: 'Montserrat,sans-serif', fontWeight: 700, letterSpacing: 2.5, textTransform: 'uppercase' }}>
             Blockchain Club, VIT Bhopal
           </span>
         </div>
 
         {/* Main title */}
-        <h1 style={{ ...a(220), margin: '0 0 8px', fontFamily: 'Montserrat,sans-serif', fontWeight: 900, lineHeight: 1.02 }}>
+        <h1 style={{ ...a(180), margin: '0 0 8px', fontFamily: 'Montserrat,sans-serif', fontWeight: 900, lineHeight: 1.02 }}>
           <span style={{ display: 'block', fontSize: 'clamp(46px, 8vw, 92px)', color: '#fff', letterSpacing: -2 }}>SMART VIT</span>
           <span style={{
             display: 'block', fontSize: 'clamp(46px, 8vw, 92px)', letterSpacing: -2,
@@ -218,49 +230,77 @@ function HeroSection() {
         </h1>
 
         {/* Year divider */}
-        <div style={{ ...a(360), display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 14, marginBottom: 20 }}>
+        <div style={{ ...a(280), display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 14, marginBottom: 20 }}>
           <div style={{ height: 2, width: 70, background: 'linear-gradient(to right, transparent, #FF9933)' }} />
           <span style={{ color: '#FF9933', fontSize: 24, fontFamily: 'Montserrat,sans-serif', fontWeight: 900, letterSpacing: 8 }}>2026</span>
           <div style={{ height: 2, width: 70, background: 'linear-gradient(to left, transparent, #138808)' }} />
         </div>
 
         {/* Tagline */}
-        <p style={{ ...a(460), color: 'rgba(255,255,255,0.72)', fontSize: 'clamp(14px, 2vw, 18px)', fontFamily: 'Poppins,sans-serif', lineHeight: 1.7, maxWidth: 680, margin: '0 auto 44px' }}>
+        <p style={{ ...a(380), color: 'rgba(255,255,255,0.72)', fontSize: 'clamp(14px, 2vw, 18px)', fontFamily: 'Poppins,sans-serif', lineHeight: 1.7, maxWidth: 680, margin: '0 auto 36px' }}>
           India's most ambitious internal hackathon — inspired by Smart India Hackathon.{' '}
           <strong style={{ color: '#fff' }}>Innovate. Build. Represent.</strong>
         </p>
 
         {/* Countdown */}
-        <div style={{ ...a(600), marginBottom: 46 }}>
+        <div style={{ ...a(580), marginBottom: 46 }}>
           <CountdownTimer />
         </div>
 
         {/* CTA buttons */}
-        <div style={{ ...a(760), display: 'flex', gap: 14, justifyContent: 'center', flexWrap: 'wrap' }}>
-          <Link to="/problem-statements" style={{
-            padding: '14px 38px', background: 'linear-gradient(135deg, #FF9933, #e07800)',
-            color: '#fff', borderRadius: 8, fontSize: 13, fontFamily: 'Montserrat,sans-serif',
-            fontWeight: 800, textDecoration: 'none', textTransform: 'uppercase', letterSpacing: 1.5,
-            boxShadow: '0 6px 24px rgba(255,153,51,0.4)', transition: 'all 0.25s', display: 'inline-block',
-          }}
-            onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-3px)'; e.currentTarget.style.boxShadow = '0 12px 34px rgba(255,153,51,0.55)'; }}
-            onMouseLeave={e => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = '0 6px 24px rgba(255,153,51,0.4)'; }}>
-            View Problem Statements
-          </Link>
-          <Link to="/guidelines" style={{
-            padding: '14px 38px', background: 'transparent', color: '#fff', borderRadius: 8,
-            fontSize: 13, fontFamily: 'Montserrat,sans-serif', fontWeight: 700, textDecoration: 'none',
-            textTransform: 'uppercase', letterSpacing: 1.5, border: '1.5px solid rgba(255,255,255,0.28)',
-            transition: 'all 0.25s', display: 'inline-block',
-          }}
-            onMouseEnter={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.09)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.6)'; }}
-            onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.28)'; }}>
-            Event Guidelines
-          </Link>
+        <div style={{ ...a(700), display: 'flex', gap: 14, justifyContent: 'center', flexWrap: 'wrap', alignItems: 'center' }}>
+          {isRegistrationOpen ? (
+            <>
+              <a href="https://forms.gle/zYNYkjygKYfbAjhy6" target="_blank" rel="noopener noreferrer" style={{
+                padding: '14px 38px', background: 'linear-gradient(135deg, #FF9933, #e07800)',
+                color: '#fff', borderRadius: 8, fontSize: 13, fontFamily: 'Montserrat,sans-serif',
+                fontWeight: 800, textDecoration: 'none', textTransform: 'uppercase', letterSpacing: 1.5,
+                boxShadow: '0 6px 24px rgba(255,153,51,0.4)', transition: 'all 0.25s', display: 'inline-block',
+              }}
+                onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-3px)'; e.currentTarget.style.boxShadow = '0 12px 34px rgba(255,153,51,0.55)'; }}
+                onMouseLeave={e => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = '0 6px 24px rgba(255,153,51,0.4)'; }}>
+                Register for SVH 2026
+              </a>
+              <Link to="/problem-statements" style={{
+                padding: '14px 38px', background: 'transparent', color: '#fff', borderRadius: 8,
+                fontSize: 13, fontFamily: 'Montserrat,sans-serif', fontWeight: 700, textDecoration: 'none',
+                textTransform: 'uppercase', letterSpacing: 1.5, border: '1.5px solid rgba(255,255,255,0.28)',
+                transition: 'all 0.25s', display: 'inline-block',
+              }}
+                onMouseEnter={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.09)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.6)'; }}
+                onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.28)'; }}>
+                Problem Statements
+              </Link>
+            </>
+          ) : (
+            <>
+              <Link to="/login" style={{
+                padding: '14px 38px', background: 'linear-gradient(135deg, #138808, #0f6d06)',
+                color: '#fff', borderRadius: 8, fontSize: 13, fontFamily: 'Montserrat,sans-serif',
+                fontWeight: 800, textDecoration: 'none', textTransform: 'uppercase', letterSpacing: 1.5,
+                boxShadow: '0 6px 24px rgba(19,136,8,0.4)', transition: 'all 0.25s', display: 'inline-block',
+              }}
+                onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-3px)'; e.currentTarget.style.boxShadow = '0 12px 34px rgba(19,136,8,0.55)'; }}
+                onMouseLeave={e => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = '0 6px 24px rgba(19,136,8,0.4)'; }}>
+                Submit PPT (Round 1)
+              </Link>
+              <Link to="/problem-statements" style={{
+                padding: '14px 38px', background: 'transparent', color: '#fff', borderRadius: 8,
+                fontSize: 13, fontFamily: 'Montserrat,sans-serif', fontWeight: 700, textDecoration: 'none',
+                textTransform: 'uppercase', letterSpacing: 1.5, border: '1.5px solid rgba(255,255,255,0.28)',
+                transition: 'all 0.25s', display: 'inline-block',
+              }}
+                onMouseEnter={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.09)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.6)'; }}
+                onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.28)'; }}>
+                Problem Statements
+              </Link>
+            </>
+          )}
+
         </div>
 
         {/* Info chips */}
-        <div style={{ ...a(920), display: 'flex', gap: 10, justifyContent: 'center', flexWrap: 'wrap', marginTop: 42 }}>
+        <div style={{ ...a(820), display: 'flex', gap: 10, justifyContent: 'center', flexWrap: 'wrap', marginTop: 42 }}>
           {[
             { icon: '📅', text: 'Registration: 1–20 July 2026' },
             { icon: '👥', text: '6 Members / Team' },
@@ -280,7 +320,7 @@ function HeroSection() {
       </div>
 
       {/* Scroll mouse indicator */}
-      <div style={{ ...a(1100, { position: 'absolute', bottom: 32, left: '50%', transform: 'translateX(-50%)' }), zIndex: 10 }}>
+      <div style={{ ...a(920, { position: 'absolute', bottom: 32, left: '50%', transform: 'translateX(-50%)' }), zIndex: 10 }}>
         <div style={{ width: 22, height: 38, border: '2px solid rgba(255,255,255,0.25)', borderRadius: 12, display: 'flex', justifyContent: 'center', padding: '5px 0' }}>
           <div style={{ width: 4, height: 9, background: '#FF9933', borderRadius: 4, animation: 'scroll-dot 1.8s ease-in-out infinite' }} />
         </div>
@@ -294,7 +334,7 @@ function HeroSection() {
 
 /* ═══════════════════════════════════════════════
    NEWS TICKER
-═══════════════════════════════════════════════ */
+   ═══════════════════════════════════════════════ */
 function NewsTicker() {
   return (
     <div style={{ background: '#07192c', borderTop: '2px solid rgba(255,153,51,0.35)', borderBottom: '2px solid rgba(255,153,51,0.35)', padding: '10px 0', overflow: 'hidden' }}>
@@ -327,7 +367,7 @@ function NewsTicker() {
 
 /* ═══════════════════════════════════════════════
    EVENT ROUNDS CAROUSEL (SIH-style)
-═══════════════════════════════════════════════ */
+   ═══════════════════════════════════════════════ */
 const rounds = [
   {
     num: 1, label: 'ROUND 1', title: 'PPT Submission', subtitle: 'Online Evaluation Phase',
@@ -540,7 +580,7 @@ function EventRoundsCarousel() {
 
 /* ═══════════════════════════════════════════════
    ABOUT SVH
-═══════════════════════════════════════════════ */
+   ═══════════════════════════════════════════════ */
 function AboutSection() {
   const [ref, visible] = useInView(0.1);
   return (
@@ -611,9 +651,9 @@ function AboutSection() {
 
 /* ═══════════════════════════════════════════════
    TIMELINE — Each item animates in on scroll
-═══════════════════════════════════════════════ */
+   ═══════════════════════════════════════════════ */
 const timelinePhases = [
-  { num: 1, title: 'Registration', date: '1 – 20 July 2026', desc: 'Teams of 6 register online. Minimum 1 female member mandatory. Fee: ₹75/member (₹450/team). Register through the official portal.', icon: '✍️', color: '#FF9933' },
+  { num: 1, title: 'Registration', date: '1 – 20 July 2026', desc: 'Teams of 6 register online. Minimum 1 female member mandatory. Fee: ₹75/member (₹450/team). Register through the official Google Form.', icon: '✍️', color: '#FF9933' },
   { num: 2, title: 'PPT Submission', date: '20 July – 5 Aug 2026', desc: 'Submit a comprehensive presentation covering problem understanding, proposed solution, technical architecture, expected impact & implementation roadmap.', icon: '📊', color: '#138808' },
   { num: 3, title: 'PPT Evaluation', date: '5 – 10 Aug 2026', desc: 'Internal panel evaluates all submissions. Top 5 teams per problem statement shortlisted. Max 60 finalist teams across all 12 PSs.', icon: '⚖️', color: '#06038D' },
   { num: 4, title: 'Results', date: 'Post 10 Aug 2026', desc: 'Shortlisted finalist teams officially announced. Teams notified through internal college channels and official platforms.', icon: '📢', color: '#FF9933' },
@@ -758,7 +798,7 @@ function TimelineSection() {
 
 /* ═══════════════════════════════════════════════
    WHY JOIN SVH — Staggered card reveal
-═══════════════════════════════════════════════ */
+   ═══════════════════════════════════════════════ */
 const benefits = [
   { icon: '🧠', title: 'SIH Simulation', desc: 'Realistic Smart India Hackathon experience with identical structure, evaluation criteria, and real problem statements.', color: '#FF9933' },
   { icon: '🏆', title: 'Certificates', desc: 'Earn Participation, Shortlisting, Winner, and Special Innovation certificates. Stand out on your resume and LinkedIn.', color: '#138808' },
@@ -805,7 +845,7 @@ function WhySVHSection() {
 
 /* ═══════════════════════════════════════════════
    EVALUATION CRITERIA
-═══════════════════════════════════════════════ */
+   ═══════════════════════════════════════════════ */
 function EvaluationSection() {
   const [ref, visible] = useInView(0.08);
   const evalRounds = [
@@ -868,7 +908,7 @@ function EvaluationSection() {
 
 /* ═══════════════════════════════════════════════
    ORGANIZERS
-═══════════════════════════════════════════════ */
+   ═══════════════════════════════════════════════ */
 function OrganizersSection() {
   const [ref, visible] = useInView(0.08);
   const orgs = [
@@ -926,9 +966,12 @@ function OrganizersSection() {
 
 /* ═══════════════════════════════════════════════
    REGISTRATION CTA
-═══════════════════════════════════════════════ */
+   ═══════════════════════════════════════════════ */
 function RegistrationCTA() {
   const [ref, visible] = useInView(0.1);
+  const now = new Date();
+  const isRegistrationOpen = now >= new Date('2026-07-01T00:00:00+05:30') && now < new Date('2026-07-20T23:59:59+05:30');
+
   return (
     <section ref={ref} style={{ background: 'linear-gradient(135deg, #0f2942 0%, #07192c 100%)', padding: '80px 20px', textAlign: 'center', position: 'relative', overflow: 'hidden' }}>
       <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 4, background: 'linear-gradient(to right, #FF9933 33.33%, #fff 33.33% 66.66%, #138808 66.66%)' }} />
@@ -936,31 +979,55 @@ function RegistrationCTA() {
         <AshokaChakra size={500} opacity={0.04} spin />
       </div>
       <div style={{
-        position: 'relative', zIndex: 1, maxWidth: 720, margin: '0 auto',
+        position: 'relative', zIndex: 1, maxWidth: 780, margin: '0 auto',
         opacity: visible ? 1 : 0, transform: visible ? 'none' : 'scale(0.96) translateY(20px)',
         transition: 'all 0.7s ease',
       }}>
         <div style={{ fontSize: 52, marginBottom: 14, animation: 'float 3s ease-in-out infinite' }}>🚀</div>
         <h2 style={{ fontFamily: 'Montserrat,sans-serif', fontWeight: 900, color: '#fff', fontSize: 'clamp(28px,5vw,48px)', margin: '0 0 16px', lineHeight: 1.1 }}>
-          Ready to{' '}
-          <span style={{ background: 'linear-gradient(90deg, #FF9933, #fff)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>Innovate</span>
-          {' '}&amp; Build?
+          {isRegistrationOpen ? 'Form Your Team & Register' : 'Join the Live Event'}
         </h2>
-        <p style={{ color: 'rgba(255,255,255,0.68)', fontSize: 16, fontFamily: 'Poppins,sans-serif', lineHeight: 1.75, marginBottom: 36 }}>
-          Registration opens <strong style={{ color: '#FF9933' }}>1 July 2026</strong>. Form your team of 6, pick a problem statement, and take your first step towards Smart India Hackathon glory.
-        </p>
-        <div style={{ display: 'flex', gap: 14, justifyContent: 'center', flexWrap: 'wrap' }}>
-          <Link to="/guidelines" style={{ padding: '14px 40px', background: 'linear-gradient(135deg, #FF9933, #e07800)', color: '#fff', borderRadius: 8, fontSize: 13, fontFamily: 'Montserrat,sans-serif', fontWeight: 800, textDecoration: 'none', textTransform: 'uppercase', letterSpacing: 1.5, boxShadow: '0 6px 24px rgba(255,153,51,0.4)', transition: 'all 0.25s', display: 'inline-block' }}
-            onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 12px 34px rgba(255,153,51,0.6)'; }}
-            onMouseLeave={e => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = '0 6px 24px rgba(255,153,51,0.4)'; }}>
-            View Guidelines
-          </Link>
-          <Link to="/problem-statements" style={{ padding: '14px 40px', background: 'transparent', color: '#fff', borderRadius: 8, fontSize: 13, fontFamily: 'Montserrat,sans-serif', fontWeight: 700, textDecoration: 'none', textTransform: 'uppercase', letterSpacing: 1.5, border: '1.5px solid rgba(255,255,255,0.28)', transition: 'all 0.25s', display: 'inline-block' }}
-            onMouseEnter={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.08)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.6)'; }}
-            onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.28)'; }}>
-            Explore Problem Statements
-          </Link>
-        </div>
+
+        {isRegistrationOpen ? (
+          <>
+            <p style={{ color: 'rgba(255,255,255,0.85)', fontSize: 16, fontFamily: 'Poppins,sans-serif', lineHeight: 1.75, marginBottom: 18, maxWidth: 620, margin: '0 auto 24px' }}>
+              Registration is active until <strong style={{ color: '#FF9933' }}>20 July 2026</strong>. Form your team of 6 (minimum 1 female member) and secure your slot strictly via the Google Form.
+            </p>
+            <div style={{ background: 'rgba(255,153,51,0.08)', border: '1px solid rgba(255,153,51,0.25)', borderRadius: 8, padding: '16px 20px', marginBottom: 30, color: '#fff', fontSize: 14, fontFamily: 'Poppins,sans-serif', display: 'inline-block', maxWidth: 620 }}>
+              ⚠️ <strong style={{ color: '#FF9933' }}>Notice:</strong> Form registrations are managed on Google Forms. Registration is NOT hosted on this website. The portal here is used exclusively for Round 1 PPT uploads beginning 20th July.
+            </div>
+            <div style={{ display: 'flex', gap: 14, justifyContent: 'center', flexWrap: 'wrap', alignItems: 'center' }}>
+              <a href="https://forms.gle/zYNYkjygKYfbAjhy6" target="_blank" rel="noopener noreferrer" style={{ padding: '14px 40px', background: 'linear-gradient(135deg, #FF9933, #e07800)', color: '#fff', borderRadius: 8, fontSize: 13, fontFamily: 'Montserrat,sans-serif', fontWeight: 800, textDecoration: 'none', textTransform: 'uppercase', letterSpacing: 1.5, boxShadow: '0 6px 24px rgba(255,153,51,0.4)', transition: 'all 0.25s', display: 'inline-block' }}
+                onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 12px 34px rgba(255,153,51,0.6)'; }}
+                onMouseLeave={e => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = '0 6px 24px rgba(255,153,51,0.4)'; }}>
+                Register on Google Form
+              </a>
+              <a href="https://chat.whatsapp.com/L7lXF9VZQRDCx0aXXwBhGw?s=sw&p=a&mlu=2" target="_blank" rel="noopener noreferrer" style={{ padding: '14px 40px', background: '#16a34a', color: '#fff', borderRadius: 8, fontSize: 13, fontFamily: 'Montserrat,sans-serif', fontWeight: 800, textDecoration: 'none', textTransform: 'uppercase', letterSpacing: 1.5, boxShadow: '0 6px 24px rgba(22,163,74,0.4)', transition: 'all 0.25s', display: 'inline-block' }}
+                onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 12px 34px rgba(22,163,74,0.6)'; }}
+                onMouseLeave={e => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = '0 6px 24px rgba(22,163,74,0.4)'; }}>
+                Join WhatsApp Group
+              </a>
+            </div>
+          </>
+        ) : (
+          <>
+            <p style={{ color: 'rgba(255,255,255,0.85)', fontSize: 16, fontFamily: 'Poppins,sans-serif', lineHeight: 1.75, marginBottom: 24, maxWidth: 620, margin: '0 auto 24px' }}>
+              Registration phase has ended. PPT Submissions are now open for all registered teams until <strong style={{ color: '#138808' }}>5 August 2026</strong>.
+            </p>
+            <div style={{ display: 'flex', gap: 14, justifyContent: 'center', flexWrap: 'wrap', alignItems: 'center' }}>
+              <Link to="/login" style={{ padding: '14px 40px', background: 'linear-gradient(135deg, #138808, #0f6d06)', color: '#fff', borderRadius: 8, fontSize: 13, fontFamily: 'Montserrat,sans-serif', fontWeight: 800, textDecoration: 'none', textTransform: 'uppercase', letterSpacing: 1.5, boxShadow: '0 6px 24px rgba(19,136,8,0.4)', transition: 'all 0.25s', display: 'inline-block' }}
+                onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 12px 34px rgba(19,136,8,0.6)'; }}
+                onMouseLeave={e => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = '0 6px 24px rgba(19,136,8,0.4)'; }}>
+                Submit PPT (Round 1)
+              </Link>
+              <a href="https://chat.whatsapp.com/L7lXF9VZQRDCx0aXXwBhGw?s=sw&p=a&mlu=2" target="_blank" rel="noopener noreferrer" style={{ padding: '14px 40px', background: '#16a34a', color: '#fff', borderRadius: 8, fontSize: 13, fontFamily: 'Montserrat,sans-serif', fontWeight: 800, textDecoration: 'none', textTransform: 'uppercase', letterSpacing: 1.5, boxShadow: '0 6px 24px rgba(22,163,74,0.4)', transition: 'all 0.25s', display: 'inline-block' }}
+                onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 12px 34px rgba(22,163,74,0.6)'; }}
+                onMouseLeave={e => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = '0 6px 24px rgba(22,163,74,0.4)'; }}>
+                Join WhatsApp Group
+              </a>
+            </div>
+          </>
+        )}
       </div>
       <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: 4, background: 'linear-gradient(to right, #FF9933 33.33%, #fff 33.33% 66.66%, #138808 66.66%)' }} />
     </section>
@@ -969,7 +1036,7 @@ function RegistrationCTA() {
 
 /* ═══════════════════════════════════════════════
    HOME PAGE
-═══════════════════════════════════════════════ */
+   ═══════════════════════════════════════════════ */
 export default function Home() {
   return (
     <div style={{ width: '100%' }}>

@@ -1,6 +1,5 @@
 import { useState, useMemo, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Users, UserPlus, Building, Hash } from 'lucide-react';
 
 /* Shared Background Assets */
 function AshokaChakra({ size = 200, opacity = 0.08, spin = true }) {
@@ -95,62 +94,21 @@ export default function LeaderDashboard() {
           </p>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 24, ...a(200) }}>
-          {/* Card 1: Team Name */}
-          <div style={{
-            background: 'rgba(255, 255, 255, 0.03)',
-            border: '1px solid rgba(255, 153, 51, 0.2)',
-            borderRadius: 20, padding: '32px',
-            backdropFilter: 'blur(16px)',
-            boxShadow: '0 16px 40px rgba(0,0,0,0.3)',
-            position: 'relative', overflow: 'hidden'
-          }}>
-            <h3 style={{ color: 'rgba(255,255,255,0.6)', margin: '0 0 8px 0', fontSize: 14, textTransform: 'uppercase', letterSpacing: 1.5, fontFamily: 'Montserrat,sans-serif' }}>Team Name</h3>
-            <p style={{ color: '#fff', margin: 0, fontSize: 24, fontWeight: 700, fontFamily: 'Poppins,sans-serif' }}>{teamInfo.teamName}</p>
-            <Users style={{ position: 'absolute', right: -15, bottom: -15, opacity: 0.1, color: '#FF9933' }} size={120} />
-          </div>
-
-          {/* Card 2: Team Leader Name */}
-          <div style={{
-            background: 'rgba(255, 255, 255, 0.03)',
-            border: '1px solid rgba(19, 136, 8, 0.2)',
-            borderRadius: 20, padding: '32px',
-            backdropFilter: 'blur(16px)',
-            boxShadow: '0 16px 40px rgba(0,0,0,0.3)',
-            position: 'relative', overflow: 'hidden'
-          }}>
-            <h3 style={{ color: 'rgba(255,255,255,0.6)', margin: '0 0 8px 0', fontSize: 14, textTransform: 'uppercase', letterSpacing: 1.5, fontFamily: 'Montserrat,sans-serif' }}>Team Leader</h3>
-            <p style={{ color: '#fff', margin: 0, fontSize: 24, fontWeight: 700, fontFamily: 'Poppins,sans-serif' }}>{teamInfo.teamLeaderName}</p>
-            <UserPlus style={{ position: 'absolute', right: -15, bottom: -15, opacity: 0.1, color: '#138808' }} size={120} />
-          </div>
-
-          {/* Card 3: Team ID */}
-          <div style={{
-            background: 'rgba(255, 255, 255, 0.03)',
-            border: '1px solid rgba(255, 255, 255, 0.1)',
-            borderRadius: 20, padding: '32px',
-            backdropFilter: 'blur(16px)',
-            boxShadow: '0 16px 40px rgba(0,0,0,0.3)',
-            position: 'relative', overflow: 'hidden'
-          }}>
-            <h3 style={{ color: 'rgba(255,255,255,0.6)', margin: '0 0 8px 0', fontSize: 14, textTransform: 'uppercase', letterSpacing: 1.5, fontFamily: 'Montserrat,sans-serif' }}>Team ID</h3>
-            <p style={{ color: '#fff', margin: 0, fontSize: 24, fontWeight: 700, fontFamily: 'Poppins,sans-serif' }}>{teamInfo.teamId}</p>
-            <Hash style={{ position: 'absolute', right: -15, bottom: -15, opacity: 0.05, color: '#fff' }} size={120} />
-          </div>
-
-          {/* Card 4: College Name */}
-          <div style={{
-            background: 'rgba(255, 255, 255, 0.03)',
-            border: '1px solid rgba(0, 198, 255, 0.2)',
-            borderRadius: 20, padding: '32px',
-            backdropFilter: 'blur(16px)',
-            boxShadow: '0 16px 40px rgba(0,0,0,0.3)',
-            position: 'relative', overflow: 'hidden'
-          }}>
-            <h3 style={{ color: 'rgba(255,255,255,0.6)', margin: '0 0 8px 0', fontSize: 14, textTransform: 'uppercase', letterSpacing: 1.5, fontFamily: 'Montserrat,sans-serif' }}>College Name</h3>
-            <p style={{ color: '#fff', margin: 0, fontSize: 24, fontWeight: 700, fontFamily: 'Poppins,sans-serif' }}>{teamInfo.collegeName}</p>
-            <Building style={{ position: 'absolute', right: -15, bottom: -15, opacity: 0.1, color: '#00c6ff' }} size={120} />
-          </div>
+        <div style={{
+          ...a(200),
+          background: 'rgba(255, 255, 255, 0.03)',
+          border: '1px solid rgba(255, 153, 51, 0.2)',
+          borderRadius: 20, padding: '60px 32px',
+          backdropFilter: 'blur(16px)',
+          boxShadow: '0 16px 40px rgba(0,0,0,0.3)',
+          textAlign: 'center'
+        }}>
+          <h2 style={{ fontFamily: 'Montserrat,sans-serif', fontWeight: 800, color: '#FF9933', fontSize: 36, margin: '0 0 16px', letterSpacing: 1, textTransform: 'uppercase' }}>
+            Coming Soon
+          </h2>
+          <p style={{ color: 'rgba(255,255,255,0.7)', fontSize: 16, fontFamily: 'Poppins,sans-serif', margin: 0, maxWidth: 600, marginLeft: 'auto', marginRight: 'auto' }}>
+            We're working hard to get your dashboard ready. Stay tuned for exciting updates and features!
+          </p>
         </div>
 
         <div style={{ ...a(300), display: 'flex', justifyContent: 'center', marginTop: 50 }}>
