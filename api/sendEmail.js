@@ -47,8 +47,8 @@ export default async function handler(req, res) {
         membersRowsHtml += `
           <tr>
             <td style="padding: 12px 16px; font-size: 13px; color: #0f2942; font-weight: 700; ${borderStyle}">${index + 2}</td>
-            <td style="padding: 12px 16px; font-size: 13px; color: #475569; ${borderStyle}">${member.name || 'N/A'}</td>
-            <td style="padding: 12px 16px; font-size: 13px; color: #475569; font-family: 'Courier New', monospace; ${borderStyle}">${member.regNo || 'N/A'}</td>
+            <td style="padding: 12px 16px; font-size: 13px; color: #475569; ${borderStyle}">${member?.name || 'N/A'}</td>
+            <td style="padding: 12px 16px; font-size: 13px; color: #475569; font-family: 'Courier New', monospace; ${borderStyle}">${member?.regNo || 'N/A'}</td>
           </tr>
         `;
       });
