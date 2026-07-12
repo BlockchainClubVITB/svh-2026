@@ -25,8 +25,8 @@ export default async function handler(req, res) {
       service: 'gmail', 
       auth: {
         // Best practice: use process.env.EMAIL_USER and process.env.EMAIL_APP_PASSWORD in production
-        user: 'blockchainvitb@gmail.com',
-        pass: 'hout vbbt wnic hnbv', 
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_APP_PASSWORD, 
       },
     });
 
