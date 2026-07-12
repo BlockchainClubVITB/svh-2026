@@ -1,5 +1,5 @@
-import { Search, Building2, ArrowLeft } from 'lucide-react';
-import { useState, useMemo } from 'react';
+import { Search, ArrowLeft, X, Info } from 'lucide-react';
+import { useState, useMemo, useEffect } from 'react';
 import { STATEMENTS } from '../data/problemStatements';
 
 const NAVY    = '#0f2942';
@@ -9,12 +9,13 @@ const GREEN   = '#138808';
 const CATEGORIES = ['All', 'Hardware', 'Software'];
 
 export default function ProblemStatements() {
-  const [search, setSearch]     = useState('');
-  const [category, setCategory] = useState('All');
-  const [pageSize, setPageSize] = useState(10);
-  const [sortKey, setSortKey]   = useState(null);
-  const [sortDir, setSortDir]   = useState('asc');
-  const [selected, setSelected] = useState(null);
+  const [search, setSearch]         = useState('');
+  const [category, setCategory]     = useState('All');
+  const [pageSize, setPageSize]     = useState(10);
+  const [sortKey, setSortKey]       = useState(null);
+  const [sortDir, setSortDir]       = useState('asc');
+  const [selected, setSelected]     = useState(null);
+  const [showBanner, setShowBanner] = useState(true);
 
   const filtered = useMemo(() => {
     let rows = STATEMENTS.filter(item => {
@@ -58,6 +59,90 @@ export default function ProblemStatements() {
 
   return (
     <div style={{ width: '100%', minHeight: '100vh', background: '#fff', padding: '32px 20px' }}>
+
+      {/* ── Floating Info Banner ───────────────────────── */}
+      {showBanner && (
+        <div style={{
+          position: 'fixed',
+          bottom: 28,
+          right: 28,
+          zIndex: 9999,
+          maxWidth: 380,
+          background: 'linear-gradient(135deg, #0f2942 0%, #1a3f6f 100%)',
+          borderRadius: 14,
+          boxShadow: '0 8px 32px rgba(0,0,0,0.28)',
+          border: '1px solid rgba(255,153,51,0.35)',
+          padding: '20px 22px 18px',
+          fontFamily: 'Poppins,sans-serif',
+          animation: 'slideUpFade 0.4s ease',
+        }}>
+          {/* Header */}
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <div style={{
+                background: 'rgba(255,153,51,0.18)',
+                borderRadius: '50%',
+                width: 32, height: 32,
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+              }}>
+                <Info size={16} color="#FF9933" />
+              </div>
+              <span style={{ color: '#FF9933', fontWeight: 700, fontSize: 13, fontFamily: 'Montserrat,sans-serif', letterSpacing: 0.3 }}>
+                Submission Info
+              </span>
+            </div>
+            <button
+              onClick={() => setShowBanner(false)}
+              style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 2, display: 'flex', alignItems: 'center' }}
+              title="Dismiss"
+            >
+              <X size={16} color="rgba(255,255,255,0.5)" />
+            </button>
+          </div>
+
+          {/* Rules */}
+          <ul style={{ margin: 0, padding: '0 0 0 16px', color: 'rgba(255,255,255,0.88)', fontSize: 12.5, lineHeight: 1.75 }}>
+            <li>Max <strong style={{ color: '#FF9933' }}>40 submissions</strong> allowed per Problem Statement.</li>
+            <li>Once a PS reaches the limit, it will be <strong style={{ color: '#ff6b6b' }}>closed</strong> for further submissions.</li>
+            <li>Submit your solution <strong style={{ color: '#38ef7d' }}>before the deadline</strong> and before max submissions are reached.</li>
+          </ul>
+
+          {/* Note */}
+          <div style={{
+            marginTop: 12,
+            padding: '8px 12px',
+            background: 'rgba(255,153,51,0.08)',
+            borderRadius: 8,
+            borderLeft: '3px solid #FF9933',
+            color: 'rgba(255,255,255,0.65)',
+            fontSize: 11.5,
+            lineHeight: 1.6,
+          }}>
+            📌 <em>Note: Maximum submission count may be increased at a later stage.</em>
+          </div>
+
+          {/* Progress bar for visual appeal */}
+          <div style={{ marginTop: 14 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 11, color: 'rgba(255,255,255,0.5)', marginBottom: 4 }}>
+              <span>Current capacity</span>
+              <span style={{ color: '#38ef7d' }}>Open</span>
+            </div>
+            <div style={{ height: 5, background: 'rgba(255,255,255,0.1)', borderRadius: 10, overflow: 'hidden' }}>
+              <div style={{ width: '0%', height: '100%', background: 'linear-gradient(90deg, #38ef7d, #00c6ff)', borderRadius: 10, transition: 'width 0.5s ease' }} />
+            </div>
+            <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.4)', marginTop: 4, textAlign: 'right' }}>0 / 40 submissions</div>
+          </div>
+        </div>
+      )}
+
+      {/* Keyframe for banner animation */}
+      <style>{`
+        @keyframes slideUpFade {
+          from { opacity: 0; transform: translateY(20px); }
+          to   { opacity: 1; transform: translateY(0); }
+        }
+      `}</style>
+
       <div style={{ maxWidth: 1200, margin: '0 auto' }}>
         <h1 style={{ fontFamily: 'Montserrat,sans-serif', fontWeight: 800, fontSize: 24, color: NAVY, marginBottom: 20 }}>
           Problem Statements
@@ -131,6 +216,7 @@ export default function ProblemStatements() {
                 <Th label="Category" onClick={() => toggleSort('category')} active={sortKey === 'category'} dir={sortDir} />
                 <Th label="PS Number" onClick={() => toggleSort('id')} active={sortKey === 'id'} dir={sortDir} />
                 <Th label="Theme" onClick={() => toggleSort('theme')} active={sortKey === 'theme'} dir={sortDir} />
+                <Th label="Submissions" />
               </tr>
             </thead>
             <tbody>
@@ -152,11 +238,24 @@ export default function ProblemStatements() {
                   <Td>{item.category}</Td>
                   <Td>{item.id}</Td>
                   <Td>{item.theme}</Td>
+                  <Td>
+                    <span style={{
+                      display: 'inline-flex', alignItems: 'center', gap: 4,
+                      background: '#f0fdf4', color: '#166534',
+                      border: '1px solid #bbf7d0',
+                      borderRadius: 20, padding: '3px 10px',
+                      fontSize: 12, fontWeight: 700, fontFamily: 'Montserrat,sans-serif',
+                      whiteSpace: 'nowrap',
+                    }}>
+                      <span style={{ width: 7, height: 7, borderRadius: '50%', background: '#22c55e', display: 'inline-block' }} />
+                      0 / 40
+                    </span>
+                  </Td>
                 </tr>
               ))}
               {visible.length === 0 && (
                 <tr>
-                  <td colSpan={6} style={{ textAlign: 'center', padding: 24, color: '#999' }}>
+                  <td colSpan={7} style={{ textAlign: 'center', padding: 24, color: '#999' }}>
                     No matching records found
                   </td>
                 </tr>
