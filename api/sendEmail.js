@@ -235,17 +235,19 @@ export default async function handler(req, res) {
     let ccEmails = [];
     if (Array.isArray(extraMembersData) && extraMembersData.length > 0) {
       extraMembersData.forEach(member => {
-        if (member && member.email) {
-          ccEmails.push(member.email);
+        if (member && member.email && typeof member.email === 'string' && member.email.includes('@')) {
+          ccEmails.push(member.email.trim());
         }
       });
     }
+
+    console.log(`[Email Dispatch] Team: ${teamName}, Leader: ${leaderEmail}, CC:`, ccEmails);
 
     // 4. Dispatch the Email Configuration
     const mailOptions = {
       from: `"Blockchain Club, VIT Bhopal" <blockchainvitb@gmail.com>`,
       to: leaderEmail,
-      cc: ccEmails.length > 0 ? ccEmails.join(', ') : undefined,
+      cc: ccEmails.length > 0 ? ccEmails : undefined, // Passed directly as an array
       subject: `SVH 2026 — Registration Confirmed for ${teamName}! 🎉`,
       html: htmlContent,
     };
