@@ -22,9 +22,9 @@ export default async function handler(req, res) {
       service: 'gmail', 
       auth: {
         // user: process.env.EMAIL_USER
-        user : blockchainvitb@gmail.com,
+        user : 'blockchainvitb@gmail.com',
         // pass: process.env.EMAIL_APP_PASSWORD
-        pass: hout vbbt wnic hnbv,
+        pass: 'hout vbbt wnic hnbv',
       },
     });
 
