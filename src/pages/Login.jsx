@@ -123,7 +123,9 @@ export default function Login() {
           password,
         });
 
-        if (signInError) throw signInError;
+        if (signInError) {
+          throw new Error('Invalid Email or Password. Please try again.');
+        }
 
         alert('Login successful! Welcome to SVH 2026.');
         if (role === 'team_leader') {
@@ -132,15 +134,17 @@ export default function Login() {
             .from('profiles')
             .select('*, teams(*)')
             .eq('id', authData.user.id)
-            .single();
+            .maybeSingle();
 
-          if (profileErr) throw profileErr;
+          if (profileErr) {
+            console.error("Profile fetch error:", profileErr);
+          }
 
           localStorage.setItem('leader_session', JSON.stringify({
-            leaderName: profileData.full_name,
-            teamName: profileData.teams?.team_name || 'No Team',
-            teamId: profileData.team_id,
-            collegeName: profileData.teams?.college_name || '',
+            leaderName: profileData?.full_name || 'Team Leader',
+            teamName: profileData?.teams?.team_name || 'No Team',
+            teamId: profileData?.team_id || null,
+            collegeName: profileData?.teams?.college_name || '',
           }));
 
           navigate('/coming-soon');
@@ -198,8 +202,8 @@ export default function Login() {
         setIsLogin(true);
       }
     } catch (err) {
-      if (isLogin) {
-        alert('Invalid Email or Password. Please try again.');
+      if (isLogin && err.message === 'Invalid Email or Password. Please try again.') {
+        alert(err.message);
       }
       setError(err.message || 'An error occurred during authentication.');
     } finally {
