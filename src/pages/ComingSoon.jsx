@@ -87,16 +87,7 @@ export default function ComingSoon() {
           Coming Soon
         </h1>
         
-        <p style={{ 
-          ...animationStyle(300),
-          fontFamily: 'Poppins, sans-serif',
-          color: 'rgba(255,255,255,0.7)',
-          fontSize: '16px',
-          lineHeight: '1.6',
-          marginBottom: '32px'
-        }}>
-          We're working hard to bring this feature to life. Check back soon!
-        </p>
+
         
         <div style={{ ...animationStyle(400) }}>
           <Link to="/" style={{
