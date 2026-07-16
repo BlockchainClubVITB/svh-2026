@@ -96,7 +96,7 @@ export default function LeaderDashboard() {
   return (
     <section style={{
       position: 'relative', minHeight: 'calc(100vh - 60px)',
-      background: 'linear-gradient(160deg, #07192c 0%, #0f2942 45%, #07192c 100%)',
+      background: 'linear-gradient(160deg, #ffffff 0%, #f0f4f8 45%, #ffffff 100%)',
       display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-start',
       overflow: 'hidden', padding: '100px 20px 60px',
     }}>
@@ -111,11 +111,11 @@ export default function LeaderDashboard() {
 
       <div style={{ position: 'relative', zIndex: 10, width: '100%', maxWidth: 1000 }}>
         <div style={{ textAlign: 'center', marginBottom: 40, ...a(100) }}>
-          <h1 style={{ fontFamily: 'Montserrat,sans-serif', fontWeight: 900, color: '#fff', fontSize: 36, margin: '0 0 12px', letterSpacing: -1 }}>
+          <h1 style={{ fontFamily: 'Montserrat,sans-serif', fontWeight: 900, color: '#06038D', fontSize: 36, margin: '0 0 12px', letterSpacing: -1 }}>
             Team Leader Dashboard
           </h1>
           {teamInfo && (
-            <p style={{ color: 'rgba(255,255,255,0.7)', fontSize: 18, fontFamily: 'Poppins,sans-serif', margin: 0 }}>
+            <p style={{ color: '#0f2942', fontSize: 18, fontFamily: 'Poppins,sans-serif', margin: 0 }}>
               Team: <strong style={{ color: '#FF9933' }}>{teamInfo.teamName}</strong> | {teamInfo.collegeName}
             </p>
           )}
@@ -123,39 +123,40 @@ export default function LeaderDashboard() {
 
         <div style={{
           ...a(200),
-          background: 'rgba(255, 255, 255, 0.03)',
-          border: '1px solid rgba(255, 153, 51, 0.2)',
+          background: 'rgba(255, 255, 255, 0.8)',
+          border: '1px solid rgba(6, 3, 141, 0.15)',
           borderRadius: 20, padding: '40px 32px',
           backdropFilter: 'blur(16px)',
-          boxShadow: '0 16px 40px rgba(0,0,0,0.3)',
+          boxShadow: '0 16px 40px rgba(6,3,141,0.05)',
         }}>
-          <h2 style={{ fontFamily: 'Montserrat,sans-serif', fontWeight: 800, color: '#fff', fontSize: 24, margin: '0 0 24px', letterSpacing: 0.5, borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: 16 }}>
+          <h2 style={{ fontFamily: 'Montserrat,sans-serif', fontWeight: 800, color: '#0f2942', fontSize: 24, margin: '0 0 24px', letterSpacing: 0.5, borderBottom: '1px solid rgba(6,3,141,0.1)', paddingBottom: 16 }}>
             Team Members
           </h2>
 
           {loading ? (
-            <p style={{ color: '#fff', textAlign: 'center', fontFamily: 'Poppins,sans-serif' }}>Loading team data...</p>
+            <p style={{ color: '#0f2942', textAlign: 'center', fontFamily: 'Poppins,sans-serif' }}>Loading team data...</p>
           ) : (
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: 24 }}>
               {members.length > 0 ? members.map((member, idx) => (
                 <div key={member.id || idx} style={{
-                  background: 'rgba(255,255,255,0.05)',
-                  border: '1px solid rgba(255,255,255,0.1)',
+                  background: '#ffffff',
+                  border: '1px solid rgba(6,3,141,0.1)',
                   borderRadius: 16,
                   padding: 24,
                   position: 'relative',
                   overflow: 'hidden',
                   transition: 'all 0.3s ease',
+                  boxShadow: '0 4px 16px rgba(0,0,0,0.03)',
                 }}
                 onMouseEnter={e => {
                   e.currentTarget.style.transform = 'translateY(-5px)';
-                  e.currentTarget.style.boxShadow = '0 10px 30px rgba(0,0,0,0.4)';
-                  e.currentTarget.style.borderColor = 'rgba(19,136,8,0.3)';
+                  e.currentTarget.style.boxShadow = '0 12px 32px rgba(6,3,141,0.12)';
+                  e.currentTarget.style.borderColor = 'rgba(6,3,141,0.3)';
                 }}
                 onMouseLeave={e => {
                   e.currentTarget.style.transform = 'none';
-                  e.currentTarget.style.boxShadow = 'none';
-                  e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)';
+                  e.currentTarget.style.boxShadow = '0 4px 16px rgba(0,0,0,0.03)';
+                  e.currentTarget.style.borderColor = 'rgba(6,3,141,0.1)';
                 }}
                 >
                   {member.is_team_leader && (
@@ -168,17 +169,15 @@ export default function LeaderDashboard() {
                       Leader
                     </div>
                   )}
-                  <h3 style={{ margin: '0 0 8px', color: '#fff', fontSize: 20, fontFamily: 'Montserrat,sans-serif', fontWeight: 700 }}>
+                  <h3 style={{ margin: '0 0 12px', color: '#06038D', fontSize: 20, fontFamily: 'Montserrat,sans-serif', fontWeight: 700 }}>
                     {member.full_name || 'Unnamed Member'}
                   </h3>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: 6, color: 'rgba(255,255,255,0.7)', fontSize: 14, fontFamily: 'Poppins,sans-serif' }}>
-                    <div><strong style={{ color: 'rgba(255,255,255,0.9)' }}>Email:</strong> {member.email}</div>
-                    {member.phone && <div><strong style={{ color: 'rgba(255,255,255,0.9)' }}>Phone:</strong> {member.phone}</div>}
-                    {member.gender && <div><strong style={{ color: 'rgba(255,255,255,0.9)' }}>Gender:</strong> {member.gender}</div>}
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 6, color: '#333', fontSize: 14, fontFamily: 'Poppins,sans-serif' }}>
+                    {member.gender && <div><strong style={{ color: '#0f2942' }}>Gender:</strong> {member.gender}</div>}
                   </div>
                 </div>
               )) : (
-                <p style={{ color: 'rgba(255,255,255,0.6)', fontFamily: 'Poppins,sans-serif', gridColumn: '1 / -1', textAlign: 'center' }}>
+                <p style={{ color: '#666', fontFamily: 'Poppins,sans-serif', gridColumn: '1 / -1', textAlign: 'center' }}>
                   No team members found.
                 </p>
               )}
