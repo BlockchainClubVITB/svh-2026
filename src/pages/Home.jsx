@@ -116,7 +116,7 @@ function useCountdown(targetDate) {
 function CountdownTimer() {
   const now = new Date();
   const opens = new Date('2026-07-01T00:00:00+05:30');
-  const regCloses = new Date('2026-07-20T23:59:59+05:30');
+  const regCloses = new Date('2026-07-25T23:59:59+05:30');
   const pptCloses = new Date('2026-08-05T23:59:59+05:30');
   const finaleStarts = new Date('2026-08-24T09:00:00+05:30');
 
@@ -125,7 +125,7 @@ function CountdownTimer() {
   if (now < opens) {
     phase = { label: 'Registration Opens In', target: '2026-07-01T00:00:00+05:30', color: '#FF9933' };
   } else if (now >= opens && now < regCloses) {
-    phase = { label: 'Registration Closes In', target: '2026-07-20T23:59:59+05:30', color: '#FF9933' };
+    phase = { label: 'Registration Closes In', target: '2026-07-25T23:59:59+05:30', color: '#FF9933' };
   } else if (now >= regCloses && now < pptCloses) {
     phase = { label: 'PPT Submission Closes In', target: '2026-08-05T23:59:59+05:30', color: '#138808' };
   } else if (now >= pptCloses && now < finaleStarts) {
@@ -174,7 +174,7 @@ function HeroSection() {
   useEffect(() => { const t = setTimeout(() => setM(true), 80); return () => clearTimeout(t); }, []);
 
   const now = new Date();
-  const isRegistrationOpen = now >= new Date('2026-07-01T00:00:00+05:30') && now < new Date('2026-07-20T23:59:59+05:30');
+  const isRegistrationOpen = now >= new Date('2026-07-01T00:00:00+05:30') && now < new Date('2026-07-25T23:59:59+05:30');
 
   // Stagger helper
   const a = (delay, extra = {}) => ({
@@ -304,7 +304,7 @@ function HeroSection() {
         {/* Info chips */}
         <div style={{ ...a(820), display: 'flex', gap: 10, justifyContent: 'center', flexWrap: 'wrap', marginTop: 42 }}>
           {[
-            { icon: '📅', text: 'Registration: 1–20 July 2026' },
+            { icon: '📅', text: 'Registration: 1–25 July 2026' },
             { icon: '👥', text: '6 Members / Team' },
             { icon: '💰', text: '₹450 / Team' },
             { icon: '🏆', text: '10 SW + 2 HW Problem Statements' },
@@ -350,8 +350,8 @@ function NewsTicker() {
             onMouseLeave={e => e.currentTarget.style.animationPlayState = 'running'}>
             <span style={{ color: 'rgba(255,255,255,0.82)', fontFamily: 'Montserrat,sans-serif', fontSize: 13, fontWeight: 500 }}>
               &nbsp;&nbsp;&nbsp;SVH 2026 by Blockchain Club, VIT Bhopal — Inspired by Smart India Hackathon &nbsp;·&nbsp;
-              Registration: <strong style={{ color: '#FF9933' }}>1–20 July 2026</strong> &nbsp;·&nbsp;
-              PPT Submission: <strong style={{ color: '#FF9933' }}>20 July – 5 Aug 2026</strong> &nbsp;·&nbsp;
+              Registration: <strong style={{ color: '#FF9933' }}>1–25 July 2026</strong> &nbsp;·&nbsp;
+              PPT Submission: <strong style={{ color: '#FF9933' }}>25 July – 5 Aug 2026</strong> &nbsp;·&nbsp;
               Team: <strong style={{ color: '#FF9933' }}>6 Members (Min. 1 Female)</strong> &nbsp;·&nbsp;
               Fee: <strong style={{ color: '#FF9933' }}>₹75/Member · ₹450/Team</strong> &nbsp;·&nbsp;
               Grand Finale: <strong style={{ color: '#138808' }}>24–25 Aug 2026 (Tentative)</strong> &nbsp;·&nbsp;
@@ -373,7 +373,7 @@ function NewsTicker() {
 const rounds = [
   {
     num: 1, label: 'ROUND 1', title: 'PPT Submission', subtitle: 'Online Evaluation Phase',
-    date: '20 July – 5 Aug 2026', color: '#FF9933', borderColor: 'rgba(255,153,51,0.25)',
+    date: '25 July – 5 Aug 2026', color: '#FF9933', borderColor: 'rgba(255,153,51,0.25)',
     bgAccent: 'rgba(255,153,51,0.05)', icon: '📊',
     description: 'Teams select up to 2 problem statements and submit a comprehensive presentation covering problem understanding, proposed solution, technical architecture, expected real-world impact, and step-by-step implementation roadmap.',
     what: [
@@ -655,8 +655,8 @@ function AboutSection() {
    TIMELINE — Each item animates in on scroll
    ═══════════════════════════════════════════════ */
 const timelinePhases = [
-  { num: 1, title: 'Registration', date: '1 – 20 July 2026', desc: 'Teams of 6 register online. Minimum 1 female member mandatory. Fee: ₹75/member (₹450/team). Register through the official Google Form.', icon: '✍️', color: '#FF9933' },
-  { num: 2, title: 'PPT Submission', date: '20 July – 5 Aug 2026', desc: 'Submit a comprehensive presentation covering problem understanding, proposed solution, technical architecture, expected impact & implementation roadmap.', icon: '📊', color: '#138808' },
+  { num: 1, title: 'Registration', date: '1 – 25 July 2026', desc: 'Teams of 6 register online. Minimum 1 female member mandatory. Fee: ₹75/member (₹450/team). Register through the official Google Form.', icon: '✍️', color: '#FF9933' },
+  { num: 2, title: 'PPT Submission', date: '25 July – 5 Aug 2026', desc: 'Submit a comprehensive presentation covering problem understanding, proposed solution, technical architecture, expected impact & implementation roadmap.', icon: '📊', color: '#138808' },
   { num: 3, title: 'PPT Evaluation', date: '5 – 10 Aug 2026', desc: 'Internal panel evaluates all submissions. Top 5 teams per problem statement shortlisted. Max 60 finalist teams across all 12 PSs.', icon: '⚖️', color: '#06038D' },
   { num: 4, title: 'Results', date: 'Post 10 Aug 2026', desc: 'Shortlisted finalist teams officially announced. Teams notified through internal college channels and official platforms.', icon: '📢', color: '#FF9933' },
   { num: 5, title: 'Grand Finale', date: '24 – 25 Aug 2026', desc: 'Finalists build a functional prototype at VIT Bhopal. 2-day, 12-hr offline format. Subject to OD approval from the institute.', icon: '🚀', color: '#138808' },
@@ -993,10 +993,10 @@ function RegistrationCTA() {
         {isRegistrationOpen ? (
           <>
             <p style={{ color: 'rgba(255,255,255,0.85)', fontSize: 16, fontFamily: 'Poppins,sans-serif', lineHeight: 1.75, marginBottom: 18, maxWidth: 620, margin: '0 auto 24px' }}>
-              Registration is active until <strong style={{ color: '#FF9933' }}>20 July 2026</strong>. Form your team of 6 (minimum 1 female member) and secure your slot strictly via the Google Form.
+              Registration is active until <strong style={{ color: '#FF9933' }}>25 July 2026</strong>. Form your team of 6 (minimum 1 female member) and secure your slot strictly via the Google Form.
             </p>
             <div style={{ background: 'rgba(255,153,51,0.08)', border: '1px solid rgba(255,153,51,0.25)', borderRadius: 8, padding: '16px 20px', marginBottom: 30, color: '#fff', fontSize: 14, fontFamily: 'Poppins,sans-serif', display: 'inline-block', maxWidth: 620 }}>
-              ⚠️ <strong style={{ color: '#FF9933' }}>Notice:</strong> Form registrations are managed on Google Forms. Registration is NOT hosted on this website. The portal here is used exclusively for Round 1 PPT uploads beginning 20th July.
+              ⚠️ <strong style={{ color: '#FF9933' }}>Notice:</strong> Form registrations are managed on Google Forms. Registration is NOT hosted on this website. The portal here is used exclusively for Round 1 PPT uploads beginning 25th July.
             </div>
             <div style={{ display: 'flex', gap: 14, justifyContent: 'center', flexWrap: 'wrap', alignItems: 'center' }}>
               <a href="https://forms.gle/zYNYkjygKYfbAjhy6" target="_blank" rel="noopener noreferrer" style={{ padding: '14px 40px', background: 'linear-gradient(135deg, #FF9933, #e07800)', color: '#fff', borderRadius: 8, fontSize: 13, fontFamily: 'Montserrat,sans-serif', fontWeight: 800, textDecoration: 'none', textTransform: 'uppercase', letterSpacing: 1.5, boxShadow: '0 6px 24px rgba(255,153,51,0.4)', transition: 'all 0.25s', display: 'inline-block' }}
@@ -1125,7 +1125,7 @@ function OrientationModal() {
           }}>
             <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#FF9933', display: 'inline-block' }} />
             <span style={{ color: '#FF9933', fontSize: 10, fontFamily: 'Montserrat,sans-serif', fontWeight: 800, letterSpacing: 1.5, textTransform: 'uppercase' }}>
-              Orientation Session
+              Important Update
             </span>
           </div>
 
@@ -1138,92 +1138,82 @@ function OrientationModal() {
             margin: '0 0 10px',
             letterSpacing: -0.5
           }}>
-            SVH-Orientation Session
+            Attention SVH 2026 Participants!
           </h3>
 
-          {/* Date & Time */}
+          {/* Subtitle */}
           <p style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: 8,
             color: '#FF9933',
             fontSize: 15,
             fontFamily: 'Poppins,sans-serif',
             fontWeight: 600,
             margin: '0 0 24px'
           }}>
-            📅 <span>Wednesday, July 15 · 9:00 – 10:00pm</span>
+            📢 Mentor Connect Sessions Announcement
           </p>
 
-          {/* Description / Join Details */}
+          {/* Description Details */}
           <div style={{
             borderTop: '1px solid rgba(255, 255, 255, 0.08)',
             paddingTop: 20,
             marginBottom: 28,
             textAlign: 'left'
           }}>
-            <h4 style={{
-              fontFamily: 'Montserrat,sans-serif',
-              fontSize: 11,
-              fontWeight: 800,
-              color: 'rgba(255, 255, 255, 0.4)',
-              textTransform: 'uppercase',
-              letterSpacing: 1,
-              margin: '0 0 10px'
-            }}>
-              Description
-            </h4>
             <p style={{
-              color: 'rgba(255, 255, 255, 0.85)',
-              fontSize: 13.5,
+              color: 'rgba(255, 255, 255, 0.95)',
+              fontSize: 14,
               fontFamily: 'Poppins,sans-serif',
               lineHeight: 1.65,
-              margin: '0 0 20px'
+              margin: '0 0 16px'
             }}>
-              We'll be hosting an orientation session for all registered teams, walking you through the problem statement selection process, PPT submission guidelines, judging criteria, and answering any questions you have before Round 1 begins.
+              The Blockchain Club is excited to announce the upcoming <strong>Mentor Connect Sessions</strong> for <strong>SVH 2026</strong>!
             </p>
 
-            <h4 style={{
-              fontFamily: 'Montserrat,sans-serif',
-              fontSize: 11,
-              fontWeight: 800,
-              color: 'rgba(255, 255, 255, 0.4)',
-              textTransform: 'uppercase',
-              letterSpacing: 1,
-              margin: '0 0 10px'
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginBottom: 20 }}>
+              <div style={{ display: 'flex', gap: 10, alignItems: 'flex-start' }}>
+                <span style={{ fontSize: 16 }}>💡</span>
+                <span style={{ color: 'rgba(255, 255, 255, 0.85)', fontSize: 13.5, fontFamily: 'Poppins,sans-serif', lineHeight: 1.5 }}>
+                  These exclusive mentoring sessions are available <strong>only for registered SVH 2026 teams</strong>.
+                </span>
+              </div>
+              <div style={{ display: 'flex', gap: 10, alignItems: 'flex-start' }}>
+                <span style={{ fontSize: 16 }}>📌</span>
+                <span style={{ color: 'rgba(255, 255, 255, 0.85)', fontSize: 13.5, fontFamily: 'Poppins,sans-serif', lineHeight: 1.5 }}>
+                  Detailed information about the mentors and session schedule will be shared with registered teams via email.
+                </span>
+              </div>
+            </div>
+
+            <p style={{
+              color: 'rgba(255, 255, 255, 0.75)',
+              fontSize: 13.5,
+              fontFamily: 'Poppins,sans-serif',
+              lineHeight: 1.6,
+              margin: '0 0 20px',
+              fontStyle: 'italic'
             }}>
-              Google Meet Joining Info
-            </h4>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-              <div style={{ color: '#fff', fontSize: 13.5, fontFamily: 'Poppins,sans-serif' }}>
-                <strong style={{ color: 'rgba(255,255,255,0.6)' }}>Video call link:</strong>{' '}
-                <a 
-                  href="https://meet.google.com/dmi-dtur-erv" 
-                  target="_blank" 
-                  rel="noopener noreferrer" 
-                  style={{ color: '#138808', textDecoration: 'none', fontWeight: 600 }}
-                >
-                  https://meet.google.com/dmi-dtur-erv
-                </a>
-              </div>
-              <div style={{ color: '#fff', fontSize: 13.5, fontFamily: 'Poppins,sans-serif' }}>
-                <strong style={{ color: 'rgba(255,255,255,0.6)' }}>Live stream:</strong>{' '}
-                <a 
-                  href="https://stream.meet.google.com/stream/1b2d060c-6900-472c-99ba-3f2213eef9ec" 
-                  target="_blank" 
-                  rel="noopener noreferrer" 
-                  style={{ color: '#FF9933', textDecoration: 'none', fontWeight: 600 }}
-                >
-                  https://stream.meet.google.com/stream/1b2d060c-6900-472c-99ba-3f2213eef9ec
-                </a>
-              </div>
+              This is your opportunity to learn directly from those who have successfully navigated the SIH journey and emerged as winners.
+            </p>
+
+            <div style={{
+              background: 'rgba(255, 153, 51, 0.1)',
+              border: '1.5px solid rgba(255, 153, 51, 0.3)',
+              borderRadius: 12,
+              padding: '12px 18px',
+              textAlign: 'center',
+              color: '#fff',
+              fontFamily: 'Montserrat,sans-serif',
+              fontWeight: 800,
+              fontSize: 14
+            }}>
+              ⏳ Registrations are extended till 25th July!
             </div>
           </div>
 
           {/* Action Buttons */}
           <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', justifyContent: 'center' }}>
             <a 
-              href="https://meet.google.com/dmi-dtur-erv" 
+              href="https://forms.gle/zYNYkjygKYfbAjhy6" 
               target="_blank" 
               rel="noopener noreferrer" 
               style={{
@@ -1231,30 +1221,31 @@ function OrientationModal() {
                 alignItems: 'center',
                 gap: 8,
                 padding: '12px 24px',
-                background: '#138808',
+                background: 'linear-gradient(135deg, #FF9933 0%, #e07800 100%)',
                 color: '#fff',
                 borderRadius: 8,
                 fontSize: 12.5,
                 fontFamily: 'Montserrat,sans-serif',
-                fontWeight: 700,
+                fontWeight: 800,
                 textDecoration: 'none',
-                boxShadow: '0 4px 14px rgba(19, 136, 8, 0.3)',
-                transition: 'all 0.25s'
+                boxShadow: '0 4px 14px rgba(255, 153, 51, 0.3)',
+                transition: 'all 0.25s',
+                textTransform: 'uppercase'
               }}
               onMouseEnter={e => {
                 e.currentTarget.style.transform = 'translateY(-2px)';
-                e.currentTarget.style.boxShadow = '0 6px 20px rgba(19, 136, 8, 0.45)';
+                e.currentTarget.style.boxShadow = '0 6px 20px rgba(255, 153, 51, 0.45)';
               }}
               onMouseLeave={e => {
                 e.currentTarget.style.transform = 'none';
-                e.currentTarget.style.boxShadow = '0 4px 14px rgba(19, 136, 8, 0.3)';
+                e.currentTarget.style.boxShadow = '0 4px 14px rgba(255, 153, 51, 0.3)';
               }}
             >
-              💻 Join Video Call
-            </a >
+              🔥 Register Now
+            </a>
 
             <a 
-              href="https://calendar.google.com/calendar/event?action=TEMPLATE&tmeid=M3R1MWRwNWg3YWJ2Ymk3dXRmMXU5OGFscnEgZGhhaXJ5YS4yM2JjZTEwMjI1QHZpdGJob3BhbC5hYy5pbg&tmsrc=dhairya.23bce10225%40vitbhopal.ac.in" 
+              href="https://chat.whatsapp.com/L7lXF9VZQRDCx0aXXwBhGw?s=sw&p=a&mlu=2" 
               target="_blank" 
               rel="noopener noreferrer" 
               style={{
@@ -1262,26 +1253,27 @@ function OrientationModal() {
                 alignItems: 'center',
                 gap: 8,
                 padding: '12px 24px',
-                background: 'transparent',
-                color: '#FF9933',
+                background: '#16a34a',
+                color: '#fff',
                 borderRadius: 8,
                 fontSize: 12.5,
                 fontFamily: 'Montserrat,sans-serif',
-                fontWeight: 700,
+                fontWeight: 800,
                 textDecoration: 'none',
-                border: '1.5px solid rgba(255, 153, 51, 0.4)',
-                transition: 'all 0.25s'
+                boxShadow: '0 4px 14px rgba(22, 163, 74, 0.3)',
+                transition: 'all 0.25s',
+                textTransform: 'uppercase'
               }}
               onMouseEnter={e => {
-                e.currentTarget.style.background = 'rgba(255, 153, 51, 0.08)';
                 e.currentTarget.style.transform = 'translateY(-2px)';
+                e.currentTarget.style.boxShadow = '0 6px 20px rgba(22, 163, 74, 0.45)';
               }}
               onMouseLeave={e => {
-                e.currentTarget.style.background = 'transparent';
                 e.currentTarget.style.transform = 'none';
+                e.currentTarget.style.boxShadow = '0 4px 14px rgba(22, 163, 74, 0.3)';
               }}
             >
-              🗓️ Add to Calendar
+              💬 WhatsApp Group
             </a>
           </div>
         </div>

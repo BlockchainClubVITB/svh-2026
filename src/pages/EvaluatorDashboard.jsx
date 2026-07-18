@@ -49,20 +49,58 @@ function FloatingParticles({ count = 18 }) {
 
 export default function EvaluatorDashboard() {
   const [session, setSession] = useState(null);
-  const [activeTab, setActiveTab] = useState('assigned'); // 'assigned' or 'ideas'
+  const [activeTab, setActiveTab] = useState('evaluate'); // 'evaluate' or 'completed'
+  const [selectedSubmission, setSelectedSubmission] = useState(null); // Active submission in modal
   const navigate = useNavigate();
 
-  // Score states for each team's idea
-  const [scores, setScores] = useState({
-    'T-4032': { q1: 5, q2: 5, q3: 5, q4: 5, q5: 5 },
-    'T-8219': { q1: 5, q2: 5, q3: 5, q4: 5, q5: 5 },
-    'T-1102': { q1: 5, q2: 5, q3: 5, q4: 5, q5: 5 }
-  });
+  // State to track all submissions
+  const [submissions, setSubmissions] = useState([
+    {
+      teamId: 'T-4032',
+      teamName: 'Team Alpha',
+      leaderName: 'Amit Patel',
+      psId: 'PS-104',
+      psName: 'Decentralized Crop Insurance Platform',
+      solutionId: 'SOL-8821',
+      videoLink: 'https://www.youtube.com/embed/dQw4w9WgXcQ', // Demo video link
+      questionsAsked: 'How does it handle satellite data offline? What is the gas cost optimization strategy?',
+      pptUrl: 'https://docs.google.com/presentation/d/17MCZsoHCGdJTqVKxhuHExweQI1M-0w59/embed?start=false&loop=false&delayms=3000'
+    },
+    {
+      teamId: 'T-8219',
+      teamName: 'Team ByteCraft',
+      leaderName: 'Sneha Reddy',
+      psId: 'PS-208',
+      psName: 'AI-Powered Traffic Congestion Management',
+      solutionId: 'SOL-5491',
+      videoLink: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
+      questionsAsked: 'What is the inference latency of the model? How does it perform in low lighting conditions?',
+      pptUrl: 'https://docs.google.com/presentation/d/17MCZsoHCGdJTqVKxhuHExweQI1M-0w59/embed?start=false&loop=false&delayms=3000'
+    },
+    {
+      teamId: 'T-1102',
+      teamName: 'Team CyberNaut',
+      leaderName: 'Rohan Sen',
+      psId: 'PS-312',
+      psName: 'Secure Medical Record Sharing Protocol',
+      solutionId: 'SOL-9304',
+      videoLink: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
+      questionsAsked: 'Are zero-knowledge proof generation times feasible on mobile devices?',
+      pptUrl: 'https://docs.google.com/presentation/d/17MCZsoHCGdJTqVKxhuHExweQI1M-0w59/embed?start=false&loop=false&delayms=3000'
+    }
+  ]);
 
-  const [submittedStatus, setSubmittedStatus] = useState({
-    'T-4032': false,
-    'T-8219': false,
-    'T-1102': false
+  // Track completed evaluations
+  const [completedEvaluations, setCompletedEvaluations] = useState([]);
+
+  // Temp scores state for evaluation modal
+  const [evalScores, setEvalScores] = useState({
+    alignment: 10,
+    innovation: 10,
+    feasibility: 10,
+    scalability: 10,
+    compliance: 10,
+    comments: ''
   });
 
   useEffect(() => {
@@ -79,62 +117,55 @@ export default function EvaluatorDashboard() {
     navigate('/login');
   };
 
-  const handleScoreChange = (teamId, field, val) => {
-    const numericVal = Math.min(5, Math.max(0, parseFloat(val) || 0));
-    setScores(prev => ({
-      ...prev,
-      [teamId]: {
-        ...prev[teamId],
-        [field]: numericVal
-      }
-    }));
+  // Open modal and load default scores
+  const startEvaluation = (submission) => {
+    setSelectedSubmission(submission);
+    setEvalScores({
+      alignment: 10,
+      innovation: 10,
+      feasibility: 10,
+      scalability: 10,
+      compliance: 10,
+      comments: ''
+    });
   };
 
-  const handleSubmitScore = (teamId) => {
-    setSubmittedStatus(prev => ({
-      ...prev,
-      [teamId]: true
-    }));
-    alert(`Scores for Team ${teamId} submitted successfully!`);
-  };
-
-  const assignedTeams = [
-    { id: 'T-4032', name: 'Team Alpha', leader: 'Amit Patel', college: 'VIT Bhopal', membersCount: 6 },
-    { id: 'T-8219', name: 'Team ByteCraft', leader: 'Sneha Reddy', college: 'IIT Bombay', membersCount: 5 },
-    { id: 'T-1102', name: 'Team CyberNaut', leader: 'Rohan Sen', college: 'NIT Trichy', membersCount: 6 }
-  ];
-
-  const submittedIdeas = [
-    {
-      teamId: 'T-4032',
-      teamName: 'Team Alpha',
-      title: 'Decentralized Crop Insurance Platform',
-      problemStatement: 'Smart agriculture and crop insurance verification using satellite data and smart contracts.',
-      pptUrl: '#'
-    },
-    {
-      teamId: 'T-8219',
-      teamName: 'Team ByteCraft',
-      title: 'AI-Powered Traffic Congestion Management',
-      problemStatement: 'Real-time traffic density analysis using legacy CCTV footage and deep learning.',
-      pptUrl: '#'
-    },
-    {
-      teamId: 'T-1102',
-      teamName: 'Team CyberNaut',
-      title: 'Secure Medical Record Sharing Protocol',
-      problemStatement: 'Consent-driven patient health record sharing using zero-knowledge proofs.',
-      pptUrl: '#'
+  const handleScoreChange = (field, val) => {
+    if (field === 'comments') {
+      setEvalScores(prev => ({ ...prev, comments: val }));
+    } else {
+      const numericVal = Math.min(10, Math.max(0, parseInt(val) || 0));
+      setEvalScores(prev => ({ ...prev, [field]: numericVal }));
     }
-  ];
+  };
 
-  const criteria = [
-    { key: 'q1', label: 'Problem-Solution Alignment', desc: 'Direct capability of the proposed idea to resolve every edge case of the official ministry problem statement.' },
-    { key: 'q2', label: 'Innovation & Uniqueness', desc: 'Novelty of your Unique Value Proposition (UVP) compared to current market solutions, avoiding basic clone concepts.' },
-    { key: 'q3', label: 'Technical Feasibility', desc: 'Logical correctness of the technical architecture diagram and the maturity of your listed technology stack.' },
-    { key: 'q4', label: 'Scalability & Practicality', desc: 'Practical viability to deploy, sustain, and scale the solution effectively at a pan-India level.' },
-    { key: 'q5', label: 'Template & Format Compliance', desc: 'Strict adherence to the 6-slide ceiling, PDF file format, and untouched official header titles.' }
-  ];
+  const submitEvaluation = () => {
+    if (!selectedSubmission) return;
+
+    const totalScore = 
+      evalScores.alignment + 
+      evalScores.innovation + 
+      evalScores.feasibility + 
+      evalScores.scalability + 
+      evalScores.compliance;
+
+    const newEvaluation = {
+      ...selectedSubmission,
+      scores: { ...evalScores },
+      totalScore,
+      evaluatedAt: new Date().toLocaleDateString()
+    };
+
+    // Add to completed list
+    setCompletedEvaluations(prev => [...prev, newEvaluation]);
+    
+    // Remove from active list
+    setSubmissions(prev => prev.filter(sub => sub.teamId !== selectedSubmission.teamId));
+
+    // Close Modal
+    setSelectedSubmission(null);
+    alert(`Evaluation for ${selectedSubmission.teamName} successfully submitted!`);
+  };
 
   return (
     <section style={{
@@ -163,83 +194,46 @@ export default function EvaluatorDashboard() {
         zIndex: 10,
         flexShrink: 0
       }}>
-        {/* Evaluator Details */}
-        {session && (
-          <div style={{
-            background: 'rgba(255, 153, 51, 0.05)',
-            border: '1px solid rgba(255, 153, 51, 0.2)',
-            borderRadius: 16,
-            padding: 20,
-            textAlign: 'center'
-          }}>
-            <div style={{ fontSize: 36, marginBottom: 12 }}>👨‍🏫</div>
-            <h3 style={{ color: '#fff', margin: '0 0 4px', fontFamily: 'Montserrat,sans-serif', fontWeight: 700, fontSize: 16 }}>
-              {session.name}
-            </h3>
-            <span style={{
-              display: 'inline-block',
-              background: 'rgba(255, 153, 51, 0.15)',
-              color: '#FF9933',
-              padding: '2px 10px',
-              borderRadius: 20,
-              fontSize: 10,
-              fontWeight: 700,
-              textTransform: 'uppercase',
-              letterSpacing: 1,
-              fontFamily: 'Montserrat,sans-serif',
-              marginBottom: 10
-            }}>{session.role}</span>
-            <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: 12, margin: 0, fontFamily: 'Poppins,sans-serif' }}>
-              {session.email}
-            </p>
-          </div>
-        )}
-
-        {/* Navigation Tabs */}
+        {/* Sidebar Nav */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
           <button
-            onClick={() => setActiveTab('assigned')}
+            onClick={() => setActiveTab('evaluate')}
             style={{
               padding: '14px 18px',
-              background: activeTab === 'assigned' ? 'rgba(255,153,51,0.15)' : 'transparent',
-              color: activeTab === 'assigned' ? '#FF9933' : '#fff',
-              border: activeTab === 'assigned' ? '1px solid rgba(255,153,51,0.3)' : '1px solid rgba(255,255,255,0.1)',
+              background: activeTab === 'evaluate' ? 'rgba(255,153,51,0.12)' : 'transparent',
+              color: activeTab === 'evaluate' ? '#FF9933' : '#fff',
+              border: activeTab === 'evaluate' ? '1px solid rgba(255,153,51,0.25)' : '1px solid rgba(255,255,255,0.1)',
               borderRadius: 12,
               cursor: 'pointer',
               fontWeight: 600,
               fontFamily: 'Poppins,sans-serif',
               textAlign: 'left',
-              display: 'flex',
-              alignItems: 'center',
-              gap: 12,
               transition: 'all 0.2s'
             }}
           >
-            <span>📋</span> Assigned Teams
+            Evaluate Ideas
           </button>
+          
           <button
-            onClick={() => setActiveTab('ideas')}
+            onClick={() => setActiveTab('completed')}
             style={{
               padding: '14px 18px',
-              background: activeTab === 'ideas' ? 'rgba(19,136,8,0.15)' : 'transparent',
-              color: activeTab === 'ideas' ? '#138808' : '#fff',
-              border: activeTab === 'ideas' ? '1px solid rgba(19,136,8,0.3)' : '1px solid rgba(255,255,255,0.1)',
+              background: activeTab === 'completed' ? 'rgba(19,136,8,0.12)' : 'transparent',
+              color: activeTab === 'completed' ? '#138808' : '#fff',
+              border: activeTab === 'completed' ? '1px solid rgba(19,136,8,0.25)' : '1px solid rgba(255,255,255,0.1)',
               borderRadius: 12,
               cursor: 'pointer',
               fontWeight: 600,
               fontFamily: 'Poppins,sans-serif',
               textAlign: 'left',
-              display: 'flex',
-              alignItems: 'center',
-              gap: 12,
               transition: 'all 0.2s'
             }}
           >
-            <span>💡</span> Submitted Ideas
+            Completed Evaluations
           </button>
         </div>
 
-        {/* Action Buttons */}
+        {/* Footer controls */}
         <div style={{ marginTop: 'auto', display: 'flex', flexDirection: 'column', gap: 12 }}>
           <button
             onClick={() => navigate('/')}
@@ -288,40 +282,74 @@ export default function EvaluatorDashboard() {
         overflowY: 'auto',
         boxSizing: 'border-box'
       }}>
-        {activeTab === 'assigned' ? (
+        {activeTab === 'evaluate' ? (
           <div>
             <h1 style={{ fontFamily: 'Montserrat,sans-serif', fontWeight: 900, color: '#fff', fontSize: 32, marginBottom: 28, letterSpacing: -0.5 }}>
-              Assigned Teams ({assignedTeams.length})
+              Evaluate Ideas
             </h1>
 
             <div style={{
               background: 'rgba(255, 255, 255, 0.03)',
               border: '1px solid rgba(255, 153, 51, 0.15)',
               borderRadius: 20,
-              padding: '32px',
+              padding: '24px 32px',
               backdropFilter: 'blur(16px)',
-              boxShadow: '0 16px 40px rgba(0,0,0,0.3)'
+              boxShadow: '0 16px 40px rgba(0,0,0,0.3)',
+              overflowX: 'auto'
             }}>
               <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontFamily: 'Poppins,sans-serif' }}>
                 <thead>
                   <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
-                    <th style={{ padding: '12px 16px', color: 'rgba(255,255,255,0.6)', fontWeight: 600, fontSize: 14 }}>Team ID</th>
-                    <th style={{ padding: '12px 16px', color: 'rgba(255,255,255,0.6)', fontWeight: 600, fontSize: 14 }}>Team Name</th>
-                    <th style={{ padding: '12px 16px', color: 'rgba(255,255,255,0.6)', fontWeight: 600, fontSize: 14 }}>Team Leader</th>
-                    <th style={{ padding: '12px 16px', color: 'rgba(255,255,255,0.6)', fontWeight: 600, fontSize: 14 }}>College</th>
-                    <th style={{ padding: '12px 16px', color: 'rgba(255,255,255,0.6)', fontWeight: 600, fontSize: 14 }}>Members</th>
+                    <th style={{ padding: '12px 16px', color: 'rgba(255,255,255,0.6)', fontWeight: 600, fontSize: 13, textTransform: 'uppercase' }}>Team ID</th>
+                    <th style={{ padding: '12px 16px', color: 'rgba(255,255,255,0.6)', fontWeight: 600, fontSize: 13, textTransform: 'uppercase' }}>Team Name</th>
+                    <th style={{ padding: '12px 16px', color: 'rgba(255,255,255,0.6)', fontWeight: 600, fontSize: 13, textTransform: 'uppercase' }}>Team Leader</th>
+                    <th style={{ padding: '12px 16px', color: 'rgba(255,255,255,0.6)', fontWeight: 600, fontSize: 13, textTransform: 'uppercase' }}>PS ID</th>
+                    <th style={{ padding: '12px 16px', color: 'rgba(255,255,255,0.6)', fontWeight: 600, fontSize: 13, textTransform: 'uppercase' }}>Problem Statement Name</th>
+                    <th style={{ padding: '12px 16px', color: 'rgba(255,255,255,0.6)', fontWeight: 600, fontSize: 13, textTransform: 'uppercase' }}>Solution ID</th>
+                    <th style={{ padding: '12px 16px', color: 'rgba(255,255,255,0.6)', fontWeight: 600, fontSize: 13, textTransform: 'uppercase', textAlign: 'center' }}>Action</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {assignedTeams.map((team, idx) => (
-                    <tr key={team.id} style={{ borderBottom: idx < assignedTeams.length - 1 ? '1px solid rgba(255,255,255,0.05)' : 'none' }}>
-                      <td style={{ padding: '16px', color: '#FF9933', fontWeight: 600, fontSize: 14 }}>{team.id}</td>
-                      <td style={{ padding: '16px', color: '#fff', fontSize: 14, fontWeight: 500 }}>{team.name}</td>
-                      <td style={{ padding: '16px', color: '#fff', fontSize: 14 }}>{team.leader}</td>
-                      <td style={{ padding: '16px', color: 'rgba(255,255,255,0.8)', fontSize: 14 }}>{team.college}</td>
-                      <td style={{ padding: '16px', color: 'rgba(255,255,255,0.8)', fontSize: 14 }}>{team.membersCount}</td>
+                  {submissions.length === 0 ? (
+                    <tr>
+                      <td colSpan="7" style={{ padding: '32px 16px', color: 'rgba(255,255,255,0.4)', textAlign: 'center', fontSize: 14 }}>
+                        No pending ideas to evaluate.
+                      </td>
                     </tr>
-                  ))}
+                  ) : (
+                    submissions.map((sub, idx) => (
+                      <tr key={sub.teamId} style={{ borderBottom: idx < submissions.length - 1 ? '1px solid rgba(255,255,255,0.05)' : 'none' }}>
+                        <td style={{ padding: '16px', color: '#FF9933', fontWeight: 600, fontSize: 14 }}>{sub.teamId}</td>
+                        <td style={{ padding: '16px', color: '#fff', fontSize: 14, fontWeight: 500 }}>{sub.teamName}</td>
+                        <td style={{ padding: '16px', color: '#fff', fontSize: 14 }}>{sub.leaderName}</td>
+                        <td style={{ padding: '16px', color: '#FF9933', fontSize: 14, fontFamily: 'Courier New, monospace' }}>{sub.psId}</td>
+                        <td style={{ padding: '16px', color: 'rgba(255,255,255,0.8)', fontSize: 14, maxWidth: 220, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{sub.psName}</td>
+                        <td style={{ padding: '16px', color: '#138808', fontSize: 14, fontFamily: 'Courier New, monospace' }}>{sub.solutionId}</td>
+                        <td style={{ padding: '16px', textAlign: 'center' }}>
+                          <button
+                            onClick={() => startEvaluation(sub)}
+                            style={{
+                              padding: '8px 16px',
+                              background: 'linear-gradient(135deg, #FF9933 0%, #e07800 100%)',
+                              color: '#fff',
+                              borderRadius: 8,
+                              border: 'none',
+                              fontFamily: 'Montserrat,sans-serif',
+                              fontWeight: 700,
+                              fontSize: 12,
+                              cursor: 'pointer',
+                              boxShadow: '0 4px 12px rgba(255,153,51,0.25)',
+                              transition: 'all 0.2s'
+                            }}
+                            onMouseEnter={e => e.currentTarget.style.transform = 'translateY(-1px)'}
+                            onMouseLeave={e => e.currentTarget.style.transform = 'none'}
+                          >
+                            Evaluate
+                          </button>
+                        </td>
+                      </tr>
+                    ))
+                  )}
                 </tbody>
               </table>
             </div>
@@ -329,176 +357,295 @@ export default function EvaluatorDashboard() {
         ) : (
           <div>
             <h1 style={{ fontFamily: 'Montserrat,sans-serif', fontWeight: 900, color: '#fff', fontSize: 32, marginBottom: 28, letterSpacing: -0.5 }}>
-              Submitted Ideas & Evaluation
+              Completed Evaluations
             </h1>
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 32 }}>
-              {submittedIdeas.map((idea) => {
-                const teamScores = scores[idea.teamId] || { q1: 5, q2: 5, q3: 5, q4: 5, q5: 5 };
-                const totalScore = teamScores.q1 + teamScores.q2 + teamScores.q3 + teamScores.q4 + teamScores.q5;
-
-                return (
-                  <div key={idea.teamId} style={{
-                    background: 'rgba(255, 255, 255, 0.03)',
-                    border: '1px solid rgba(255, 153, 51, 0.15)',
-                    borderRadius: 20,
-                    padding: '32px',
-                    backdropFilter: 'blur(16px)',
-                    boxShadow: '0 16px 40px rgba(0,0,0,0.3)',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    gap: 24
-                  }}>
-                    {/* Header Info */}
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 16 }}>
-                      <div>
-                        <span style={{ color: '#FF9933', fontSize: 13, fontWeight: 700, fontFamily: 'Montserrat,sans-serif' }}>
-                          {idea.teamName} ({idea.teamId})
-                        </span>
-                        <h2 style={{ color: '#fff', margin: '6px 0 10px', fontSize: 22, fontFamily: 'Montserrat,sans-serif', fontWeight: 800 }}>
-                          {idea.title}
-                        </h2>
-                        <p style={{ color: 'rgba(255,255,255,0.7)', fontSize: 14, margin: 0, fontFamily: 'Poppins,sans-serif', lineHeight: 1.5 }}>
-                          <strong>Problem:</strong> {idea.problemStatement}
-                        </p>
-                      </div>
-                      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 8 }}>
-                        <div style={{
-                          background: 'rgba(255, 255, 255, 0.05)',
-                          border: '1px solid rgba(255, 255, 255, 0.1)',
-                          borderRadius: 12,
-                          padding: '12px 20px',
-                          textAlign: 'center'
-                        }}>
-                          <span style={{ display: 'block', color: 'rgba(255,255,255,0.5)', fontSize: 10, textTransform: 'uppercase', fontWeight: 700 }}>Total Score</span>
-                          <span style={{ color: '#FF9933', fontSize: 24, fontWeight: 900 }}>{totalScore} <span style={{ fontSize: 14, color: 'rgba(255,255,255,0.5)' }}>/ 25</span></span>
-                        </div>
-                        <a href={idea.pptUrl} style={{
-                          color: '#138808',
-                          textDecoration: 'none',
-                          fontSize: 13,
-                          fontWeight: 600,
-                          fontFamily: 'Poppins,sans-serif',
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: 6
-                        }}>
-                          📂 View Submitted PPT
-                        </a>
-                      </div>
-                    </div>
-
-                    <hr style={{ border: 'none', borderTop: '1px solid rgba(255,255,255,0.1)', margin: 0 }} />
-
-                    {/* Marking System */}
-                    <div>
-                      <h3 style={{ color: '#fff', fontSize: 16, fontFamily: 'Montserrat,sans-serif', fontWeight: 700, marginBottom: 20 }}>
-                        Evaluation Scorecard
-                      </h3>
-
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-                        {criteria.map((crit, idx) => (
-                          <div key={crit.key} style={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'space-between',
-                            gap: 24,
-                            background: 'rgba(255,255,255,0.01)',
-                            padding: '16px 20px',
-                            borderRadius: 12,
-                            border: '1px solid rgba(255,255,255,0.03)'
-                          }}>
-                            <div style={{ flex: 1 }}>
-                              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                                <span style={{
-                                  background: 'rgba(255, 153, 51, 0.15)',
-                                  color: '#FF9933',
-                                  padding: '2px 8px',
-                                  borderRadius: 6,
-                                  fontSize: 11,
-                                  fontWeight: 700,
-                                  fontFamily: 'Montserrat,sans-serif'
-                                }}>0{idx + 1}</span>
-                                <h4 style={{ color: '#fff', margin: 0, fontSize: 15, fontFamily: 'Poppins,sans-serif', fontWeight: 600 }}>
-                                  {crit.label}
-                                </h4>
-                              </div>
-                              <p style={{ color: 'rgba(255,255,255,0.5)', fontSize: 12, margin: '6px 0 0', fontFamily: 'Poppins,sans-serif', lineHeight: 1.4 }}>
-                                {crit.desc}
-                              </p>
-                            </div>
-
-                            <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                              <input
-                                type="range"
-                                min="0"
-                                max="5"
-                                step="0.5"
-                                value={teamScores[crit.key]}
-                                disabled={submittedStatus[idea.teamId]}
-                                onChange={(e) => handleScoreChange(idea.teamId, crit.key, e.target.value)}
-                                style={{
-                                  width: 120,
-                                  accentColor: '#FF9933',
-                                  cursor: 'pointer'
-                                }}
-                              />
-                              <input
-                                type="number"
-                                min="0"
-                                max="5"
-                                step="0.5"
-                                value={teamScores[crit.key]}
-                                disabled={submittedStatus[idea.teamId]}
-                                onChange={(e) => handleScoreChange(idea.teamId, crit.key, e.target.value)}
-                                style={{
-                                  width: 60,
-                                  padding: '8px',
-                                  background: 'rgba(255,255,255,0.05)',
-                                  border: '1px solid rgba(255,255,255,0.1)',
-                                  borderRadius: 8,
-                                  color: '#fff',
-                                  textAlign: 'center',
-                                  fontSize: 14,
-                                  fontFamily: 'Poppins,sans-serif',
-                                  outline: 'none'
-                                }}
-                              />
-                              <span style={{ color: 'rgba(255,255,255,0.5)', fontSize: 13, fontFamily: 'Poppins,sans-serif' }}>/ 5</span>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-
-                    {/* Action Button */}
-                    <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 12 }}>
-                      <button
-                        onClick={() => handleSubmitScore(idea.teamId)}
-                        disabled={submittedStatus[idea.teamId]}
-                        style={{
-                          padding: '12px 28px',
-                          background: submittedStatus[idea.teamId] ? 'rgba(255,255,255,0.1)' : 'linear-gradient(135deg, #138808, #0e6605)',
-                          color: submittedStatus[idea.teamId] ? 'rgba(255,255,255,0.4)' : '#fff',
-                          border: 'none',
-                          borderRadius: 10,
-                          fontWeight: 700,
-                          fontFamily: 'Montserrat,sans-serif',
-                          cursor: submittedStatus[idea.teamId] ? 'not-allowed' : 'pointer',
-                          boxShadow: submittedStatus[idea.teamId] ? 'none' : '0 8px 24px rgba(19,136,8,0.2)',
-                          transition: 'all 0.2s'
-                        }}
-                      >
-                        {submittedStatus[idea.teamId] ? 'Evaluation Submitted ✓' : 'Submit Evaluation'}
-                      </button>
-                    </div>
-                  </div>
-                );
-              })}
+            <div style={{
+              background: 'rgba(255, 255, 255, 0.03)',
+              border: '1px solid rgba(19, 136, 8, 0.2)',
+              borderRadius: 20,
+              padding: '24px 32px',
+              backdropFilter: 'blur(16px)',
+              boxShadow: '0 16px 40px rgba(0,0,0,0.3)',
+              overflowX: 'auto'
+            }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontFamily: 'Poppins,sans-serif' }}>
+                <thead>
+                  <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
+                    <th style={{ padding: '12px 16px', color: 'rgba(255,255,255,0.6)', fontWeight: 600, fontSize: 13, textTransform: 'uppercase' }}>Team ID</th>
+                    <th style={{ padding: '12px 16px', color: 'rgba(255,255,255,0.6)', fontWeight: 600, fontSize: 13, textTransform: 'uppercase' }}>Team Name</th>
+                    <th style={{ padding: '12px 16px', color: 'rgba(255,255,255,0.6)', fontWeight: 600, fontSize: 13, textTransform: 'uppercase' }}>PS ID</th>
+                    <th style={{ padding: '12px 16px', color: 'rgba(255,255,255,0.6)', fontWeight: 600, fontSize: 13, textTransform: 'uppercase' }}>Solution ID</th>
+                    <th style={{ padding: '12px 16px', color: 'rgba(255,255,255,0.6)', fontWeight: 600, fontSize: 13, textTransform: 'uppercase' }}>Score Given</th>
+                    <th style={{ padding: '12px 16px', color: 'rgba(255,255,255,0.6)', fontWeight: 600, fontSize: 13, textTransform: 'uppercase' }}>Evaluated On</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {completedEvaluations.length === 0 ? (
+                    <tr>
+                      <td colSpan="6" style={{ padding: '32px 16px', color: 'rgba(255,255,255,0.4)', textAlign: 'center', fontSize: 14 }}>
+                        No completed evaluations yet.
+                      </td>
+                    </tr>
+                  ) : (
+                    completedEvaluations.map((sub, idx) => (
+                      <tr key={sub.teamId} style={{ borderBottom: idx < completedEvaluations.length - 1 ? '1px solid rgba(255,255,255,0.05)' : 'none' }}>
+                        <td style={{ padding: '16px', color: '#138808', fontWeight: 600, fontSize: 14 }}>{sub.teamId}</td>
+                        <td style={{ padding: '16px', color: '#fff', fontSize: 14, fontWeight: 500 }}>{sub.teamName}</td>
+                        <td style={{ padding: '16px', color: 'rgba(255,255,255,0.8)', fontSize: 14, fontFamily: 'Courier New, monospace' }}>{sub.psId}</td>
+                        <td style={{ padding: '16px', color: 'rgba(255,255,255,0.8)', fontSize: 14, fontFamily: 'Courier New, monospace' }}>{sub.solutionId}</td>
+                        <td style={{ padding: '16px', color: '#FF9933', fontSize: 15, fontWeight: 700 }}>{sub.totalScore} <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.4)', fontWeight: 500 }}>/ 50</span></td>
+                        <td style={{ padding: '16px', color: 'rgba(255,255,255,0.6)', fontSize: 13 }}>{sub.evaluatedAt}</td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
             </div>
           </div>
         )}
       </main>
+
+      {/* Interactive Evaluation Popup Modal */}
+      {selectedSubmission && (
+        <div style={{
+          position: 'fixed',
+          inset: 0,
+          background: 'rgba(7, 25, 44, 0.85)',
+          backdropFilter: 'blur(10px)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 99999,
+          padding: 20
+        }}>
+          <div style={{
+            position: 'relative',
+            width: '100%',
+            maxWidth: 1200,
+            height: '90vh',
+            background: 'linear-gradient(135deg, rgba(255, 153, 51, 0.15) 0%, rgba(19, 136, 8, 0.1) 100%)',
+            border: '1.5px solid rgba(255, 255, 255, 0.15)',
+            borderRadius: 24,
+            padding: 2,
+            boxShadow: '0 24px 60px rgba(0,0,0,0.6)'
+          }}>
+            <div style={{
+              background: '#07192c',
+              borderRadius: 22,
+              height: '100%',
+              display: 'flex',
+              flexDirection: 'column',
+              overflow: 'hidden'
+            }}>
+              {/* Header */}
+              <div style={{
+                padding: '24px 32px',
+                borderBottom: '1px solid rgba(255,255,255,0.1)',
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                background: 'rgba(255,255,255,0.02)'
+              }}>
+                <div>
+                  <span style={{ color: '#FF9933', fontSize: 12, fontWeight: 700, fontFamily: 'Montserrat,sans-serif', textTransform: 'uppercase', letterSpacing: 1.5 }}>Review & Evaluate</span>
+                  <h2 style={{ color: '#fff', fontSize: 22, fontFamily: 'Montserrat,sans-serif', fontWeight: 900, margin: '4px 0 0' }}>
+                    {selectedSubmission.teamName} <span style={{ color: 'rgba(255,255,255,0.4)', fontWeight: 500 }}>({selectedSubmission.teamId})</span>
+                  </h2>
+                </div>
+                <button
+                  onClick={() => setSelectedSubmission(null)}
+                  style={{
+                    background: 'rgba(255,255,255,0.05)',
+                    border: '1px solid rgba(255,255,255,0.15)',
+                    width: 36,
+                    height: 36,
+                    borderRadius: '50%',
+                    color: '#fff',
+                    fontSize: 16,
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    transition: 'all 0.2s'
+                  }}
+                  onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.15)'}
+                  onMouseLeave={e => e.currentTarget.style.background = 'rgba(255,255,255,0.05)'}
+                >
+                  ✕
+                </button>
+              </div>
+
+              {/* Body (Split Screen) */}
+              <div style={{ flex: 1, display: 'flex', overflow: 'hidden' }}>
+                {/* Left side: Info & Embedded Presentation */}
+                <div style={{
+                  flex: 1.2,
+                  padding: 32,
+                  overflowY: 'auto',
+                  borderRight: '1px solid rgba(255,255,255,0.1)',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: 24
+                }}>
+                  {/* Metadata fields */}
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20 }}>
+                    <div>
+                      <strong style={{ color: 'rgba(255,255,255,0.4)', fontSize: 11, textTransform: 'uppercase', display: 'block', marginBottom: 4 }}>Problem Statement</strong>
+                      <div style={{ color: '#fff', fontSize: 14, fontWeight: 600 }}>{selectedSubmission.psId} — {selectedSubmission.psName}</div>
+                    </div>
+                    <div>
+                      <strong style={{ color: 'rgba(255,255,255,0.4)', fontSize: 11, textTransform: 'uppercase', display: 'block', marginBottom: 4 }}>Solution ID</strong>
+                      <div style={{ color: '#138808', fontSize: 14, fontWeight: 700, fontFamily: 'Courier New, monospace' }}>{selectedSubmission.solutionId}</div>
+                    </div>
+                    <div>
+                      <strong style={{ color: 'rgba(255,255,255,0.4)', fontSize: 11, textTransform: 'uppercase', display: 'block', marginBottom: 4 }}>Video Link</strong>
+                      <a href={selectedSubmission.videoLink} target="_blank" rel="noopener noreferrer" style={{ color: '#FF9933', fontSize: 13.5, fontWeight: 600, textDecoration: 'underline' }}>
+                        🔗 Demo Presentation Video
+                      </a>
+                    </div>
+                    <div>
+                      <strong style={{ color: 'rgba(255,255,255,0.4)', fontSize: 11, textTransform: 'uppercase', display: 'block', marginBottom: 4 }}>Questions Answered</strong>
+                      <div style={{ color: 'rgba(255,255,255,0.8)', fontSize: 13, lineHeight: 1.5 }}>
+                        {selectedSubmission.questionsAsked}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Embedded PDF/PPT Viewer */}
+                  <div style={{ flex: 1, minHeight: 350, display: 'flex', flexDirection: 'column' }}>
+                    <strong style={{ color: 'rgba(255,255,255,0.4)', fontSize: 11, textTransform: 'uppercase', display: 'block', marginBottom: 10 }}>Submitted PPT Slide Deck</strong>
+                    <div style={{
+                      flex: 1,
+                      border: '1px solid rgba(255,255,255,0.1)',
+                      borderRadius: 12,
+                      overflow: 'hidden',
+                      background: '#04111f',
+                      position: 'relative'
+                    }}>
+                      <iframe 
+                        src={selectedSubmission.pptUrl} 
+                        width="100%" 
+                        height="100%" 
+                        allowFullScreen 
+                        style={{ border: 'none' }}
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Right side: Point Scoring */}
+                <div style={{
+                  flex: 0.8,
+                  padding: 32,
+                  overflowY: 'auto',
+                  background: 'rgba(255,255,255,0.01)',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: 24
+                }}>
+                  <h3 style={{ color: '#fff', fontSize: 16, fontFamily: 'Montserrat,sans-serif', fontWeight: 800, margin: 0 }}>
+                    Award Points (Max 10 per category)
+                  </h3>
+
+                  {/* 5 Scoring points */}
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+                    {[
+                      { key: 'alignment', label: 'Problem-Solution Alignment', desc: 'Alignment with ministry statements' },
+                      { key: 'innovation', label: 'Innovation & Uniqueness', desc: 'UVP & originality' },
+                      { key: 'feasibility', label: 'Technical Feasibility', desc: 'Architecture & tech stack suitability' },
+                      { key: 'scalability', label: 'Scalability & Practicality', desc: 'Pan-India viability' },
+                      { key: 'compliance', label: 'Template & Format Compliance', desc: '6-slide deck limit & rules' }
+                    ].map((item) => (
+                      <div key={item.key} style={{
+                        background: 'rgba(255,255,255,0.02)',
+                        border: '1px solid rgba(255,255,255,0.05)',
+                        borderRadius: 12,
+                        padding: '14px 18px',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: 8
+                      }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                          <span style={{ color: '#fff', fontSize: 13.5, fontWeight: 600 }}>{item.label}</span>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                            <input
+                              type="number"
+                              min="0"
+                              max="10"
+                              value={evalScores[item.key]}
+                              onChange={(e) => handleScoreChange(item.key, e.target.value)}
+                              style={{
+                                width: 56,
+                                padding: '6px',
+                                background: 'rgba(255,255,255,0.05)',
+                                border: '1px solid rgba(255,255,255,0.15)',
+                                borderRadius: 6,
+                                color: '#FF9933',
+                                fontWeight: 700,
+                                textAlign: 'center',
+                                outline: 'none'
+                              }}
+                            />
+                            <span style={{ color: 'rgba(255,255,255,0.4)', fontSize: 12 }}>/ 10</span>
+                          </div>
+                        </div>
+                        <span style={{ color: 'rgba(255,255,255,0.45)', fontSize: 11 }}>{item.desc}</span>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Comment Box */}
+                  <div>
+                    <label style={{ color: 'rgba(255,255,255,0.4)', fontSize: 11, textTransform: 'uppercase', display: 'block', marginBottom: 8 }}>Evaluator Comments</label>
+                    <textarea
+                      placeholder="Enter detailed feedback or suggestions here..."
+                      value={evalScores.comments}
+                      onChange={(e) => handleScoreChange('comments', e.target.value)}
+                      rows="3"
+                      style={{
+                        width: '100%',
+                        background: 'rgba(255,255,255,0.05)',
+                        border: '1px solid rgba(255,255,255,0.15)',
+                        borderRadius: 10,
+                        padding: 12,
+                        color: '#fff',
+                        fontSize: 13,
+                        fontFamily: 'Poppins,sans-serif',
+                        outline: 'none',
+                        resize: 'none'
+                      }}
+                    />
+                  </div>
+
+                  {/* Submit Button */}
+                  <button
+                    onClick={submitEvaluation}
+                    style={{
+                      marginTop: 'auto',
+                      padding: '14px',
+                      background: 'linear-gradient(135deg, #138808, #0e6605)',
+                      color: '#fff',
+                      borderRadius: 10,
+                      border: 'none',
+                      fontFamily: 'Montserrat,sans-serif',
+                      fontWeight: 800,
+                      fontSize: 13,
+                      cursor: 'pointer',
+                      boxShadow: '0 8px 24px rgba(19,136,8,0.3)',
+                      transition: 'all 0.2s'
+                    }}
+                    onMouseEnter={e => e.currentTarget.style.transform = 'translateY(-1px)'}
+                    onMouseLeave={e => e.currentTarget.style.transform = 'none'}
+                  >
+                    Submit Evaluation
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   );
 }
