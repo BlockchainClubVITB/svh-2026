@@ -187,11 +187,10 @@ export default function LeaderDashboard() {
   };
 
   return (
-    <section style={{
+    <section className="flex flex-col md:flex-row" style={{
       position: 'relative', minHeight: '100vh',
       background: 'linear-gradient(160deg, #07192c 0%, #0f2942 45%, #07192c 100%)',
-      display: 'flex',
-      overflow: 'hidden'
+      overflowX: 'hidden'
     }}>
       <FloatingParticles count={22} />
 
@@ -200,16 +199,16 @@ export default function LeaderDashboard() {
       </div>
 
       {/* Sidebar */}
-      <nav style={{
-        width: 320,
+      <nav className="w-full md:w-[320px] h-auto md:h-screen md:sticky top-0 overflow-y-auto" style={{
         background: 'rgba(255,255,255,0.02)',
         borderRight: '1px solid rgba(255,153,51,0.15)',
+        borderBottom: '1px solid rgba(255,153,51,0.15)',
         backdropFilter: 'blur(16px)',
-        padding: '40px 24px',
+        padding: '24px',
         boxSizing: 'border-box',
         display: 'flex',
         flexDirection: 'column',
-        gap: 28,
+        gap: 20,
         zIndex: 10,
         flexShrink: 0
       }}>
@@ -331,13 +330,7 @@ export default function LeaderDashboard() {
       </nav>
 
       {/* Main Content Area */}
-      <main style={{
-        flex: 1,
-        padding: '40px 48px',
-        zIndex: 10,
-        overflowY: 'auto',
-        boxSizing: 'border-box'
-      }}>
+      <main className="flex-1 p-6 md:p-10 z-10 box-border overflow-y-auto h-auto md:h-screen">
         {activeTab === 'teamDetails' && (
           <div>
             <h1 style={{ fontFamily: 'Montserrat,sans-serif', fontWeight: 900, color: '#fff', fontSize: 32, marginBottom: 28, letterSpacing: -0.5 }}>
