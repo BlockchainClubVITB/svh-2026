@@ -14,13 +14,14 @@ import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import LeaderDashboard from './pages/LeaderDashboard';
 import EvaluatorDashboard from './pages/EvaluatorDashboard';
+import SuperEvaluatorDashboard from './pages/SuperEvaluatorDashboard';
 import TestEmail from './pages/TestEmail';
 import ComingSoon from './pages/ComingSoon';
 
 function AppContent() {
   const [menuOpen, setMenuOpen] = useState(false);
   const location = useLocation();
-  const isDashboard = location.pathname === '/leader-dashboard' || location.pathname === '/evaluator-dashboard';
+  const isDashboard = location.pathname === '/leader-dashboard' || location.pathname === '/evaluator-dashboard' || location.pathname === '/super-admin-dashboard';
 
   return (
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', position: 'relative' }}>
@@ -112,6 +113,7 @@ function AppContent() {
           <Route path="/dashboard"          element={<Dashboard />} />
           <Route path="/leader-dashboard"   element={<LeaderDashboard />} />
           <Route path="/evaluator-dashboard" element={<EvaluatorDashboard />} />
+          <Route path="/super-admin-dashboard" element={<SuperEvaluatorDashboard />} />
           <Route path="/test-email"         element={<TestEmail />} />
           <Route path="/coming-soon"        element={<ComingSoon />} />
         </Routes>

@@ -145,7 +145,23 @@ export default function Login() {
           return;
         }
 
-        // For other roles (like super_admin)
+        if (role === 'super_admin') {
+          if (email === 'admin@svh2026.com' && password === 'admin123') {
+            localStorage.setItem('super_eval_session', JSON.stringify({
+              email: 'admin@svh2026.com',
+              name: 'Super Admin',
+              role: 'Super Admin'
+            }));
+            navigate('/super-admin-dashboard');
+            return;
+          } else {
+            setError('Invalid Super Admin credentials.');
+            setLoading(false);
+            return;
+          }
+        }
+
+        // For other roles
         const { data: authData, error: signInError } = await supabase.auth.signInWithPassword({ email, password });
 
         if (signInError) {
