@@ -65,6 +65,7 @@ export default function AdminDashboard() {
   const [manualBccEmails, setManualBccEmails] = useState('');
 
   const [sendingEmails, setSendingEmails] = useState(false);
+  const [emailDryRun, setEmailDryRun] = useState(false);
   const [emailSendStatus, setEmailSendStatus] = useState(null); // { success: boolean, message: string }
 
   // Computed BCC Recipients List
@@ -128,7 +129,11 @@ export default function AdminDashboard() {
       return;
     }
 
-    if (!window.confirm(`Are you sure you want to broadcast this email to ${computedBccRecipients.length} recipients via BCC?`)) {
+    const confirmMessage = emailDryRun
+      ? `Are you sure you want to run a DRY RUN simulation for this broadcast to ${computedBccRecipients.length} recipients (no actual emails will be sent)?`
+      : `Are you sure you want to broadcast this email to ${computedBccRecipients.length} recipients via BCC?`;
+
+    if (!window.confirm(confirmMessage)) {
       return;
     }
 
@@ -144,7 +149,8 @@ export default function AdminDashboard() {
           body: emailBody,
           isHtml: emailIsHtml,
           toEmail: emailToOverride,
-          bccRecipients: computedBccRecipients
+          bccRecipients: computedBccRecipients,
+          dryRun: emailDryRun
         })
       });
 
@@ -153,9 +159,14 @@ export default function AdminDashboard() {
         throw new Error(data.message || 'Error occurred while broadcasting emails.');
       }
 
-      setEmailSendStatus({ success: true, message: `Successfully sent email broadcast to ${computedBccRecipients.length} recipients!` });
-      setEmailSubject('');
-      setEmailBody('');
+      setEmailSendStatus({ 
+        success: true, 
+        message: data.message || `Successfully processed email broadcast for ${computedBccRecipients.length} recipients!` 
+      });
+      if (!emailDryRun) {
+        setEmailSubject('');
+        setEmailBody('');
+      }
     } catch (err) {
       console.error('Broadcast Error:', err);
       setEmailSendStatus({ success: false, message: err.message || 'Failed to send broadcast.' });
@@ -1854,6 +1865,18 @@ export default function AdminDashboard() {
                   />
                   <div style={{ color: 'rgba(255,255,255,0.35)', fontSize: 11, marginTop: 4 }}>
                     💡 {emailIsHtml ? 'HTML Mode: Paste full HTML tags, links (<a href="...">), and CSS colors. They will parse and render natively in standard mail boxes.' : 'Plain Text Mode: Raw text content only (no formatting tags).'}
+                  </div>
+
+                  <div style={{ marginTop: 14, display: 'flex', alignItems: 'center', gap: 8, padding: '10px 12px', background: 'rgba(255,153,51,0.06)', border: '1px solid rgba(255,153,51,0.15)', borderRadius: 8 }}>
+                    <label style={{ display: 'flex', alignItems: 'center', gap: 8, color: '#FF9933', fontWeight: 700, fontSize: 12.5, cursor: 'pointer' }}>
+                      <input
+                        type="checkbox"
+                        checked={emailDryRun}
+                        onChange={e => setEmailDryRun(e.target.checked)}
+                        style={{ accentColor: '#FF9933', width: 16, height: 16 }}
+                      />
+                      <span>Dry Run Mode (Test/Simulate without sending actual emails)</span>
+                    </label>
                   </div>
                 </div>
               </div>
