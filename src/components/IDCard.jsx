@@ -83,7 +83,12 @@ const IDCard = () => {
         try {
             const { data, error } = await supabase
                 .from('profiles')
-                .select('*')
+                .select(`
+                    *,
+                    teams (
+                        team_name
+                    )
+                `)
                 .eq('email', formData.email.toLowerCase())
                 .single();
 
@@ -96,7 +101,14 @@ const IDCard = () => {
                 setUserData(null);
                 setShowPreview(false);
             } else {
-                setUserData(data);
+                const teamName = data.teams
+                    ? (Array.isArray(data.teams) ? data.teams[0]?.team_name : data.teams.team_name)
+                    : null;
+
+                setUserData({
+                    ...data,
+                    team_name: teamName
+                });
                 setFormData({
                     ...formData,
                     name: data.full_name || formData.name
@@ -129,12 +141,22 @@ const IDCard = () => {
 
         try {
             const displayName = userData.full_name || userData.name || formData.name || 'Participant';
-            const registrationNumber = userData.registration_number || '';
+            
+            let teamInfoStr = '';
+            if (userData.team_name) {
+                teamInfoStr = `Team - ${userData.team_name}`;
+                if (userData.is_team_leader) {
+                    teamInfoStr += ' (Team Leader)';
+                }
+            } else {
+                teamInfoStr = userData.registration_number || '';
+            }
+
             const imageUrl = await generateIdCard({
                 templateSrc: getTemplateImage(),
                 userImageSrc: formData.imagePreview,
                 name: displayName,
-                registrationNumber: registrationNumber,
+                registrationNumber: teamInfoStr,
             });
 
             setGeneratedCardUrl(imageUrl);
@@ -460,6 +482,9 @@ const IDCard = () => {
                                         </p>
                                         <div className="space-y-1 text-sm text-slate-700 font-medium">
                                             <p><span className="text-slate-500 font-normal">Name:</span> <strong className="text-[#0f2942]">{userData.full_name || userData.name}</strong></p>
+                                            {userData.team_name && (
+                                                <p><span className="text-slate-500 font-normal">Team:</span> <strong className="text-[#0f2942]">{userData.team_name} {userData.is_team_leader ? '(Team Leader)' : ''}</strong></p>
+                                            )}
                                             <p><span className="text-slate-500 font-normal">Registration Number:</span> <strong className="text-[#0f2942]">{userData.registration_number || 'N/A'}</strong></p>
                                             {userData.email && <p><span className="text-slate-500 font-normal">Email:</span> {userData.email}</p>}
                                             {userData.phone && <p><span className="text-slate-500 font-normal">Phone:</span> {userData.phone}</p>}

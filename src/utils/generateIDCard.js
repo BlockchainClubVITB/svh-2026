@@ -111,12 +111,19 @@ export async function generateIdCard({
         ctx.fillText(name.toUpperCase(), textCenterX, nameY);
     }
 
-    // Draw Registration Number
+    // Draw Registration Number / Team Info
     if (registrationNumber) {
         ctx.fillStyle = '#0f2942'; // Dark Navy
         let regFontSize = 26;
         ctx.font = `italic 700 ${regFontSize}px "Montserrat", "Poppins", sans-serif`;
-        ctx.fillText(`${registrationNumber.toUpperCase()}`, textCenterX, regNoY);
+        const upperReg = registrationNumber.toUpperCase();
+
+        while (ctx.measureText(upperReg).width > 350 && regFontSize > 14) {
+            regFontSize -= 1;
+            ctx.font = `italic 700 ${regFontSize}px "Montserrat", "Poppins", sans-serif`;
+        }
+
+        ctx.fillText(upperReg, textCenterX, regNoY);
     }
 
     // Return final image as data URL
