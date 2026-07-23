@@ -1,30 +1,71 @@
 import { Search, ArrowLeft, X, Info } from 'lucide-react';
 import { useState, useMemo, useEffect } from 'react';
 import { STATEMENTS } from '../data/problemStatements';
+import { supabase } from '../supabaseClient';
 
-const NAVY    = '#0f2942';
+const NAVY = '#0f2942';
 const SAFFRON = '#FF9933';
-const GREEN   = '#138808';
+const GREEN = '#138808';
 
 const CATEGORIES = ['All', 'Hardware', 'Software'];
 
 export default function ProblemStatements() {
-  const [search, setSearch]         = useState('');
-  const [category, setCategory]     = useState('All');
-  const [pageSize, setPageSize]     = useState(10);
-  const [sortKey, setSortKey]       = useState(null);
-  const [sortDir, setSortDir]       = useState('asc');
-  const [selected, setSelected]     = useState(null);
+  const [search, setSearch] = useState('');
+  const [category, setCategory] = useState('All');
+  const [pageSize, setPageSize] = useState(10);
+  const [sortKey, setSortKey] = useState(null);
+  const [sortDir, setSortDir] = useState('asc');
+  const [selected, setSelected] = useState(null);
   const [showBanner, setShowBanner] = useState(true);
+  const [submissionCounts, setSubmissionCounts] = useState({});
+
+  useEffect(() => {
+    const fetchSubmissions = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('submissions')
+          .select('problem_code');
+
+        if (error) {
+          console.error('Error fetching submissions:', error);
+          return;
+        }
+
+        const counts = {};
+        (data || []).forEach(sub => {
+          if (sub.problem_code) {
+            const code = String(sub.problem_code).trim().toLowerCase();
+            counts[code] = (counts[code] || 0) + 1;
+          }
+        });
+        setSubmissionCounts(counts);
+      } catch (err) {
+        console.error('Unexpected error fetching submissions:', err);
+      }
+    };
+
+    fetchSubmissions();
+
+    const channel = supabase
+      .channel('submissions_counts_change')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'submissions' }, () => {
+        fetchSubmissions();
+      })
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, []);
 
   const filtered = useMemo(() => {
     let rows = STATEMENTS.filter(item => {
       const q = search.toLowerCase();
       const matchesSearch =
         item.title.toLowerCase().includes(q) ||
-        item.desc.toLowerCase().includes(q)  ||
-        item.id.toLowerCase().includes(q)    ||
-        item.org.toLowerCase().includes(q)   ||
+        item.desc.toLowerCase().includes(q) ||
+        item.id.toLowerCase().includes(q) ||
+        item.org.toLowerCase().includes(q) ||
         item.theme.toLowerCase().includes(q);
       const matchesCategory = category === 'All' || item.category === category;
       return matchesSearch && matchesCategory;
@@ -239,17 +280,28 @@ export default function ProblemStatements() {
                   <Td>{item.id}</Td>
                   <Td>{item.theme}</Td>
                   <Td>
-                    <span style={{
-                      display: 'inline-flex', alignItems: 'center', gap: 4,
-                      background: '#f0fdf4', color: '#166534',
-                      border: '1px solid #bbf7d0',
-                      borderRadius: 20, padding: '3px 10px',
-                      fontSize: 12, fontWeight: 700, fontFamily: 'Montserrat,sans-serif',
-                      whiteSpace: 'nowrap',
-                    }}>
-                      <span style={{ width: 7, height: 7, borderRadius: '50%', background: '#22c55e', display: 'inline-block' }} />
-                      0 / 40
-                    </span>
+                    {(() => {
+                      const count = submissionCounts[String(item.id).trim().toLowerCase()] || 0;
+                      const isFull = count >= 40;
+                      return (
+                        <span style={{
+                          display: 'inline-flex', alignItems: 'center', gap: 4,
+                          background: isFull ? '#fef2f2' : '#f0fdf4',
+                          color: isFull ? '#991b1b' : '#166534',
+                          border: `1px solid ${isFull ? '#fecaca' : '#bbf7d0'}`,
+                          borderRadius: 20, padding: '3px 10px',
+                          fontSize: 12, fontWeight: 700, fontFamily: 'Montserrat,sans-serif',
+                          whiteSpace: 'nowrap',
+                        }}>
+                          <span style={{
+                            width: 7, height: 7, borderRadius: '50%',
+                            background: isFull ? '#ef4444' : '#22c55e',
+                            display: 'inline-block'
+                          }} />
+                          {count} / 40
+                        </span>
+                      );
+                    })()}
                   </Td>
                 </tr>
               ))}

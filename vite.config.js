@@ -49,15 +49,15 @@ function apiDevServerPlugin() {
             };
 
             if (apiName === 'uploadPdf') {
-              const { default: handler } = await import('./api/uploadPdf.js');
+              const { default: handler } = await server.ssrLoadModule('./api/uploadPdf.js');
               await handler(req, res);
               return;
             } else if (apiName === 'sendEmail') {
-              const { default: handler } = await import('./api/sendEmail.js');
+              const { default: handler } = await server.ssrLoadModule('./api/sendEmail.js');
               await handler(req, res);
               return;
             } else if (apiName === 'bulkSendEmail') {
-              const { default: handler } = await import('./api/bulkSendEmail.js');
+              const { default: handler } = await server.ssrLoadModule('./api/bulkSendEmail.js');
               await handler(req, res);
               return;
             }
