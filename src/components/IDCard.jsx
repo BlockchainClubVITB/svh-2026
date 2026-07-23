@@ -469,6 +469,16 @@ const IDCard = () => {
                                     )}
                                 </motion.button>
 
+                                {/* Warning Disclaimer Banner */}
+                                {!userData && (
+                                    <div className="p-4 bg-amber-50/50 border border-dashed border-[#FF9933]/30 rounded-xl flex gap-3 items-start text-xs text-amber-800 font-medium leading-relaxed font-poppins">
+                                        <span className="text-base leading-none">⚠️</span>
+                                        <div>
+                                            <strong>Verification Note:</strong> If your email ID is not verified, you might be using a wrong email ID that is not present in our database. Please ask your Team Leader to verify or update your email ID from the Leader's Dashboard after logging in.
+                                        </div>
+                                    </div>
+                                )}
+
                                 {/* User Data Display Card */}
                                 {userData && (
                                     <motion.div

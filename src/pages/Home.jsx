@@ -195,6 +195,54 @@ function HeroSection() {
       {/* Animated particles */}
       <FloatingParticles count={22} />
 
+      {/* Animated ID Card Announcement Banner */}
+      <div style={{
+        position: 'absolute',
+        top: '75px',
+        right: '20px',
+        zIndex: 100,
+        animation: 'pulse-idcard 3s infinite ease-in-out',
+      }}>
+        <style>{`
+          @keyframes pulse-idcard {
+            0%, 100% { transform: scale(1); box-shadow: 0 4px 14px rgba(255,153,51,0.1); }
+            50% { transform: scale(1.02); box-shadow: 0 6px 20px rgba(255,153,51,0.25); }
+          }
+        `}</style>
+        <Link to="/id-card" style={{
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '4px',
+          background: 'rgba(7,25,44,0.92)',
+          border: '1.5px solid rgba(255,153,51,0.4)',
+          borderRadius: '8px',
+          padding: '12px 16px',
+          color: '#fff',
+          textDecoration: 'none',
+          transition: 'all 0.25s ease',
+          backdropFilter: 'blur(10px)',
+          maxWidth: '280px',
+          boxSizing: 'border-box',
+          textAlign: 'left',
+        }}
+          onMouseEnter={e => { e.currentTarget.style.borderColor = '#FF9933'; e.currentTarget.style.boxShadow = '0 6px 24px rgba(255,153,51,0.35)'; }}
+          onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(255,153,51,0.4)'; e.currentTarget.style.boxShadow = 'none'; }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <span style={{ fontSize: '9px', background: 'rgba(255,153,51,0.2)', color: '#FF9933', padding: '2px 8px', borderRadius: '4px', fontWeight: 800, fontFamily: 'Montserrat, sans-serif', textTransform: 'uppercase', letterSpacing: '1px' }}>
+              ⚡ Live Now
+            </span>
+          </div>
+          <p style={{ margin: '4px 0 0', fontSize: '11px', fontFamily: 'Poppins, sans-serif', color: 'rgba(255,255,255,0.85)', fontWeight: 500, lineHeight: '1.4' }}>
+            Unleash your innovation & represent your team! Claim your official <bold>SVH 2026 Participant ID Card</bold> now.
+          </p>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '4px', marginTop: '4px', color: '#FF9933', fontSize: '11px', fontWeight: 700, fontFamily: 'Montserrat, sans-serif' }}>
+            <span>Generate Card</span>
+            <span>➡️</span>
+          </div>
+        </Link>
+      </div>
+
       {/* Chakras */}
       <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', pointerEvents: 'none', zIndex: 0 }}>
         <AshokaChakra size={640} opacity={0.045} spin />
