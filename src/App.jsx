@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
-
+import { Link } from 'react-router-dom';
 import Header from './components/Header';
 import Footer from './components/Footer';
 
@@ -17,6 +17,7 @@ import EvaluatorDashboard from './pages/EvaluatorDashboard';
 import SuperEvaluatorDashboard from './pages/AdminDashboard';
 import TestEmail from './pages/TestEmail';
 import ComingSoon from './pages/ComingSoon';
+import IDCard from './components/IDCard';
 
 function AppContent() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -47,9 +48,34 @@ function AppContent() {
                 { label: '📝 PPT Template', url: 'https://docs.google.com/presentation/d/17MCZsoHCGdJTqVKxhuHExweQI1M-0w59/edit?usp=drive_link&ouid=105509570291334746986&rtpof=true&sd=true' },
                 { label: '❓ FAQs', url: 'https://drive.google.com/file/d/1uArUM1izOY9tYd3Vkfu-JEwU575jz2yD/view?usp=drive_link' },
                 { label: '⚖️ Rules', url: 'https://drive.google.com/file/d/1bHVw_gNub44fYBw_mBqQ_f99ymqzUhHs/view?usp=drive_link' },
-                { label: '📊 Problem Statements', url: 'https://drive.google.com/file/d/18qqRV16SGclaXetUdcRS6GcrDV-o-esD/view?usp=drive_link' }
-              ].map((item, idx) => (
-                <a
+                { label: '📊 Problem Statements', url: 'https://drive.google.com/file/d/18qqRV16SGclaXetUdcRS6GcrDV-o-esD/view?usp=drive_link' },
+                { label: '👤 ID Card', url: '', route: "/id-card" }
+              ].map((item, idx) => {
+                if (item.route) {
+                  return (<Link
+                  key={idx}
+                  to={item.route}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{
+                    color: '#fff',
+                    textDecoration: 'none',
+                    fontFamily: 'Poppins,sans-serif',
+                    fontSize: 13,
+                    padding: '8px 12px',
+                    borderRadius: 6,
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 8,
+                    transition: 'all 0.2s',
+                  }}
+                  onMouseEnter={e => { e.currentTarget.style.background = 'rgba(255,153,51,0.15)'; e.currentTarget.style.color = '#FF9933'; }}
+                  onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#fff'; }}
+                >
+                  {item.label}
+                </Link>)
+                }
+                return <a
                   key={idx}
                   href={item.url}
                   target="_blank"
@@ -71,7 +97,7 @@ function AppContent() {
                 >
                   {item.label}
                 </a>
-              ))}
+              })}
             </div>
           )}
           <button
@@ -116,6 +142,7 @@ function AppContent() {
           <Route path="/super-admin-dashboard" element={<SuperEvaluatorDashboard />} />
           <Route path="/test-email" element={<TestEmail />} />
           <Route path="/coming-soon" element={<ComingSoon />} />
+          <Route path="/id-card" element={<IDCard />} />
         </Routes>
       </main>
       {!isDashboard && <Footer />}

@@ -77,4 +77,12 @@ function apiDevServerPlugin() {
 
 export default defineConfig({
   plugins: [react(), tailwindcss(), apiDevServerPlugin()],
+  optimizeDeps: {
+    exclude: ['./api/uploadPdf.js', './api/sendEmail.js'],
+  },
+  build: {
+    rollupOptions: {
+      external: [/^\/api\//],
+    },
+  },
 });
