@@ -18,6 +18,7 @@ import SuperEvaluatorDashboard from './pages/AdminDashboard';
 import TestEmail from './pages/TestEmail';
 import ComingSoon from './pages/ComingSoon';
 import IDCard from './components/IDCard';
+import MentorConnect from './pages/MentorConnect';
 
 function AppContent() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -143,6 +144,7 @@ function AppContent() {
           <Route path="/test-email" element={<TestEmail />} />
           <Route path="/coming-soon" element={<ComingSoon />} />
           <Route path="/id-card" element={<IDCard />} />
+          <Route path="/mentor-connect" element={<MentorConnect />} />
         </Routes>
       </main>
       {!isDashboard && <Footer />}

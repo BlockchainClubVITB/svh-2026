@@ -78,6 +78,7 @@ export default function Header() {
 
   const navLinks = [
     { label: 'Problem Statements', to: '/problem-statements' },
+    { label: 'Mentor Connect', to: '/mentor-connect' },
     { label: 'FAQs', to: '/faq' },
     { label: 'Contact Us', to: '/contact' },
   ];
