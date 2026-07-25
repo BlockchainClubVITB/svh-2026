@@ -55,7 +55,8 @@ export default function MentorConnect() {
       desc: 'Leader, Team Gati (SIH \'25 Finalist)',
       topic: 'Roadmap to SIH 2026 & SVH Guidance',
       img: '/img/mentor-session/mentor-dhairya.png',
-      status: 'Ongoing/Completed'
+      status: 'Ongoing/Completed',
+      linkedin: 'https://www.linkedin.com/in/dhairya-gothi-65945b288/'
     },
     {
       id: 'II',
@@ -67,7 +68,8 @@ export default function MentorConnect() {
       desc: 'Team Gati (SIH \'25 Finalist)',
       topic: 'How to Draft an SIH Winning PPT',
       img: '/img/mentor-session/mentor-riddhi.png',
-      status: 'Upcoming'
+      status: 'Upcoming',
+      linkedin: 'https://www.linkedin.com/in/riddhi-mhadgut-3b0a21289/'
     },
     {
       id: 'III',
@@ -79,7 +81,8 @@ export default function MentorConnect() {
       desc: 'Team Gati (SIH \'25 Finalist)',
       topic: 'Tips to Crack SIH 2026 & Presentation Strategy',
       img: '/img/mentor-session/mentor-rishita.png',
-      status: 'Upcoming'
+      status: 'Upcoming',
+      linkedin: 'https://www.linkedin.com/in/rishita-mehta-97426125a/'
     },
     {
       id: 'IV',
@@ -91,7 +94,8 @@ export default function MentorConnect() {
       desc: 'Team Gati (SIH \'25 Finalist)',
       topic: 'How to Prepare Your Idea & Research for SIH 2026',
       img: '/img/mentor-session/mentor-shreya.png',
-      status: 'Upcoming'
+      status: 'Upcoming',
+      linkedin: 'https://www.linkedin.com/pub/dir?first=Shreya&last=Dubey'
     },
     {
       id: 'V',
@@ -103,7 +107,8 @@ export default function MentorConnect() {
       desc: 'Team Gati (SIH \'25 Finalist)',
       topic: 'Hack to Win: Innovation Thinking & Team Strategy for SIH 2026',
       img: '/img/mentor-session/mentor-shruti.png',
-      status: 'Upcoming'
+      status: 'Upcoming',
+      linkedin: 'https://www.linkedin.com/pub/dir?first=Shruti&last=Dewaskar'
     },
     {
       id: 'VI',
@@ -115,7 +120,8 @@ export default function MentorConnect() {
       desc: 'Team Gati (SIH \'25 Finalist)',
       topic: 'Zero to MVP: How to Build a Working Prototype for SIH 2026',
       img: '/img/mentor-session/mentor-prem.png',
-      status: 'Upcoming'
+      status: 'Upcoming',
+      linkedin: 'https://www.linkedin.com/in/prem-kolte/'
     }
   ];
 
@@ -184,7 +190,21 @@ export default function MentorConnect() {
                     <td style={{ padding: '14px 16px', fontWeight: 600, color: '#0f2942' }}>{s.date} <span style={{ fontSize: 11.5, color: '#64748b', fontWeight: 400 }}>({s.day})</span></td>
                     <td style={{ padding: '14px 16px', color: '#334155' }}>{s.time}</td>
                     <td style={{ padding: '14px 16px' }}>
-                      <div style={{ fontWeight: 700, color: '#0f2942' }}>{s.speaker}</div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                        <span style={{ fontWeight: 700, color: '#0f2942' }}>{s.speaker}</span>
+                        {s.linkedin && (
+                          <a 
+                            href={s.linkedin} 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            style={{ color: '#0a66c2', textDecoration: 'none', display: 'inline-flex', alignItems: 'center' }}
+                          >
+                            <svg width="14" height="14" fill="currentColor" viewBox="0 0 448 512">
+                              <path d="M416 32H31.9C14.3 32 0 46.5 0 64.3v383.4C0 465.5 14.3 480 31.9 480H416c17.6 0 32-14.5 32-32.3V64.3c0-17.8-14.4-32.3-32-32.3zM135.4 416H69V202.2h66.5V416zm-33.2-243c-21.3 0-38.5-17.3-38.5-38.5S80.9 96 102.2 96c21.2 0 38.5 17.3 38.5 38.5 0 21.3-17.2 38.5-38.5 38.5zm282.1 243h-66.4V312c0-24.8-.5-56.7-34.5-56.7-34.6 0-39.9 27-39.9 54.9V416h-66.4V202.2h63.7v29.2h.9c8.9-16.8 30.6-34.5 62.9-34.5 67.2 0 79.7 44.3 79.7 101.9V416z" />
+                            </svg>
+                          </a>
+                        )}
+                      </div>
                       <div style={{ fontSize: 11, color: '#64748b', marginTop: 1 }}>{s.desc}</div>
                     </td>
                     <td style={{ padding: '14px 16px', color: '#0f2942', fontWeight: 600 }}>{s.topic}</td>
@@ -247,9 +267,32 @@ export default function MentorConnect() {
                     <span style={{ fontSize: 10, background: 'rgba(255,153,51,0.1)', color: '#FF9933', padding: '2px 8px', borderRadius: 4, fontWeight: 800, textTransform: 'uppercase', letterSpacing: 0.5, fontFamily: 'Montserrat, sans-serif' }}>
                       {s.num}
                     </span>
-                    <h3 style={{ margin: '8px 0 4px', fontSize: 15, fontWeight: 700, color: '#0f2942', fontFamily: 'Montserrat, sans-serif' }}>
-                      {s.speaker}
-                    </h3>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', margin: '8px 0 4px' }}>
+                      <h3 style={{ margin: 0, fontSize: 15, fontWeight: 700, color: '#0f2942', fontFamily: 'Montserrat, sans-serif' }}>
+                        {s.speaker}
+                      </h3>
+                      {s.linkedin && (
+                        <a 
+                          href={s.linkedin} 
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          onClick={(e) => e.stopPropagation()}
+                          style={{
+                            color: '#0a66c2',
+                            textDecoration: 'none',
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            transition: 'transform 0.2s',
+                          }}
+                          onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.15)'}
+                          onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}
+                        >
+                          <svg width="16" height="16" fill="currentColor" viewBox="0 0 448 512">
+                            <path d="M416 32H31.9C14.3 32 0 46.5 0 64.3v383.4C0 465.5 14.3 480 31.9 480H416c17.6 0 32-14.5 32-32.3V64.3c0-17.8-14.4-32.3-32-32.3zM135.4 416H69V202.2h66.5V416zm-33.2-243c-21.3 0-38.5-17.3-38.5-38.5S80.9 96 102.2 96c21.2 0 38.5 17.3 38.5 38.5 0 21.3-17.2 38.5-38.5 38.5zm282.1 243h-66.4V312c0-24.8-.5-56.7-34.5-56.7-34.6 0-39.9 27-39.9 54.9V416h-66.4V202.2h63.7v29.2h.9c8.9-16.8 30.6-34.5 62.9-34.5 67.2 0 79.7 44.3 79.7 101.9V416z" />
+                          </svg>
+                        </a>
+                      )}
+                    </div>
                     <p style={{ margin: 0, fontSize: 11.5, color: '#64748b', fontWeight: 500, marginBottom: 8 }}>
                       {s.desc}
                     </p>
@@ -346,8 +389,15 @@ export default function MentorConnect() {
             <div style={{ padding: 18, color: '#fff', background: '#0a1d33', borderTop: '1px solid rgba(255,255,255,0.08)' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 6 }}>
                 <div>
-                  <h4 style={{ margin: 0, color: '#FF9933', fontFamily: 'Montserrat, sans-serif', fontSize: 16, fontWeight: 800 }}>
+                  <h4 style={{ margin: 0, color: '#FF9933', fontFamily: 'Montserrat, sans-serif', fontSize: 16, fontWeight: 800, display: 'flex', alignItems: 'center', gap: 6 }}>
                     {activeFlyer.speaker} — {activeFlyer.num}
+                    {activeFlyer.linkedin && (
+                      <a href={activeFlyer.linkedin} target="_blank" rel="noopener noreferrer" style={{ color: '#0a66c2', textDecoration: 'none', display: 'inline-flex', alignItems: 'center' }}>
+                        <svg width="14" height="14" fill="currentColor" viewBox="0 0 448 512">
+                          <path d="M416 32H31.9C14.3 32 0 46.5 0 64.3v383.4C0 465.5 14.3 480 31.9 480H416c17.6 0 32-14.5 32-32.3V64.3c0-17.8-14.4-32.3-32-32.3zM135.4 416H69V202.2h66.5V416zm-33.2-243c-21.3 0-38.5-17.3-38.5-38.5S80.9 96 102.2 96c21.2 0 38.5 17.3 38.5 38.5 0 21.3-17.2 38.5-38.5 38.5zm282.1 243h-66.4V312c0-24.8-.5-56.7-34.5-56.7-34.6 0-39.9 27-39.9 54.9V416h-66.4V202.2h63.7v29.2h.9c8.9-16.8 30.6-34.5 62.9-34.5 67.2 0 79.7 44.3 79.7 101.9V416z" />
+                        </svg>
+                      </a>
+                    )}
                   </h4>
                   <p style={{ margin: '4px 0 0', fontSize: 12.5, color: 'rgba(255,255,255,0.7)' }}>
                     {activeFlyer.topic}

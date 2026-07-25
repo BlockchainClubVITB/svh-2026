@@ -12,7 +12,7 @@ const CATEGORIES = ['All', 'Hardware', 'Software'];
 export default function ProblemStatements() {
   const [search, setSearch] = useState('');
   const [category, setCategory] = useState('All');
-  const [pageSize, setPageSize] = useState(10);
+  const [pageSize, setPageSize] = useState(20);
   const [sortKey, setSortKey] = useState(null);
   const [sortDir, setSortDir] = useState('asc');
   const [selected, setSelected] = useState(null);

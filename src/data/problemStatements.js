@@ -320,4 +320,95 @@ export const STATEMENTS = [
       },
     ],
   },
+
+  {
+    id: 'SVH26011',
+    category: 'Hardware',
+    theme: 'Clean & Green Technology',
+    title: 'Efficient Waste Management and Conversion to Valuable Energy Products (SIH1575)',
+    org: 'Ministry of Power',
+    dept: 'Ministry of Power',
+    desc: 'Developing innovative community-based solutions for solid waste collection, tracking waste from generation to recycling, torrefaction of MSW pellets for bioenergy, and collecting/treating landfill gas (LFG) as a renewable energy resource.',
+    sections: [
+      {
+        heading: 'Background',
+        body: 'Management of solid waste has been one of the key problem in most of the cities around the world. The failure is evident from burgeoning growth of landfill site into mountain of MSW. Waste management accounts for a comparatively very high share of national GHG emissions in several countries worldwide. Emissions of methane following the disposal of waste in landfill account for a large share of GHG emissions from waste management.',
+      },
+      {
+        heading: 'Description',
+        body: 'With increasing pressure of development and urbanization, the need for efficient municipal service delivery is also growing rapidly, which the municipal bodies are very often unable to cope with. This is true in case of solid waste disposal and management as well. The main objectives of solid waste management are to reduce the amount of waste that ends up in landfills, promote recycling, and minimize the negative effects of waste on the environment and human health.',
+      },
+      {
+        heading: 'Expected Solution',
+        items: [
+          'Developing Community based solution for collection and recycling of solid waste management for developing into Net Zero waste communities.',
+          'Digital solution for tracking the waste generation to waste recycling giving the effective tracking mechanism to utilities to collect, account and manage waste.',
+          'Developing local solution for recycling of waste by Torrefaction of Municipal Solid Waste (MSW) Pellets converting it into valuable product to get bioenergy.',
+          'Innovative solution for waste management to reduce LFG and Collecting and Treating Landfill Gas (LFG) and used as a renewable energy resource.',
+        ],
+      },
+    ],
+  },
+
+  {
+    id: 'SVH26012',
+    category: 'Software',
+    theme: 'Smart Education',
+    title: 'Learning App for Deaf & Mute with English/Gujarati Sign Language Converter (SIH1610)',
+    org: 'Government of Gujarat',
+    dept: 'Education Department',
+    desc: 'A comprehensive mobile application facilitating off-classroom Gujarati/English learning through sign language tutorials, interactive writing pads, math/science modules, speech-to-sign conversion, and data analytics.',
+    sections: [
+      {
+        heading: 'Background',
+        body: '“Inclusivity” is the motto of Education department, Government of Gujarat. Opportunity for all is the new slogan and The Indian Government has come up with Indian Sign Language. There has been lot of work in done in American sign language and focusing on interpretation in English. Majority schools in India adopt local language. In Gujarat, the deaf and mute students would be learning Gujarati by sign language. There are two general methods of deaf education are manualism and oralism. The students learn at school but at home if they want to practice material in Digital form is in limited form especially considering Indian Sign Language and Gujarati as local language.',
+      },
+      {
+        heading: 'Detailed Description',
+        body: 'The proposed comprehensive Mobile Application aims to address the key challenges faced in learning beyond classroom by deaf and mute students. The key features of the application include:\n• Interpretation of Alphabets and numbers in Gujarati: Explaining the alphabets and numbers in Gujarati. The students first should learn and then should get writing pad to practice the writing of alphabets and numbers.\n• Words and Sentences: Explaining the basic words starting from each Gujarati alphabet.\n• Mathematics: Tables, basic calculation (sum, subtract, multiplication, division) in Gujarati with writing problems for assessment.\n• Science: Science principles converted to sign language tutorials and writing exercises.\n• Sign Language Converters: Gujarati sentences/speech to Sign Language and vice versa (speech-to-sign and text-to-sign).\n• Data Analytics: Report cards to assess learning in mathematics and science.',
+      },
+      {
+        heading: 'Expected Benefits / Stakeholders',
+        items: [
+          'Teachers: Platform for teaching and administering repeated exercises to fine-tune learning.',
+          'Students: Self-paced learning platform to practice mathematics and science beyond the classroom.',
+          'Parents & HR: Bridging the communication gap and resources lack.',
+        ],
+      },
+    ],
+  },
+
+  {
+    id: 'SVH26013',
+    category: 'Software',
+    theme: 'Smart Automation',
+    title: 'ML-Based Passive Bot Detection & CAPTCHA Refinement (SIH1672)',
+    org: 'Unique Identification Authority of India',
+    dept: 'Ministry of Electronics and Information Technology',
+    desc: 'Develop a passive bot detection system analyzing environmental parameters and browser context using backend ML models to protect resident portals from DDoS attacks without user-facing barriers.',
+    sections: [
+      {
+        heading: 'Background',
+        body: 'UIDAI has multiple portals on the Internet for resident engagement and back office operations. These portals are protected with CAPTCHA for denial of service-related attacks. UIDAI believes that CAPTCHA is a barrier to smooth resident engagement with the Aadhaar portals and therefore intends to remove it soon. Instead of active CAPTCHA, UIDAI is looking for a passive solution that can differentiate between a bot and a human operator.',
+      },
+      {
+        heading: 'Problem Description',
+        body: 'Participating teams are required to develop a solution, mostly following a passive approach through collection of environmental parameters and using AI/ML to analyze it in the backend to differentiate between a bot and human-being. The passive solution may capture environmental details through the browser context and analyze the same with the help of ML models deployed in the backend to protect all backend APIs from DoS/DDoS vulnerabilities.',
+      },
+      {
+        heading: 'Objectives & Feature Requirements',
+        items: [
+          'Define the list of environmental parameters to capture (e.g. mouse movements, timing, browser headers).',
+          'Fall back to minimal human interaction if passive parameters are unable to differentiate, prioritizing user experience.',
+          'Develop compliant frontend code to capture parameters in standard JavaScript frameworks (React/TypeScript/Flutter).',
+          'Build backend ML models that are pluggable and fully compatible with the UIDAI application stack.',
+          'Adhere strictly to UIDAI core privacy policies.',
+        ],
+      },
+      {
+        heading: 'Expected Solution',
+        body: 'A complete end-to-end system including frontend tracking libraries, backend analytics endpoints, and pluggable ML classification models.',
+      },
+    ],
+  },
 ];
