@@ -219,7 +219,6 @@ export default function AdminDashboard() {
       { id: 'evaluator_id', label: 'Evaluator ID', default: true },
       { id: 'evaluator_name', label: 'Evaluator Name', default: true },
       { id: 'evaluator_email', label: 'Evaluator Email', default: true },
-      { id: 'evaluator_password', label: 'Evaluator Password', default: true },
       { id: 'created_at', label: 'Created At', default: true }
     ]
   }), []);
@@ -348,7 +347,6 @@ export default function AdminDashboard() {
         if (selectedColumns['evaluator_id']) row['evaluator_id'] = ev.id;
         if (selectedColumns['evaluator_name']) row['evaluator_name'] = ev.name;
         if (selectedColumns['evaluator_email']) row['evaluator_email'] = ev.email;
-        if (selectedColumns['evaluator_password']) row['evaluator_password'] = ev.password;
         if (selectedColumns['created_at']) row['created_at'] = new Date(ev.created_at).toLocaleString();
         rowsData.push(row);
       });
@@ -407,7 +405,7 @@ export default function AdminDashboard() {
         supabase.from('teams').select('*').limit(5000).order('created_at', { ascending: false }),
         supabase.from('profiles').select('*').limit(5000),
         supabase.from('submissions').select('*').limit(5000).order('submitted_at', { ascending: false }),
-        supabase.from('evaluators').select('*').limit(5000).order('name', { ascending: true }),
+        supabase.from('evaluators').select('id, name, email, created_at').limit(5000).order('name', { ascending: true }),
         supabase.from('evaluator_assignments').select('*').limit(5000),
         supabase.from('evaluations').select('*').limit(5000).order('created_at', { ascending: false }),
         supabase.from('change_requests').select('*').limit(5000).order('created_at', { ascending: false })

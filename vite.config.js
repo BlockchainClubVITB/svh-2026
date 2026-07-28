@@ -48,7 +48,11 @@ function apiDevServerPlugin() {
               return res;
             };
 
-            if (apiName === 'uploadPdf') {
+            if (apiName === 'login') {
+              const { default: handler } = await server.ssrLoadModule('./api/login.js');
+              await handler(req, res);
+              return;
+            } else if (apiName === 'uploadPdf') {
               const { default: handler } = await server.ssrLoadModule('./api/uploadPdf.js');
               await handler(req, res);
               return;

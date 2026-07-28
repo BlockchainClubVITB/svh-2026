@@ -65,65 +65,36 @@ export default function Login() {
     if (!cleanEmail || !cleanPassword) { showToast('Please enter both Email and Password.', 'error'); return; }
     setLoading(true);
     try {
-      const ADMIN_CREDS = [
-        { email: 'dhairya@svh.com', pass: '2026@svh', name: 'Dhairya (Super Admin)' },
-        { email: 'abhilash@svh.com', pass: '2026@svh', name: 'Abhilash (Super Admin)' },
-        { email: 'soumya@svh.com', pass: '2026@svh', name: 'Soumya (Super Admin)' },
-        { email: 'ayush@svh.com', pass: '2026@svh', name: 'Ayush (Super Admin)' },
-        { email: 'admin@svh2026.com', pass: 'admin123', name: 'Super Admin' },
-      ];
-      const foundAdmin = ADMIN_CREDS.find(ac => ac.email.toLowerCase() === cleanEmail && ac.pass === cleanPassword);
-      if (foundAdmin) {
-        localStorage.setItem('super_eval_session', JSON.stringify({ email: foundAdmin.email, name: foundAdmin.name, role: 'super_admin' }));
+      const res = await fetch('/api/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: cleanEmail, password: cleanPassword }),
+      });
+
+      const result = await res.json();
+      if (!res.ok || !result.success) {
+        throw new Error(result.message || 'Invalid credentials. Please verify your email and password.');
+      }
+
+      const { user } = result;
+      if (user.role === 'super_admin' || user.role === 'admin') {
+        localStorage.setItem('super_eval_session', JSON.stringify({ id: user.id, email: user.email, name: user.name, role: 'super_admin' }));
         showToast('Admin Login Successful. Redirecting...', 'success');
         setTimeout(() => navigate('/super-admin-dashboard'), 500);
         return;
-      }
-
-      const EVAL_CREDS = [
-        { email: 'dhairya.23bce10225@vitbhopal.ac.in', pass: 'svh2026@evaluator_dhairya', name: 'Dhairya Evaluator' },
-        { email: 'ayush.24mei10025@vitbhopal.ac.in', pass: 'svh2026@evaluator_ayush', name: 'Ayush Evaluator' },
-      ];
-      const foundEval = EVAL_CREDS.find(ec => ec.email.toLowerCase() === cleanEmail && ec.pass === cleanPassword);
-      if (foundEval) {
-        localStorage.setItem('evaluator_session', JSON.stringify({ email: foundEval.email, name: foundEval.name, role: 'Evaluator' }));
+      } else if (user.role === 'Evaluator' || user.role === 'evaluator') {
+        localStorage.setItem('evaluator_session', JSON.stringify({ id: user.id, email: user.email, name: user.name, role: 'Evaluator' }));
         showToast('Evaluator Login Successful. Redirecting...', 'success');
         setTimeout(() => navigate('/evaluator-dashboard'), 500);
         return;
-      }
-
-      const { data: appUser } = await supabase.from('app_users').select('*').eq('email', cleanEmail).eq('password', cleanPassword).maybeSingle();
-      if (appUser) {
-        if (appUser.role === 'super_admin' || appUser.role === 'admin') {
-          localStorage.setItem('super_eval_session', JSON.stringify({ id: appUser.id, email: appUser.email, name: appUser.full_name || appUser.email, role: 'super_admin' }));
-          showToast('Admin Authentication Successful. Redirecting...', 'success');
-          setTimeout(() => navigate('/super-admin-dashboard'), 500);
-          return;
-        } else if (appUser.role === 'evaluator') {
-          localStorage.setItem('evaluator_session', JSON.stringify({ id: appUser.id, email: appUser.email, name: appUser.full_name || appUser.email, role: 'Evaluator' }));
-          showToast('Evaluator Login Successful. Redirecting...', 'success');
-          setTimeout(() => navigate('/evaluator-dashboard'), 500);
-          return;
-        }
-      }
-
-      const { data: evalData } = await supabase.from('evaluators').select('*').eq('email', cleanEmail).eq('password', cleanPassword).maybeSingle();
-      if (evalData) {
-        localStorage.setItem('evaluator_session', JSON.stringify({ id: evalData.id, email: evalData.email, name: evalData.name || evalData.email, role: 'Evaluator' }));
-        showToast('Evaluator Login Successful. Redirecting...', 'success');
-        setTimeout(() => navigate('/evaluator-dashboard'), 500);
-        return;
-      }
-
-      const { data: teamData } = await supabase.from('teams').select('*').eq('email', cleanEmail).eq('password', cleanPassword).maybeSingle();
-      if (teamData) {
-        localStorage.setItem('leader_session', JSON.stringify({ leaderName: teamData.team_name || 'Team Leader', teamName: teamData.team_name || 'Your Team', teamId: teamData.id, email: teamData.email, password: teamData.password }));
+      } else if (user.role === 'team_leader' || user.role === 'leader') {
+        localStorage.setItem('leader_session', JSON.stringify({ leaderName: user.leaderName || 'Team Leader', teamName: user.teamName || 'Your Team', teamId: user.teamId, email: user.email }));
         showToast('Login Successful. Redirecting to Portal...', 'success');
         setTimeout(() => navigate('/leader-dashboard'), 500);
         return;
       }
 
-      throw new Error('Invalid credentials. Please verify your email and password.');
+      throw new Error('Unrecognized user role.');
     } catch (err) {
       showToast(err.message || 'Authentication failed.', 'error');
     } finally {
