@@ -24,7 +24,7 @@ export default async function handler(req, res) {
 
     const supabase = createClient(supabaseUrl, supabaseKey);
 
-    // 1. Check app_users table (super_admin / admin / evaluator)
+    // 1. Check app_users table (super_admin / admin / evaluator / team_leader)
     const { data: appUser } = await supabase
       .from('app_users')
       .select('id, email, password, full_name, role')
@@ -38,12 +38,29 @@ export default async function handler(req, res) {
           ? 'Evaluator' 
           : appUser.role;
 
+      let teamId = appUser.team_id || null;
+      let teamName = 'Your Team';
+
+      if (normalizedRole === 'team_leader' || normalizedRole === 'leader') {
+        const { data: t } = await supabase.from('teams').select('id, team_name').eq('email', cleanEmail).maybeSingle();
+        if (t) {
+          teamId = t.id;
+          teamName = t.team_name || teamName;
+        } else {
+          const { data: p } = await supabase.from('profiles').select('team_id').eq('email', cleanEmail).maybeSingle();
+          if (p) teamId = p.team_id;
+        }
+      }
+
       return res.status(200).json({
         success: true,
         user: {
           id: appUser.id,
+          teamId: teamId,
           email: appUser.email,
           name: appUser.full_name || appUser.email,
+          leaderName: appUser.full_name || appUser.email,
+          teamName: teamName,
           role: normalizedRole,
         }
       });
@@ -83,6 +100,31 @@ export default async function handler(req, res) {
           email: teamData.email,
           leaderName: teamData.team_name || 'Team Leader',
           teamName: teamData.team_name || 'Your Team',
+          role: 'team_leader',
+        }
+      });
+    }
+
+    // 4. Check profiles table (team leader / member fallback)
+    const { data: profileData } = await supabase
+      .from('profiles')
+      .select('id, email, password, full_name, team_id, is_team_leader')
+      .eq('email', cleanEmail)
+      .maybeSingle();
+
+    if (profileData && profileData.password === cleanPassword) {
+      let teamName = 'Your Team';
+      if (profileData.team_id) {
+        const { data: t } = await supabase.from('teams').select('team_name').eq('id', profileData.team_id).maybeSingle();
+        if (t?.team_name) teamName = t.team_name;
+      }
+      return res.status(200).json({
+        success: true,
+        user: {
+          teamId: profileData.team_id || profileData.id,
+          email: profileData.email,
+          leaderName: profileData.full_name || 'Team Leader',
+          teamName: teamName,
           role: 'team_leader',
         }
       });

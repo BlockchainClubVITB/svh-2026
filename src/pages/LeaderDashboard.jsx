@@ -69,35 +69,78 @@ export default function LeaderDashboard() {
   }, []);
 
   const fetchTeamData = async () => {
+    setLoading(true);
+    setSubmissionStatus('loading');
     try {
       const sessionStr = localStorage.getItem('leader_session');
       if (!sessionStr) {
         navigate('/login');
         return;
       }
-      const session = JSON.parse(sessionStr);
+      let session = JSON.parse(sessionStr);
+      let teamId = session.teamId;
+
+      // Fallback 1: Resolve teamId from teams or profiles table if missing in session
+      if (!teamId && session.email) {
+        const { data: tData } = await supabase
+          .from('teams')
+          .select('id, team_name')
+          .eq('email', session.email)
+          .maybeSingle();
+
+        if (tData) {
+          teamId = tData.id;
+          session.teamName = tData.team_name || session.teamName;
+        } else {
+          const { data: pData } = await supabase
+            .from('profiles')
+            .select('team_id')
+            .eq('email', session.email)
+            .maybeSingle();
+
+          if (pData) {
+            teamId = pData.team_id;
+          }
+        }
+
+        if (teamId) {
+          session.teamId = teamId;
+          localStorage.setItem('leader_session', JSON.stringify(session));
+        }
+      }
+
       setTeamInfo(session);
 
-      if (session.teamId) {
+      if (teamId) {
         // 1. Fetch team members
-        const { data: memData, error: memErr } = await supabase
+        let { data: memData } = await supabase
           .from('profiles')
           .select('*')
-          .eq('team_id', session.teamId);
+          .eq('team_id', teamId);
 
-        if (memErr) throw memErr;
+        // Fallback: If no profiles by team_id, try by email
+        if ((!memData || memData.length === 0) && session.email) {
+          const { data: memByEmail } = await supabase
+            .from('profiles')
+            .select('*')
+            .eq('email', session.email);
+          if (memByEmail && memByEmail.length > 0) {
+            memData = memByEmail;
+          }
+        }
+
         setMembers(memData || []);
 
         // 2. Fetch submissions for this team
-        const { data: subData, error: subErr } = await supabase
+        const { data: subData } = await supabase
           .from('submissions')
           .select('*')
-          .eq('team_id', session.teamId)
+          .eq('team_id', teamId)
           .order('submitted_at', { ascending: true });
 
-        if (!subErr && subData) {
+        if (subData && subData.length > 0) {
           setUserSubmissions(subData);
-          setSubmissionStatus(subData.length > 0 ? 'submitted' : 'none');
+          setSubmissionStatus('submitted');
         } else {
           setUserSubmissions([]);
           setSubmissionStatus('none');
@@ -107,13 +150,19 @@ export default function LeaderDashboard() {
         const { data: reqData } = await supabase
           .from('change_requests')
           .select('*')
-          .eq('team_id', session.teamId)
+          .eq('team_id', teamId)
           .order('created_at', { ascending: false });
 
         setTeamChangeRequests(reqData || []);
+      } else {
+        setMembers([]);
+        setUserSubmissions([]);
+        setSubmissionStatus('none');
       }
     } catch (err) {
       console.error("Error fetching team data:", err);
+      setUserSubmissions([]);
+      setSubmissionStatus('none');
     } finally {
       setLoading(false);
     }
