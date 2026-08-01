@@ -9,7 +9,7 @@ import blockchainLogo from '../assets/Blockchain.png';
 
 export default function AdminDashboard() {
   const [session, setSession] = useState(null);
-  const [activeTab, setActiveTab] = useState('analytics'); // 'analytics', 'teams', 'evaluators', 'leaderboard', 'changeRequests'
+  const [activeTab, setActiveTab] = useState('analytics'); // 'analytics', 'teams', 'submissions', 'evaluators', 'leaderboard', 'changeRequests'
   const navigate = useNavigate();
 
   // Primary Supabase Data Collections
@@ -987,6 +987,7 @@ export default function AdminDashboard() {
           {[
             { id: 'analytics', label: 'Dashboard & Analytics' },
             { id: 'teams', label: 'Teams & Members', count: teams.length },
+            { id: 'submissions', label: 'Idea Submissions', count: submissions.length },
             { id: 'evaluators', label: 'Evaluators & Assignments', count: evaluators.length },
             { id: 'leaderboard', label: 'PS Scores & Leaderboard', count: evaluations.length },
             { id: 'changeRequests', label: 'Change Requests', count: overallStats.pendingChangeReqs, highlight: overallStats.pendingChangeReqs > 0 },
@@ -1198,6 +1199,127 @@ export default function AdminDashboard() {
                               >
                                 Delete
                               </button>
+                            </div>
+                          </td>
+                        </tr>
+                      );
+                    })
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
+
+        {/* TAB 2.5: IDEA SUBMISSIONS RECEIVED */}
+        {activeTab === 'submissions' && (
+          <div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 18, flexWrap: 'wrap', gap: 12 }}>
+              <h1 style={{ fontFamily: 'Montserrat,sans-serif', fontWeight: 800, color: '#fff', fontSize: 24, margin: 0 }}>
+                All Idea Submissions Received ({visibleSubmissionsForAssignment.length})
+              </h1>
+              
+              <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', alignItems: 'center' }}>
+                <select
+                  value={selectedPsFilter}
+                  onChange={e => setSelectedPsFilter(e.target.value)}
+                  style={{ padding: '8px 12px', borderRadius: 8, border: '1px solid rgba(255,255,255,0.15)', background: 'rgba(0,0,0,0.3)', color: '#fff', fontSize: 12 }}
+                >
+                  <option value="ALL" style={{ color: '#000' }}>All Problem Statements</option>
+                  {STATEMENTS.map(s => (
+                    <option key={s.id} value={s.id} style={{ color: '#000' }}>
+                      {s.id} - {s.title.substring(0, 35)}...
+                    </option>
+                  ))}
+                </select>
+
+                <input
+                  type="text"
+                  placeholder="Search Idea ID, Team ID, Title..."
+                  value={searchQuery}
+                  onChange={e => setSearchQuery(e.target.value)}
+                  style={{ padding: '8px 14px', borderRadius: 8, border: '1px solid rgba(255,255,255,0.15)', background: 'rgba(0,0,0,0.3)', color: '#fff', outline: 'none', width: 260, fontSize: 12 }}
+                />
+              </div>
+            </div>
+
+            <div style={{ background: '#0a1d33', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 14, padding: 16, overflowX: 'auto' }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse', color: '#fff', fontSize: 12.5 }}>
+                <thead>
+                  <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.1)', textAlign: 'left' }}>
+                    <th style={{ padding: '10px 12px', color: '#FF9933' }}>Idea ID</th>
+                    <th style={{ padding: '10px 12px' }}>Team Name / ID</th>
+                    <th style={{ padding: '10px 12px' }}>PS Selection</th>
+                    <th style={{ padding: '10px 12px' }}>Idea Title</th>
+                    <th style={{ padding: '10px 12px', textAlign: 'center' }}>PPT Deck</th>
+                    <th style={{ padding: '10px 12px', textAlign: 'center' }}>Links</th>
+                    <th style={{ padding: '10px 12px', textAlign: 'right' }}>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {visibleSubmissionsForAssignment.length === 0 ? (
+                    <tr>
+                      <td colSpan="7" style={{ padding: '32px 16px', color: 'rgba(255,255,255,0.4)', textAlign: 'center', fontSize: 13 }}>
+                        No submissions found matching filters or search queries.
+                      </td>
+                    </tr>
+                  ) : (
+                    visibleSubmissionsForAssignment.map(sub => {
+                      const teamObj = teams.find(t => t.id === sub.team_id) || { team_name: sub.team_name || 'Unknown Team' };
+                      return (
+                        <tr key={sub.id || sub.idea_id} style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
+                          <td style={{ padding: '10px 12px', fontWeight: 800, fontFamily: 'Courier New, monospace', color: '#FF9933' }}>
+                            {sub.idea_id}
+                          </td>
+                          <td style={{ padding: '10px 12px' }}>
+                            <div style={{ fontWeight: 700 }}>{teamObj.team_name}</div>
+                            <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.5)', fontFamily: 'Courier New, monospace' }}>ID: {sub.team_id}</div>
+                          </td>
+                          <td style={{ padding: '10px 12px' }}>
+                            <span style={{ color: '#FF9933', fontWeight: 700, display: 'block' }}>{sub.problem_code}</span>
+                            <span style={{ fontSize: 10.5, color: 'rgba(255,255,255,0.6)', display: 'inline-block', maxWidth: 180, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                              {sub.problem_statement}
+                            </span>
+                          </td>
+                          <td style={{ padding: '10px 12px', fontWeight: 600, maxWidth: 220, overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                            {sub.idea_title}
+                          </td>
+                          <td style={{ padding: '10px 12px', textAlign: 'center' }}>
+                            {sub.ppt_url ? (
+                              <a href={sub.ppt_url} target="_blank" rel="noreferrer" style={{ background: 'rgba(74,222,128,0.15)', color: '#4ade80', border: '1px solid rgba(74,222,128,0.3)', padding: '4px 8px', borderRadius: 6, textDecoration: 'none', fontSize: 11, fontWeight: 700, display: 'inline-block' }}>
+                                View PDF
+                              </a>
+                            ) : (
+                              <span style={{ color: 'rgba(255,255,255,0.25)', fontSize: 11 }}>No PPT</span>
+                            )}
+                          </td>
+                          <td style={{ padding: '10px 12px', textAlign: 'center' }}>
+                            <div style={{ display: 'flex', gap: 6, justifyContent: 'center' }}>
+                              {sub.yt_link ? (
+                                <a href={sub.yt_link} target="_blank" rel="noreferrer" style={{ background: 'rgba(239,68,68,0.15)', color: '#ef4444', border: '1px solid rgba(239,68,68,0.3)', padding: '4px 8px', borderRadius: 6, textDecoration: 'none', fontSize: 11, fontWeight: 700 }}>
+                                  Video
+                                </a>
+                              ) : null}
+                              {sub.document_link ? (
+                                <a href={sub.document_link} target="_blank" rel="noreferrer" style={{ background: 'rgba(56,189,248,0.15)', color: '#38bdf8', border: '1px solid rgba(56,189,248,0.3)', padding: '4px 8px', borderRadius: 6, textDecoration: 'none', fontSize: 11, fontWeight: 700 }}>
+                                  Doc
+                                </a>
+                              ) : null}
+                              {!sub.yt_link && !sub.document_link ? (
+                                <span style={{ color: 'rgba(255,255,255,0.25)', fontSize: 11 }}>No Links</span>
+                              ) : null}
+                            </div>
+                          </td>
+                          <td style={{ padding: '10px 12px', textAlign: 'right' }}>
+                            <div style={{ display: 'flex', gap: 6, justifyContent: 'flex-end' }}>
+                              {teams.find(t => t.id === sub.team_id) ? (
+                                <button
+                                  onClick={() => openViewTeamModal(teams.find(t => t.id === sub.team_id))}
+                                  style={{ background: 'rgba(255,255,255,0.08)', color: '#fff', border: '1px solid rgba(255,255,255,0.15)', padding: '5px 10px', borderRadius: 6, cursor: 'pointer', fontSize: 11, fontWeight: 600 }}
+                                >
+                                  View Team
+                                </button>
+                              ) : null}
                             </div>
                           </td>
                         </tr>
