@@ -130,9 +130,9 @@ export default function Header() {
           alignItems: 'center',
           gap: 12
         }}>
-          <span style={{ fontSize: 16 }}>🚀</span>
-          <span>Registrations extended till 25th July! Secure your spot before slots fill up.</span>
-          <span style={{ fontSize: 16 }}>🚀</span>
+          <span style={{ fontSize: 16 }}>📊</span>
+          <span>PPT Submission Deadline is 5th August 2026! Submit your presentation PDF now.</span>
+          <span style={{ fontSize: 16 }}>📊</span>
         </div>
         {/* ── MAIN NAV ── */}
         <nav style={{
