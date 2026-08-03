@@ -1390,7 +1390,7 @@ function OrientationModal() {
             margin: '0 0 10px',
             letterSpacing: -0.5
           }}>
-            Registration Deadline Extended!
+            PPT Submission Deadline Approaching!
           </h3>
 
           <p style={{
@@ -1401,7 +1401,7 @@ function OrientationModal() {
             margin: '0 0 16px',
             textAlign: 'left'
           }}>
-            📢 Great news for all aspiring teams! Registrations for <strong>SVH 2026</strong> have been extended until <strong style={{ color: '#FF9933' }}>25th July 2026</strong>.
+            📢 Attention all registered teams! The Round 1 Presentation PPT submission deadline for <strong>SVH 2026</strong> is <strong style={{ color: '#4ade80' }}>5th August 2026 (11:59 PM)</strong>. Ensure your presentation PDF is submitted before the deadline.
           </p>
 
           <div style={{
@@ -1417,7 +1417,7 @@ function OrientationModal() {
           }}>
             <div style={{ display: 'flex', gap: 10, alignItems: 'center', fontSize: 13, color: '#fff', fontFamily: 'Poppins,sans-serif' }}>
               <span>✍️</span>
-              <span>Registration Deadline: <strong style={{ color: '#FF9933' }}>25th July 2026</strong></span>
+              <span>Registration Status: <strong style={{ color: '#FF9933' }}>Closed (25th July 2026)</strong></span>
             </div>
             <div style={{ display: 'flex', gap: 10, alignItems: 'center', fontSize: 13, color: '#fff', fontFamily: 'Poppins,sans-serif' }}>
               <span>📊</span>
@@ -1427,10 +1427,8 @@ function OrientationModal() {
 
           {/* Action Buttons */}
           <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', justifyContent: 'center' }}>
-            <a
-              href="https://forms.gle/zYNYkjygKYfbAjhy6"
-              target="_blank"
-              rel="noopener noreferrer"
+            <Link
+              to="/dashboard"
               style={{
                 display: 'inline-flex',
                 alignItems: 'center',
@@ -1456,7 +1454,39 @@ function OrientationModal() {
                 e.currentTarget.style.boxShadow = '0 4px 14px rgba(255, 153, 51, 0.3)';
               }}
             >
-              🔥 Register Now
+              📊 Submit PPT Now
+            </Link>
+
+            <a
+              href="https://docs.google.com/presentation/d/17MCZsoHCGdJTqVKxhuHExweQI1M-0w59/edit?usp=drive_link&ouid=105509570291334746986&rtpof=true&sd=true"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 8,
+                padding: '11px 22px',
+                background: 'rgba(255, 255, 255, 0.1)',
+                border: '1px solid rgba(255, 255, 255, 0.25)',
+                color: '#fff',
+                borderRadius: 8,
+                fontSize: 12,
+                fontFamily: 'Montserrat,sans-serif',
+                fontWeight: 800,
+                textDecoration: 'none',
+                transition: 'all 0.25s',
+                textTransform: 'uppercase'
+              }}
+              onMouseEnter={e => {
+                e.currentTarget.style.transform = 'translateY(-2px)';
+                e.currentTarget.style.background = 'rgba(255, 255, 255, 0.2)';
+              }}
+              onMouseLeave={e => {
+                e.currentTarget.style.transform = 'none';
+                e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)';
+              }}
+            >
+              📥 PPT Template
             </a>
 
             <a
