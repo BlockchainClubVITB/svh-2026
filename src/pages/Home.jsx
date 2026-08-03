@@ -118,7 +118,7 @@ function CountdownTimer() {
   const now = new Date();
   const opens = new Date('2026-07-01T00:00:00+05:30');
   const regCloses = new Date('2026-07-25T23:59:59+05:30');
-  const pptCloses = new Date('2026-08-05T23:59:59+05:30');
+  const pptCloses = new Date('2026-08-10T23:59:59+05:30');
   const finaleStarts = new Date('2026-08-24T09:00:00+05:30');
 
   let phase = { label: 'Registration Opens In', target: '2026-07-01T00:00:00+05:30', color: '#FF9933' };
@@ -128,7 +128,7 @@ function CountdownTimer() {
   } else if (now >= opens && now < regCloses) {
     phase = { label: 'Registration Closes In', target: '2026-07-25T23:59:59+05:30', color: '#FF9933' };
   } else if (now >= regCloses && now < pptCloses) {
-    phase = { label: 'PPT Submission Closes In', target: '2026-08-05T23:59:59+05:30', color: '#138808' };
+    phase = { label: 'PPT Submission Closes In', target: '2026-08-10T23:59:59+05:30', color: '#138808' };
   } else if (now >= pptCloses && now < finaleStarts) {
     phase = { label: 'Grand Finale Begins In', target: '2026-08-24T09:00:00+05:30', color: '#06038D' };
   } else {
@@ -454,7 +454,7 @@ function NewsTicker() {
             <span style={{ color: 'rgba(255,255,255,0.82)', fontFamily: 'Montserrat,sans-serif', fontSize: 13, fontWeight: 500 }}>
               &nbsp;&nbsp;&nbsp;SVH 2026 by Blockchain Club, VIT Bhopal — Inspired by Smart India Hackathon &nbsp;·&nbsp;
               Registration: <strong style={{ color: '#FF9933' }}>1–25 July 2026</strong> &nbsp;·&nbsp;
-              PPT Submission: <strong style={{ color: '#FF9933' }}>22 July – 5 Aug 2026</strong> &nbsp;·&nbsp;
+              PPT Submission: <strong style={{ color: '#FF9933' }}>22 July – 10 Aug 2026</strong> &nbsp;·&nbsp;
               Team: <strong style={{ color: '#FF9933' }}>6 Members (Min. 1 Female)</strong> &nbsp;·&nbsp;
               Fee: <strong style={{ color: '#FF9933' }}>₹75/Member · ₹450/Team</strong> &nbsp;·&nbsp;
               Grand Finale: <strong style={{ color: '#138808' }}>24–25 Aug 2026 (Tentative)</strong> &nbsp;·&nbsp;
@@ -554,7 +554,7 @@ function LiveStatsSection() {
 const rounds = [
   {
     num: 1, label: 'ROUND 1', title: 'PPT Submission', subtitle: 'Online Evaluation Phase',
-    date: '22 July – 5 Aug 2026', color: '#FF9933', borderColor: 'rgba(255,153,51,0.25)',
+    date: '22 July – 10 Aug 2026', color: '#FF9933', borderColor: 'rgba(255,153,51,0.25)',
     bgAccent: 'rgba(255,153,51,0.05)', icon: '📊',
     description: 'Teams select up to 2 problem statements and submit a comprehensive presentation covering problem understanding, proposed solution, technical architecture, expected real-world impact, and step-by-step implementation roadmap.',
     what: [
@@ -837,9 +837,9 @@ function AboutSection() {
    ═══════════════════════════════════════════════ */
 const timelinePhases = [
   { num: 1, title: 'Registration', date: '1 – 25 July 2026', desc: 'Teams of 6 register online. Minimum 1 female member mandatory. Fee: ₹75/member (₹450/team). Register through the official Google Form.', icon: '✍️', color: '#FF9933' },
-  { num: 2, title: 'PPT Submission', date: '22 July – 5 Aug 2026', desc: 'Submit a comprehensive presentation covering problem understanding, proposed solution, technical architecture, expected impact & implementation roadmap.', icon: '📊', color: '#138808' },
-  { num: 3, title: 'PPT Evaluation', date: '5 – 10 Aug 2026', desc: 'Internal panel evaluates all submissions. Top 5 teams per problem statement shortlisted. Max 60 finalist teams across all 12 PSs.', icon: '⚖️', color: '#06038D' },
-  { num: 4, title: 'Results', date: 'Post 10 Aug 2026', desc: 'Shortlisted finalist teams officially announced. Teams notified through internal college channels and official platforms.', icon: '📢', color: '#FF9933' },
+  { num: 2, title: 'PPT Submission', date: '22 July – 10 Aug 2026', desc: 'Submit a comprehensive presentation covering problem understanding, proposed solution, technical architecture, expected impact & implementation roadmap.', icon: '📊', color: '#138808' },
+  { num: 3, title: 'PPT Evaluation', date: '10 – 15 Aug 2026', desc: 'Internal panel evaluates all submissions. Top 5 teams per problem statement shortlisted. Max 60 finalist teams across all 12 PSs.', icon: '⚖️', color: '#06038D' },
+  { num: 4, title: 'Results', date: 'Post 15 Aug 2026', desc: 'Shortlisted finalist teams officially announced. Teams notified through internal college channels and official platforms.', icon: '📢', color: '#FF9933' },
   { num: 5, title: 'Grand Finale', date: '24 – 25 Aug 2026', desc: 'Finalists build a functional prototype at VIT Bhopal. 2-day, 12-hr offline format. Subject to OD approval from the institute.', icon: '🚀', color: '#138808' },
 ];
 
@@ -1033,7 +1033,7 @@ function EvaluationSection() {
   const [ref, visible] = useInView(0.08);
   const evalRounds = [
     {
-      round: 'Round 1', sub: 'PPT Submission', date: '20 Jul – 5 Aug 2026', color: '#FF9933', bg: 'rgba(255,153,51,0.06)',
+      round: 'Round 1', sub: 'PPT Submission', date: '20 Jul – 10 Aug 2026', color: '#FF9933', bg: 'rgba(255,153,51,0.06)',
       criteria: ['Problem Understanding', 'Innovation & Creativity', 'Feasibility of Solution', 'Technical Approach', 'Presentation Quality'],
       desc: 'Teams submit a comprehensive presentation covering their solution approach, technical architecture, impact, and implementation roadmap.',
     },
@@ -1195,7 +1195,7 @@ function RegistrationCTA() {
         ) : (
           <>
             <p style={{ color: 'rgba(255,255,255,0.85)', fontSize: 16, fontFamily: 'Poppins,sans-serif', lineHeight: 1.75, marginBottom: 24, maxWidth: 620, margin: '0 auto 24px' }}>
-              Registration phase has ended. PPT Submissions are now open for all registered teams until <strong style={{ color: '#138808' }}>5 August 2026</strong>.
+              Registration phase has ended. PPT Submissions are now open for all registered teams until <strong style={{ color: '#138808' }}>10 August 2026</strong>.
             </p>
             <div style={{ display: 'flex', gap: 14, justifyContent: 'center', flexWrap: 'wrap', alignItems: 'center' }}>
               <Link to="/login" style={{ padding: '14px 40px', background: 'linear-gradient(135deg, #138808, #0f6d06)', color: '#fff', borderRadius: 8, fontSize: 13, fontFamily: 'Montserrat,sans-serif', fontWeight: 800, textDecoration: 'none', textTransform: 'uppercase', letterSpacing: 1.5, boxShadow: '0 6px 24px rgba(19,136,8,0.4)', transition: 'all 0.25s', display: 'inline-block' }}
@@ -1401,7 +1401,7 @@ function OrientationModal() {
             margin: '0 0 16px',
             textAlign: 'left'
           }}>
-            📢 Attention all registered teams! The Round 1 Presentation PPT submission deadline for <strong>SVH 2026</strong> is <strong style={{ color: '#4ade80' }}>5th August 2026 (11:59 PM)</strong>. Ensure your presentation PDF is submitted before the deadline.
+            📢 Attention all registered teams! The Round 1 Presentation PPT submission deadline for <strong>SVH 2026</strong> is <strong style={{ color: '#4ade80' }}>10th August 2026 (11:59 PM)</strong>. Ensure your presentation PDF is submitted before the deadline.
           </p>
 
           <div style={{
@@ -1421,7 +1421,7 @@ function OrientationModal() {
             </div>
             <div style={{ display: 'flex', gap: 10, alignItems: 'center', fontSize: 13, color: '#fff', fontFamily: 'Poppins,sans-serif' }}>
               <span>📊</span>
-              <span>Presentation PPT Submission Deadline: <strong style={{ color: '#4ade80' }}>5th August 2026</strong></span>
+              <span>Presentation PPT Submission Deadline: <strong style={{ color: '#4ade80' }}>10th August 2026</strong></span>
             </div>
           </div>
 

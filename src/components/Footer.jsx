@@ -31,8 +31,8 @@ const quickLinks = [
 
 const timelineLinks = [
   { label: 'Registration: 1–25 July 2026',        phase: 'Round 1' },
-  { label: 'PPT Submission: 20 Jul – 5 Aug 2026', phase: 'Round 2' },
-  { label: 'Evaluation: 5–10 Aug 2026',           phase: 'Results' },
+  { label: 'PPT Submission: 20 Jul – 10 Aug 2026', phase: 'Round 2' },
+  { label: 'Evaluation: 10–15 Aug 2026',          phase: 'Results' },
   { label: 'Grand Finale: 24–25 Aug 2026',        phase: 'Finale' },
 ];
 

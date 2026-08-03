@@ -131,7 +131,7 @@ export default function Header() {
           gap: 12
         }}>
           <span style={{ fontSize: 16 }}>📊</span>
-          <span>PPT Submission Deadline is 5th August 2026! Submit your presentation PDF now.</span>
+          <span>PPT Submission Deadline is 10th August 2026! Submit your presentation PDF now.</span>
           <span style={{ fontSize: 16 }}>📊</span>
         </div>
         {/* ── MAIN NAV ── */}

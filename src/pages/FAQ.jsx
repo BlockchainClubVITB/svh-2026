@@ -116,7 +116,7 @@ const faqCategories = [
       },
       {
         q: 'When and where should we submit our ideas?',
-        a: 'Idea submissions must be done on the official SVH website between July 22nd and August 5th.',
+        a: 'Idea submissions must be done on the official SVH website between July 22nd and August 10th.',
       },
       {
         q: 'What are the PPT submission rules for Round 1?',
