@@ -20,20 +20,23 @@ function apiDevServerPlugin() {
           try {
             // Parse body for POST requests
             let body = {};
+            let rawBody = '';
             if (req.method === 'POST') {
               const buffers = [];
               for await (const chunk of req) {
                 buffers.push(chunk);
               }
-              const rawBody = Buffer.concat(buffers).toString('utf-8');
+              rawBody = Buffer.concat(buffers).toString('utf-8');
               if (rawBody) {
                 try {
                   body = JSON.parse(rawBody);
                 } catch (e) {
-                  // Not valid JSON, leave body empty
+                  console.error(`\x1b[31m[API Dev Error] Failed to parse JSON body for ${req.url}:\x1b[0m`, e);
                 }
               }
             }
+
+            console.log(`\x1b[36m[API Dev Server] Request: ${req.method} ${req.url}\x1b[0m (Payload Size: ${(rawBody.length / 1024).toFixed(2)} KB)`);
 
             req.body = body;
 
@@ -45,6 +48,7 @@ function apiDevServerPlugin() {
             res.json = function (data) {
               res.setHeader('Content-Type', 'application/json');
               res.end(JSON.stringify(data));
+              console.log(`\x1b[32m[API Dev Server] Response: ${req.url} -> Status ${res.statusCode || 200}\x1b[0m`);
               return res;
             };
 

@@ -341,27 +341,56 @@ export default function LeaderDashboard() {
           reader.readAsDataURL(pptFile);
         });
 
-        const uploadRes = await fetch('/api/uploadPdf', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            fileBase64: fileBase64,
-            fileName: `${teamInfo.teamId}_sub${userSubmissions.length + 1}_${(teamInfo.teamName || 'team').replace(/[^a-zA-Z0-9]/g, '_')}.pdf`,
-            teamId: teamInfo.teamId,
-          }),
-        });
+        const fileName = `${teamInfo.teamId}_sub${userSubmissions.length + 1}_${(teamInfo.teamName || 'team').replace(/[^a-zA-Z0-9]/g, '_')}.pdf`;
+        const appsScriptUrl = import.meta.env.VITE_APPS_SCRIPT_URL;
 
-        const contentType = uploadRes.headers.get('content-type');
+        let uploadRes;
         let uploadData = {};
-        if (contentType && contentType.includes('application/json')) {
-          uploadData = await uploadRes.json();
-        } else {
-          const rawText = await uploadRes.text();
-          throw new Error(rawText || `Upload endpoint returned HTTP ${uploadRes.status}`);
-        }
 
-        if (!uploadRes.ok) {
-          throw new Error(uploadData.message || 'Failed to upload presentation to Google Drive.');
+        if (appsScriptUrl) {
+          // Direct browser to Apps Script upload to bypass Vercel's 4.5MB payload limit
+          uploadRes = await fetch(appsScriptUrl, {
+            method: 'POST',
+            body: JSON.stringify({
+              fileBase64: fileBase64,
+              fileName: fileName,
+              folderId: '1vJgSd32NJWReqzMc4SzI-3oV7ykRQ0G3'
+            })
+          });
+
+          if (!uploadRes.ok) {
+            throw new Error(`Direct Google Drive upload returned HTTP ${uploadRes.status}`);
+          }
+
+          const scriptData = await uploadRes.json();
+          if (!scriptData.success) {
+            throw new Error(scriptData.message || 'Failed to upload PDF via Google Apps Script.');
+          }
+
+          uploadData = { pdfUrl: scriptData.pdfUrl };
+        } else {
+          // Fallback to Vercel api upload (subject to Vercel's 4.5MB limit)
+          uploadRes = await fetch('/api/uploadPdf', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              fileBase64: fileBase64,
+              fileName: fileName,
+              teamId: teamInfo.teamId,
+            }),
+          });
+
+          const contentType = uploadRes.headers.get('content-type');
+          if (contentType && contentType.includes('application/json')) {
+            uploadData = await uploadRes.json();
+          } else {
+            const rawText = await uploadRes.text();
+            throw new Error(rawText || `Upload endpoint returned HTTP ${uploadRes.status}`);
+          }
+
+          if (!uploadRes.ok) {
+            throw new Error(uploadData.message || 'Failed to upload presentation to Google Drive.');
+          }
         }
 
         finalPptUrl = uploadData.pdfUrl;
@@ -794,15 +823,45 @@ export default function LeaderDashboard() {
                       {sub.submitted_at && <span style={{ color: 'rgba(255,255,255,0.5)', fontSize: 11 }}>Submitted on {new Date(sub.submitted_at).toLocaleDateString()}</span>}
                     </div>
 
-                    <h3 style={{ margin: '0 0 6px', color: '#fff', fontSize: 16 }}>{sub.idea_title}</h3>
-                    <p style={{ fontSize: 12.5, color: 'rgba(255,255,255,0.8)', margin: '0 0 8px' }}><strong>Problem:</strong> {sub.problem_statement}</p>
-                    {sub.use_case && <p style={{ fontSize: 12, color: 'rgba(255,255,255,0.7)', margin: '0 0 6px' }}><strong>Use Case:</strong> {sub.use_case}</p>}
-                    {sub.target_audience && <p style={{ fontSize: 12, color: 'rgba(255,255,255,0.7)', margin: '0 0 10px' }}><strong>Target Audience:</strong> {sub.target_audience}</p>}
+                    <h3 style={{ margin: '0 0 8px', color: '#fff', fontSize: 16, fontWeight: 700, fontFamily: 'Montserrat, sans-serif' }}>{sub.idea_title}</h3>
+                    
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 10, margin: '10px 0', padding: '10px 14px', background: 'rgba(255,255,255,0.02)', borderRadius: 8, border: '1px solid rgba(255,255,255,0.05)', fontSize: 12 }}>
+                      <div><strong>Problem Statement:</strong> <span style={{ color: 'rgba(255,255,255,0.8)' }}>{sub.problem_statement}</span></div>
+                      <div><strong>Theme:</strong> <span style={{ color: '#FF9933' }}>{sub.theme || '-'}</span></div>
+                      <div><strong>Category:</strong> <span style={{ color: '#FF9933' }}>{sub.category || '-'}</span></div>
+                    </div>
 
-                    <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', marginTop: 10 }}>
-                      {sub.ppt_url && <a href={sub.ppt_url} target="_blank" rel="noreferrer" style={{ color: '#4ade80', fontSize: 12, textDecoration: 'none', background: 'rgba(74,222,128,0.15)', padding: '5px 10px', borderRadius: 6, border: '1px solid rgba(74,222,128,0.3)' }}>View Presentation PPT</a>}
-                      {sub.yt_link && <a href={sub.yt_link} target="_blank" rel="noreferrer" style={{ color: '#ef4444', fontSize: 12, textDecoration: 'none', background: 'rgba(239,68,68,0.15)', padding: '5px 10px', borderRadius: 6, border: '1px solid rgba(239,68,68,0.3)' }}>YouTube Video</a>}
-                      {sub.document_link && <a href={sub.document_link} target="_blank" rel="noreferrer" style={{ color: '#38bdf8', fontSize: 12, textDecoration: 'none', background: 'rgba(56,189,248,0.15)', padding: '5px 10px', borderRadius: 6, border: '1px solid rgba(56,189,248,0.3)' }}>Drive Document</a>}
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginTop: 12, borderTop: '1px solid rgba(255,255,255,0.05)', paddingTop: 12 }}>
+                      {sub.use_case && (
+                        <div>
+                          <strong style={{ color: '#4ade80', display: 'block', fontSize: 12, fontWeight: 700 }}>Real-life Use Case:</strong>
+                          <p style={{ fontSize: 12, color: 'rgba(255,255,255,0.7)', margin: '2px 0 0 0', whiteSpace: 'pre-wrap', lineHeight: 1.5 }}>{sub.use_case}</p>
+                        </div>
+                      )}
+                      {sub.target_audience && (
+                        <div>
+                          <strong style={{ color: '#38bdf8', display: 'block', fontSize: 12, fontWeight: 700 }}>Target Audience & Stakeholders:</strong>
+                          <p style={{ fontSize: 12, color: 'rgba(255,255,255,0.7)', margin: '2px 0 0 0', whiteSpace: 'pre-wrap', lineHeight: 1.5 }}>{sub.target_audience}</p>
+                        </div>
+                      )}
+                      {sub.unique_idea && (
+                        <div>
+                          <strong style={{ color: '#a78bfa', display: 'block', fontSize: 12, fontWeight: 700 }}>Unique Idea & Innovation:</strong>
+                          <p style={{ fontSize: 12, color: 'rgba(255,255,255,0.7)', margin: '2px 0 0 0', whiteSpace: 'pre-wrap', lineHeight: 1.5 }}>{sub.unique_idea}</p>
+                        </div>
+                      )}
+                      {sub.idea_description && (
+                        <div>
+                          <strong style={{ color: '#fbbf24', display: 'block', fontSize: 12, fontWeight: 700 }}>Detailed Description & Solution Architecture:</strong>
+                          <p style={{ fontSize: 12, color: 'rgba(255,255,255,0.7)', margin: '2px 0 0 0', whiteSpace: 'pre-wrap', lineHeight: 1.5 }}>{sub.idea_description}</p>
+                        </div>
+                      )}
+                    </div>
+
+                    <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', marginTop: 16, borderTop: '1px solid rgba(255,255,255,0.05)', paddingTop: 12 }}>
+                      {sub.ppt_url && <a href={sub.ppt_url} target="_blank" rel="noreferrer" style={{ color: '#4ade80', fontSize: 12, textDecoration: 'none', background: 'rgba(74,222,128,0.15)', padding: '5px 10px', borderRadius: 6, border: '1px solid rgba(74,222,128,0.3)', fontWeight: 600 }}>View Presentation PPT</a>}
+                      {sub.yt_link && <a href={sub.yt_link} target="_blank" rel="noreferrer" style={{ color: '#ef4444', fontSize: 12, textDecoration: 'none', background: 'rgba(239,68,68,0.15)', padding: '5px 10px', borderRadius: 6, border: '1px solid rgba(239,68,68,0.3)', fontWeight: 600 }}>YouTube Video</a>}
+                      {sub.document_link && <a href={sub.document_link} target="_blank" rel="noreferrer" style={{ color: '#38bdf8', fontSize: 12, textDecoration: 'none', background: 'rgba(56,189,248,0.15)', padding: '5px 10px', borderRadius: 6, border: '1px solid rgba(56,189,248,0.3)', fontWeight: 600 }}>Drive Document</a>}
                     </div>
                   </div>
                 ))}
