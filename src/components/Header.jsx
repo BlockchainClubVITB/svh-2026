@@ -116,7 +116,7 @@ export default function Header() {
 
         {/* Announcement Banner */}
         <div style={{
-          background: 'linear-gradient(90deg, #FF9933, #e07800)',
+          background: 'linear-gradient(90deg, #0284c7, #0369a1)',
           color: '#fff',
           textAlign: 'center',
           padding: '6px 16px',
@@ -124,15 +124,15 @@ export default function Header() {
           fontFamily: 'Montserrat,sans-serif',
           fontWeight: 700,
           letterSpacing: 1,
-          boxShadow: '0 2px 10px rgba(255,153,51,0.3)',
+          boxShadow: '0 2px 10px rgba(2,132,199,0.3)',
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
           gap: 12
         }}>
-          <span style={{ fontSize: 16 }}>📊</span>
-          <span>PPT Submission Deadline is 5th August 2026! Submit your presentation PDF now.</span>
-          <span style={{ fontSize: 16 }}>📊</span>
+          <span style={{ fontSize: 16 }}>⚖️</span>
+          <span>PPT Submission Phase is Closed · PPT Evaluation Phase is Currently Ongoing (10–15 Aug 2026)!</span>
+          <span style={{ fontSize: 16 }}>⚖️</span>
         </div>
         {/* ── MAIN NAV ── */}
         <nav style={{

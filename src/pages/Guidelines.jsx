@@ -293,7 +293,7 @@ export default function Guidelines() {
                   <RuleCard num="02" title="Participation Fee" desc="A participation fee of ₹75 per person (₹450 per team) is required to confirm your slot." color="#138808" />
                   <RuleCard num="03" title="How to Register" desc={<>Registration will be managed through the official Google form link: <a href="https://forms.gle/zYNYkjygKYfbAjhy6" target="_blank" rel="noreferrer" style={{ color: '#138808', fontWeight: 600 }}>https://forms.gle/zYNYkjygKYfbAjhy6</a></>} color="#138808" />
                   <RuleCard num="04" title="Details Required" desc="Team leader needs to enter: Team name, names/gender/email/phone of leader and all 5 members." color="#138808" />
-                  <RuleCard num="05" title="Idea Submission" desc="Idea submission will be done on the official website of the SVH between 22nd July to 5th August." color="#138808" />
+                  <RuleCard num="05" title="Idea Submission" desc="Idea submission will be done on the official website of the SVH between 22nd July to 10th August." color="#138808" />
                 </div>
               </AccordionItem>
             </section>

@@ -496,13 +496,18 @@ export default function LeaderDashboard() {
               Leader: {teamInfo ? teamInfo.leaderName || 'Team Leader' : ''}
             </div>
           </div>
+          <div style={{ background: 'rgba(56, 189, 248, 0.1)', border: '1px solid rgba(56, 189, 248, 0.25)', borderRadius: 8, padding: '8px 10px', marginTop: 10, display: 'flex', alignItems: 'center', gap: 6 }}>
+            <span style={{ fontSize: 13 }}>⚖️</span>
+            <span style={{ color: '#38bdf8', fontSize: 10.5, fontWeight: 700, fontFamily: 'Montserrat, sans-serif' }}>
+              PPT Evaluation Phase Ongoing
+            </span>
+          </div>
         </div>
 
         {/* Sidebar Nav Buttons */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
           {[
             { id: 'teamDetails', label: 'Team Details', count: members.length },
-            { id: 'submission', label: 'Submit Idea', count: `${userSubmissions.length}/2`, highlight: userSubmissions.length < 2 },
             { id: 'review', label: 'Review Submissions', count: userSubmissions.length },
             { id: 'changeRequest', label: 'Change Requests', count: teamChangeRequests.length },
             { id: 'contacts', label: 'Contact Support' }
@@ -642,161 +647,35 @@ export default function LeaderDashboard() {
         )}
 
         {/* TAB 2: SUBMISSION */}
+        {/* TAB 2: SUBMISSION (CLOSED) */}
         {activeTab === 'submission' && (
           <div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 18, flexWrap: 'wrap', gap: 12 }}>
               <h1 style={{ fontFamily: 'Montserrat,sans-serif', fontWeight: 800, color: '#fff', fontSize: 24, margin: 0 }}>
                 Problem Statement Submission
               </h1>
-              <span style={{ background: 'rgba(255,153,51,0.15)', color: '#FF9933', border: '1px solid rgba(255,153,51,0.3)', padding: '5px 12px', borderRadius: 8, fontSize: 12, fontWeight: 700 }}>
-                {userSubmissions.length} of 2 Submissions Completed
+              <span style={{ background: 'rgba(239,68,68,0.15)', color: '#ef4444', border: '1px solid rgba(239,68,68,0.3)', padding: '5px 12px', borderRadius: 8, fontSize: 12, fontWeight: 700 }}>
+                Submission Phase Closed
               </span>
             </div>
 
-            {submissionStatus === 'loading' ? (
-              <p style={{ color: 'rgba(255,255,255,0.6)' }}>Loading...</p>
-            ) : userSubmissions.length >= 2 ? (
-              <div style={{ padding: '40px 20px', textAlign: 'center', background: '#0a1d33', borderRadius: 14, border: '1px solid rgba(74,222,128,0.3)' }}>
-                <div style={{ fontSize: 40, marginBottom: 12 }}>🎉</div>
-                <h3 style={{ margin: '0 0 8px', color: '#4ade80', fontFamily: 'Montserrat,sans-serif', fontSize: 20, fontWeight: 800 }}>
-                  Maximum Submissions Reached (2 / 2)
-                </h3>
-                <p style={{ color: 'rgba(255,255,255,0.8)', fontSize: 13, margin: '0 auto 16px', maxWidth: 480 }}>
-                  Your team has submitted the maximum allowed 2 problem statements. You can review both of your submitted ideas in the <strong>Review Submissions</strong> tab.
-                </p>
-                <button onClick={() => setActiveTab('review')} style={{ background: '#FF9933', color: '#000', padding: '8px 20px', borderRadius: 8, border: 'none', fontWeight: 700, fontSize: 12, cursor: 'pointer' }}>
+            <div style={{ padding: '50px 20px', textAlign: 'center', background: '#0a1d33', borderRadius: 14, border: '1px solid rgba(255,153,51,0.2)' }}>
+              <div style={{ fontSize: 48, marginBottom: 16 }}>🔒</div>
+              <h3 style={{ margin: '0 0 8px', color: '#fff', fontFamily: 'Montserrat,sans-serif', fontSize: 22, fontWeight: 800 }}>
+                PPT Submission Phase is Closed
+              </h3>
+              <p style={{ color: 'rgba(255,255,255,0.8)', fontSize: 14, margin: '0 auto 20px', maxWidth: 520, lineHeight: 1.6 }}>
+                The Round 1 PPT submission deadline was <strong>10th August 2026 (11:59 PM)</strong>. Idea submissions are now closed as our judging panel evaluates all submitted presentations.
+              </p>
+              <div style={{ background: 'rgba(56,189,248,0.1)', border: '1px solid rgba(56,189,248,0.3)', padding: '12px 20px', borderRadius: 8, display: 'inline-block', color: '#38bdf8', fontSize: 13, fontWeight: 600, marginBottom: 20 }}>
+                ⚖️ PPT Evaluation Phase is Currently Ongoing (10 – 15 Aug 2026)
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'center', gap: 12 }}>
+                <button onClick={() => setActiveTab('review')} style={{ background: '#FF9933', color: '#000', padding: '10px 24px', borderRadius: 8, border: 'none', fontWeight: 700, fontSize: 13, cursor: 'pointer' }}>
                   Review Submissions &rarr;
                 </button>
               </div>
-            ) : timeLeft ? (
-              <div style={{ padding: '50px 20px', textAlign: 'center', background: '#0a1d33', borderRadius: 14, border: '1px solid rgba(255,153,51,0.2)' }}>
-                <div style={{ fontSize: 40, marginBottom: 16 }}>⏳</div>
-                <h3 style={{ margin: '0 0 8px', color: '#fff', fontFamily: 'Montserrat,sans-serif', fontSize: 20, fontWeight: 700 }}>
-                  Submissions Open Soon
-                </h3>
-                <p style={{ color: 'rgba(255,255,255,0.6)', margin: '0 auto 24px', fontSize: 13, maxWidth: 450 }}>
-                  PPT submissions will begin on 20th July 2026. Get your ideas ready!
-                </p>
-                <div style={{ display: 'flex', justifyContent: 'center', gap: 14, flexWrap: 'wrap' }}>
-                  {Object.entries(timeLeft).map(([unit, value]) => (
-                    <div key={unit} style={{ background: 'rgba(0,0,0,0.3)', padding: '12px 16px', borderRadius: 8, minWidth: 70, border: '1px solid rgba(255,153,51,0.2)' }}>
-                      <div style={{ color: '#FF9933', fontSize: 24, fontWeight: 800, fontFamily: 'Montserrat,sans-serif' }}>
-                        {value.toString().padStart(2, '0')}
-                      </div>
-                      <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: 11, textTransform: 'uppercase', marginTop: 2 }}>
-                        {unit}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            ) : (
-              <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 16, background: '#0a1d33', border: '1px solid rgba(255,153,51,0.15)', borderRadius: 14, padding: 24 }}>
-                {/* Warning Banner */}
-                <div style={{ background: 'rgba(239, 68, 68, 0.12)', border: '1px solid rgba(239, 68, 68, 0.3)', borderRadius: 8, padding: '12px 16px', color: '#fca5a5', fontSize: 12.5, lineHeight: 1.5, display: 'flex', alignItems: 'center', gap: 10 }}>
-                  <span style={{ fontSize: 20, flexShrink: 0 }}>⚠️</span>
-                  <div>
-                    <strong style={{ color: '#ef4444', display: 'block', fontSize: 13, textTransform: 'uppercase' }}>Warning: Submissions are final & uneditable</strong>
-                    Once an idea is submitted, it <strong>cannot be edited or updated</strong>. Please double-check all problem statements, presentation slides, and URLs carefully before submitting!
-                  </div>
-                </div>
-
-                {/* Genuine Thoughts / AI Notice Banner */}
-                <div style={{ background: 'rgba(255, 153, 51, 0.1)', border: '1px solid rgba(255, 153, 51, 0.3)', borderRadius: 8, padding: '14px 18px', color: '#ffedd5', fontSize: 13, lineHeight: 1.6, display: 'flex', alignItems: 'flex-start', gap: 12 }}>
-                  <span style={{ fontSize: 22, flexShrink: 0 }}>💡</span>
-                  <div>
-                    <strong style={{ color: '#FF9933', display: 'block', fontSize: 13.5, marginBottom: 2, fontFamily: 'Montserrat,sans-serif' }}>Express Your Authentic Thoughts</strong>
-                    Please write your solution descriptions, use cases, and innovation details in your own words based on your actual knowledge and ideas. Avoid using AI tools to copy-paste generated text — our judges want to understand your team's genuine perspective and creative problem-solving approach!
-                  </div>
-                </div>
-
-                {submitError && <div style={{ padding: 10, background: 'rgba(239, 68, 68, 0.2)', border: '1px solid #ef4444', color: '#ef4444', borderRadius: 8, fontSize: 12 }}>{submitError}</div>}
-
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 12 }}>
-                  <div>
-                    <label style={{ display: 'block', fontWeight: 600, fontSize: 12, color: '#fff', marginBottom: 4 }}>Select PS Code *</label>
-                    <select value={problemCode} onChange={handleProblemCodeChange} required style={{ width: '100%', padding: '8px 10px', borderRadius: 6, border: '1px solid rgba(255,255,255,0.15)', background: 'rgba(0,0,0,0.3)', color: '#fff', fontSize: 12 }}>
-                      <option value="" style={{ color: '#000' }}>Choose PS Code...</option>
-                      {STATEMENTS.map(s => <option key={s.id} value={s.id} style={{ color: '#000' }}>{s.id} - {s.title.substring(0, 45)}...</option>)}
-                    </select>
-                  </div>
-                  <div>
-                    <label style={{ display: 'block', fontWeight: 600, fontSize: 12, color: '#fff', marginBottom: 4 }}>Select PS Title *</label>
-                    <select value={problemTitle} onChange={handleProblemTitleChange} required style={{ width: '100%', padding: '8px 10px', borderRadius: 6, border: '1px solid rgba(255,255,255,0.15)', background: 'rgba(0,0,0,0.3)', color: '#fff', fontSize: 12 }}>
-                      <option value="" style={{ color: '#000' }}>Choose PS Title...</option>
-                      {STATEMENTS.map(s => <option key={s.id} value={s.title} style={{ color: '#000' }}>{s.title}</option>)}
-                    </select>
-                  </div>
-                </div>
-
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 12 }}>
-                  <div>
-                    <label style={{ display: 'block', fontWeight: 600, fontSize: 12, color: '#fff', marginBottom: 4 }}>Theme</label>
-                    <input type="text" value={theme} readOnly style={{ width: '100%', padding: '8px 10px', borderRadius: 6, border: '1px solid rgba(255,255,255,0.1)', background: 'rgba(0,0,0,0.4)', color: '#FF9933', fontSize: 12, boxSizing: 'border-box' }} />
-                  </div>
-                  <div>
-                    <label style={{ display: 'block', fontWeight: 600, fontSize: 12, color: '#fff', marginBottom: 4 }}>Category</label>
-                    <input type="text" value={category} readOnly style={{ width: '100%', padding: '8px 10px', borderRadius: 6, border: '1px solid rgba(255,255,255,0.1)', background: 'rgba(0,0,0,0.4)', color: '#FF9933', fontSize: 12, boxSizing: 'border-box' }} />
-                  </div>
-                </div>
-
-                <div>
-                  <label style={{ display: 'block', fontWeight: 600, fontSize: 12, color: '#fff', marginBottom: 4 }}>Idea Title *</label>
-                  <input type="text" value={ideaTitle} onChange={e => setIdeaTitle(e.target.value)} required placeholder="Short catchy title..." style={{ width: '100%', padding: '8px 10px', borderRadius: 6, border: '1px solid rgba(255,255,255,0.15)', background: 'rgba(0,0,0,0.3)', color: '#fff', fontSize: 12, boxSizing: 'border-box' }} />
-                </div>
-
-                <div>
-                  <label style={{ display: 'block', fontWeight: 600, fontSize: 12, color: '#fff', marginBottom: 4 }}>Real-life Use Case *</label>
-                  <textarea rows="2" value={useCase} onChange={e => setUseCase(e.target.value)} required placeholder="Explain real-world usage..." style={{ width: '100%', padding: '8px 10px', borderRadius: 6, border: '1px solid rgba(255,255,255,0.15)', background: 'rgba(0,0,0,0.3)', color: '#fff', fontSize: 12, boxSizing: 'border-box' }} />
-                </div>
-
-                <div>
-                  <label style={{ display: 'block', fontWeight: 600, fontSize: 12, color: '#fff', marginBottom: 4 }}>Target Audience & Stakeholders *</label>
-                  <textarea rows="2" value={targetAudience} onChange={e => setTargetAudience(e.target.value)} required placeholder="Who will benefit?" style={{ width: '100%', padding: '8px 10px', borderRadius: 6, border: '1px solid rgba(255,255,255,0.15)', background: 'rgba(0,0,0,0.3)', color: '#fff', fontSize: 12, boxSizing: 'border-box' }} />
-                </div>
-
-                <div>
-                  <label style={{ display: 'block', fontWeight: 600, fontSize: 12, color: '#fff', marginBottom: 4 }}>Unique Idea & Innovation *</label>
-                  <textarea rows="2" value={uniqueIdea} onChange={e => setUniqueIdea(e.target.value)} required placeholder="What makes your solution unique?" style={{ width: '100%', padding: '8px 10px', borderRadius: 6, border: '1px solid rgba(255,255,255,0.15)', background: 'rgba(0,0,0,0.3)', color: '#fff', fontSize: 12, boxSizing: 'border-box' }} />
-                </div>
-
-                <div>
-                  <label style={{ display: 'block', fontWeight: 600, fontSize: 12, color: '#fff', marginBottom: 4 }}>Detailed Description of Solution *</label>
-                  <textarea rows="3" value={ideaDesc} onChange={e => setIdeaDesc(e.target.value)} required placeholder="Explain technical architecture and workflow..." style={{ width: '100%', padding: '8px 10px', borderRadius: 6, border: '1px solid rgba(255,255,255,0.15)', background: 'rgba(0,0,0,0.3)', color: '#fff', fontSize: 12, boxSizing: 'border-box' }} />
-                </div>
-
-                {/* Upload PPT File (.pdf only, max 6 pages) */}
-                <div>
-                  <label style={{ display: 'block', fontWeight: 600, fontSize: 12, color: '#fff', marginBottom: 4 }}>Upload Presentation Deck (.pdf only, max 6 pages)</label>
-                  <div style={{ border: '1.5px dashed rgba(255,153,51,0.3)', borderRadius: 8, padding: '16px', textAlign: 'center', background: 'rgba(0,0,0,0.2)' }}>
-                    <input type="file" accept=".pdf,application/pdf" onChange={handlePptFileSelect} style={{ display: 'none' }} id="ppt-file-upload" />
-                    <label htmlFor="ppt-file-upload" style={{ cursor: 'pointer', display: 'block' }}>
-                      <div style={{ color: '#fff', fontWeight: 600, fontSize: 12.5 }}>
-                        {pptFile ? `Selected: ${pptFile.name}` : 'Click to select .pdf presentation file'}
-                      </div>
-                      <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: 11, marginTop: 2 }}>
-                        Must be a PDF document &middot; Up to 20MB &middot; Max 6 pages
-                      </div>
-                    </label>
-                  </div>
-                </div>
-
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 12 }}>
-                  <div>
-                    <label style={{ display: 'block', fontWeight: 600, fontSize: 12, color: '#fff', marginBottom: 4 }}>YouTube Link (Optional)</label>
-                    <input type="url" value={ytLink} onChange={e => setYtLink(e.target.value)} placeholder="https://youtube.com/..." style={{ width: '100%', padding: '8px 10px', borderRadius: 6, border: '1px solid rgba(255,255,255,0.15)', background: 'rgba(0,0,0,0.3)', color: '#fff', fontSize: 12, boxSizing: 'border-box' }} />
-                  </div>
-                  <div>
-                    <label style={{ display: 'block', fontWeight: 600, fontSize: 12, color: '#fff', marginBottom: 4 }}>Drive Doc Link (Optional)</label>
-                    <input type="url" value={documentLink} onChange={e => setDocumentLink(e.target.value)} placeholder="https://drive.google.com/..." style={{ width: '100%', padding: '8px 10px', borderRadius: 6, border: '1px solid rgba(255,255,255,0.15)', background: 'rgba(0,0,0,0.3)', color: '#fff', fontSize: 12, boxSizing: 'border-box' }} />
-                  </div>
-                </div>
-
-                <button disabled={submitting} type="submit" style={{ background: '#FF9933', color: '#000', padding: '10px 24px', borderRadius: 8, border: 'none', fontWeight: 700, fontSize: 13, cursor: submitting ? 'not-allowed' : 'pointer', opacity: submitting ? 0.7 : 1, alignSelf: 'flex-start' }}>
-                  {submitting ? 'Submitting...' : `Submit Idea (Submission #${userSubmissions.length + 1})`}
-                </button>
-              </form>
-            )}
+            </div>
           </div>
         )}
 
