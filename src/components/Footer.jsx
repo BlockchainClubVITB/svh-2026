@@ -30,10 +30,10 @@ const quickLinks = [
 ];
 
 const timelineLinks = [
-  { label: 'Registration: 1–25 July 2026',        phase: 'Round 1' },
-  { label: 'PPT Submission: 20 Jul – 10 Aug 2026', phase: 'Round 2' },
-  { label: 'Evaluation: 10–15 Aug 2026',          phase: 'Results' },
-  { label: 'Grand Finale: 24–25 Aug 2026',        phase: 'Finale' },
+  { label: 'Registration: 1–25 July 2026',        phase: 'Closed' },
+  { label: 'PPT Submission: 20 Jul – 10 Aug 2026', phase: 'Closed' },
+  { label: 'PPT Evaluation: 10–15 Aug 2026',      phase: 'Ongoing' },
+  { label: 'Grand Finale: 24–25 Aug 2026',        phase: 'Upcoming' },
 ];
 
 export default function Footer() {

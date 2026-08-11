@@ -119,6 +119,7 @@ function CountdownTimer() {
   const opens = new Date('2026-07-01T00:00:00+05:30');
   const regCloses = new Date('2026-07-25T23:59:59+05:30');
   const pptCloses = new Date('2026-08-10T23:59:59+05:30');
+  const evalCloses = new Date('2026-08-15T23:59:59+05:30');
   const finaleStarts = new Date('2026-08-24T09:00:00+05:30');
 
   let phase = { label: 'Registration Opens In', target: '2026-07-01T00:00:00+05:30', color: '#FF9933' };
@@ -129,7 +130,9 @@ function CountdownTimer() {
     phase = { label: 'Registration Closes In', target: '2026-07-25T23:59:59+05:30', color: '#FF9933' };
   } else if (now >= regCloses && now < pptCloses) {
     phase = { label: 'PPT Submission Closes In', target: '2026-08-10T23:59:59+05:30', color: '#138808' };
-  } else if (now >= pptCloses && now < finaleStarts) {
+  } else if (now >= pptCloses && now < evalCloses) {
+    phase = { label: 'PPT Evaluation Ongoing — Shortlist Announcement In', target: '2026-08-15T23:59:59+05:30', color: '#38bdf8' };
+  } else if (now >= evalCloses && now < finaleStarts) {
     phase = { label: 'Grand Finale Begins In', target: '2026-08-24T09:00:00+05:30', color: '#06038D' };
   } else {
     phase = { label: 'Event Ongoing', target: '2026-08-25T18:00:00+05:30', color: '#FF9933' };
@@ -378,14 +381,14 @@ function HeroSection() {
           ) : (
             <>
               <Link to="/login" style={{
-                padding: '14px 38px', background: 'linear-gradient(135deg, #138808, #0f6d06)',
+                padding: '14px 38px', background: 'linear-gradient(135deg, #0284c7, #0369a1)',
                 color: '#fff', borderRadius: 8, fontSize: 13, fontFamily: 'Montserrat,sans-serif',
                 fontWeight: 800, textDecoration: 'none', textTransform: 'uppercase', letterSpacing: 1.5,
-                boxShadow: '0 6px 24px rgba(19,136,8,0.4)', transition: 'all 0.25s', display: 'inline-block',
+                boxShadow: '0 6px 24px rgba(2,132,199,0.4)', transition: 'all 0.25s', display: 'inline-block',
               }}
-                onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-3px)'; e.currentTarget.style.boxShadow = '0 12px 34px rgba(19,136,8,0.55)'; }}
-                onMouseLeave={e => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = '0 6px 24px rgba(19,136,8,0.4)'; }}>
-                Submit PPT (Round 1)
+                onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-3px)'; e.currentTarget.style.boxShadow = '0 12px 34px rgba(2,132,199,0.55)'; }}
+                onMouseLeave={e => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = '0 6px 24px rgba(2,132,199,0.4)'; }}>
+                Team Leader Portal
               </Link>
               <Link to="/problem-statements" style={{
                 padding: '14px 38px', background: 'transparent', color: '#fff', borderRadius: 8,
@@ -837,8 +840,8 @@ function AboutSection() {
    ═══════════════════════════════════════════════ */
 const timelinePhases = [
   { num: 1, title: 'Registration', date: '1 – 25 July 2026', desc: 'Teams of 6 register online. Minimum 1 female member mandatory. Fee: ₹75/member (₹450/team). Register through the official Google Form.', icon: '✍️', color: '#FF9933' },
-  { num: 2, title: 'PPT Submission', date: '22 July – 10 Aug 2026', desc: 'Submit a comprehensive presentation covering problem understanding, proposed solution, technical architecture, expected impact & implementation roadmap.', icon: '📊', color: '#138808' },
-  { num: 3, title: 'PPT Evaluation', date: '10 – 15 Aug 2026', desc: 'Internal panel evaluates all submissions. Top 5 teams per problem statement shortlisted. Max 60 finalist teams across all 12 PSs.', icon: '⚖️', color: '#06038D' },
+  { num: 2, title: 'PPT Submission', date: '22 July – 10 Aug 2026', desc: 'Submission phase completed on 10th August. All presentation decks submitted by registered teams.', icon: '📊', color: '#138808' },
+  { num: 3, title: 'PPT Evaluation (Ongoing)', date: '10 – 15 Aug 2026', desc: 'Ongoing phase. Internal judging panel evaluates all submitted presentations. Top 5 teams per problem statement will be shortlisted for the Grand Finale.', icon: '⚖️', color: '#38bdf8' },
   { num: 4, title: 'Results', date: 'Post 15 Aug 2026', desc: 'Shortlisted finalist teams officially announced. Teams notified through internal college channels and official platforms.', icon: '📢', color: '#FF9933' },
   { num: 5, title: 'Grand Finale', date: '24 – 25 Aug 2026', desc: 'Finalists build a functional prototype at VIT Bhopal. 2-day, 12-hr offline format. Subject to OD approval from the institute.', icon: '🚀', color: '#138808' },
 ];
@@ -1195,13 +1198,13 @@ function RegistrationCTA() {
         ) : (
           <>
             <p style={{ color: 'rgba(255,255,255,0.85)', fontSize: 16, fontFamily: 'Poppins,sans-serif', lineHeight: 1.75, marginBottom: 24, maxWidth: 620, margin: '0 auto 24px' }}>
-              Registration phase has ended. PPT Submissions are now open for all registered teams until <strong style={{ color: '#138808' }}>10 August 2026</strong>.
+              PPT Submission phase has ended. <strong style={{ color: '#38bdf8' }}>PPT Evaluation Phase</strong> is currently ongoing by our panel of evaluators (10–15 August 2026).
             </p>
             <div style={{ display: 'flex', gap: 14, justifyContent: 'center', flexWrap: 'wrap', alignItems: 'center' }}>
-              <Link to="/login" style={{ padding: '14px 40px', background: 'linear-gradient(135deg, #138808, #0f6d06)', color: '#fff', borderRadius: 8, fontSize: 13, fontFamily: 'Montserrat,sans-serif', fontWeight: 800, textDecoration: 'none', textTransform: 'uppercase', letterSpacing: 1.5, boxShadow: '0 6px 24px rgba(19,136,8,0.4)', transition: 'all 0.25s', display: 'inline-block' }}
-                onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 12px 34px rgba(19,136,8,0.6)'; }}
-                onMouseLeave={e => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = '0 6px 24px rgba(19,136,8,0.4)'; }}>
-                Submit PPT (Round 1)
+              <Link to="/login" style={{ padding: '14px 40px', background: 'linear-gradient(135deg, #0284c7, #0369a1)', color: '#fff', borderRadius: 8, fontSize: 13, fontFamily: 'Montserrat,sans-serif', fontWeight: 800, textDecoration: 'none', textTransform: 'uppercase', letterSpacing: 1.5, boxShadow: '0 6px 24px rgba(2,132,199,0.4)', transition: 'all 0.25s', display: 'inline-block' }}
+                onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 12px 34px rgba(2,132,199,0.6)'; }}
+                onMouseLeave={e => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = '0 6px 24px rgba(2,132,199,0.4)'; }}>
+                Team Leader Portal
               </Link>
               <a href="https://chat.whatsapp.com/L7lXF9VZQRDCx0aXXwBhGw?s=sw&p=a&mlu=2" target="_blank" rel="noopener noreferrer" style={{ padding: '14px 40px', background: '#16a34a', color: '#fff', borderRadius: 8, fontSize: 13, fontFamily: 'Montserrat,sans-serif', fontWeight: 800, textDecoration: 'none', textTransform: 'uppercase', letterSpacing: 1.5, boxShadow: '0 6px 24px rgba(22,163,74,0.4)', transition: 'all 0.25s', display: 'inline-block' }}
                 onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 12px 34px rgba(22,163,74,0.6)'; }}
@@ -1390,7 +1393,7 @@ function OrientationModal() {
             margin: '0 0 10px',
             letterSpacing: -0.5
           }}>
-            PPT Submission Deadline Approaching!
+            PPT Evaluation Phase Ongoing!
           </h3>
 
           <p style={{
@@ -1401,7 +1404,7 @@ function OrientationModal() {
             margin: '0 0 16px',
             textAlign: 'left'
           }}>
-            📢 Attention all registered teams! The Round 1 Presentation PPT submission deadline for <strong>SVH 2026</strong> is <strong style={{ color: '#4ade80' }}>10th August 2026 (11:59 PM)</strong>. Ensure your presentation PDF is submitted before the deadline.
+            📢 Attention all registered teams! PPT submission for <strong>SVH 2026</strong> is now <strong>CLOSED</strong>. Our judging panel is actively evaluating all submitted presentations. Shortlisted finalist teams will be announced post 15th August 2026.
           </p>
 
           <div style={{
@@ -1417,77 +1420,49 @@ function OrientationModal() {
           }}>
             <div style={{ display: 'flex', gap: 10, alignItems: 'center', fontSize: 13, color: '#fff', fontFamily: 'Poppins,sans-serif' }}>
               <span>✍️</span>
-              <span>Registration Status: <strong style={{ color: '#FF9933' }}>Closed (25th July 2026)</strong></span>
+              <span>Registration: <strong style={{ color: '#FF9933' }}>Closed (25th July 2026)</strong></span>
             </div>
             <div style={{ display: 'flex', gap: 10, alignItems: 'center', fontSize: 13, color: '#fff', fontFamily: 'Poppins,sans-serif' }}>
               <span>📊</span>
-              <span>Presentation PPT Submission Deadline: <strong style={{ color: '#4ade80' }}>10th August 2026</strong></span>
+              <span>PPT Submissions: <strong style={{ color: '#ef4444' }}>Closed (10th August 2026)</strong></span>
+            </div>
+            <div style={{ display: 'flex', gap: 10, alignItems: 'center', fontSize: 13, color: '#fff', fontFamily: 'Poppins,sans-serif' }}>
+              <span>⚖️</span>
+              <span>PPT Evaluation: <strong style={{ color: '#38bdf8' }}>Ongoing (10th – 15th August 2026)</strong></span>
             </div>
           </div>
 
           {/* Action Buttons */}
           <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', justifyContent: 'center' }}>
             <Link
-              to="/dashboard"
+              to="/login"
               style={{
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: 8,
                 padding: '11px 22px',
-                background: 'linear-gradient(135deg, #FF9933 0%, #e07800 100%)',
+                background: 'linear-gradient(135deg, #0284c7 0%, #0369a1 100%)',
                 color: '#fff',
                 borderRadius: 8,
                 fontSize: 12,
                 fontFamily: 'Montserrat,sans-serif',
                 fontWeight: 800,
                 textDecoration: 'none',
-                boxShadow: '0 4px 14px rgba(255, 153, 51, 0.3)',
+                boxShadow: '0 4px 14px rgba(2, 132, 199, 0.3)',
                 transition: 'all 0.25s',
                 textTransform: 'uppercase'
               }}
               onMouseEnter={e => {
                 e.currentTarget.style.transform = 'translateY(-2px)';
-                e.currentTarget.style.boxShadow = '0 6px 20px rgba(255, 153, 51, 0.45)';
+                e.currentTarget.style.boxShadow = '0 6px 20px rgba(2, 132, 199, 0.45)';
               }}
               onMouseLeave={e => {
                 e.currentTarget.style.transform = 'none';
-                e.currentTarget.style.boxShadow = '0 4px 14px rgba(255, 153, 51, 0.3)';
+                e.currentTarget.style.boxShadow = '0 4px 14px rgba(2, 132, 199, 0.3)';
               }}
             >
-              📊 Submit PPT Now
+              🔐 Team Leader Portal
             </Link>
-
-            <a
-              href="https://docs.google.com/presentation/d/17MCZsoHCGdJTqVKxhuHExweQI1M-0w59/edit?usp=drive_link&ouid=105509570291334746986&rtpof=true&sd=true"
-              target="_blank"
-              rel="noopener noreferrer"
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: 8,
-                padding: '11px 22px',
-                background: 'rgba(255, 255, 255, 0.1)',
-                border: '1px solid rgba(255, 255, 255, 0.25)',
-                color: '#fff',
-                borderRadius: 8,
-                fontSize: 12,
-                fontFamily: 'Montserrat,sans-serif',
-                fontWeight: 800,
-                textDecoration: 'none',
-                transition: 'all 0.25s',
-                textTransform: 'uppercase'
-              }}
-              onMouseEnter={e => {
-                e.currentTarget.style.transform = 'translateY(-2px)';
-                e.currentTarget.style.background = 'rgba(255, 255, 255, 0.2)';
-              }}
-              onMouseLeave={e => {
-                e.currentTarget.style.transform = 'none';
-                e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)';
-              }}
-            >
-              📥 PPT Template
-            </a>
 
             <a
               href="https://chat.whatsapp.com/L7lXF9VZQRDCx0aXXwBhGw?s=sw&p=a&mlu=2"
