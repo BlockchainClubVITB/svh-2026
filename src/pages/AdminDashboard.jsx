@@ -690,6 +690,59 @@ export default function AdminDashboard() {
     }
   };
 
+  const handleAssignPsToEvaluator = async (psCode, targetEvaluatorEmail) => {
+    setActionLoading(true);
+    try {
+      // 1. Find all submissions for this problem statement code
+      const targetSubmissions = submissions.filter(s => s.problem_code === psCode);
+      const targetIdeaIds = targetSubmissions.map(s => s.idea_id);
+
+      if (targetIdeaIds.length === 0) {
+        alert(`No submissions found for problem statement code ${psCode} to assign!`);
+        setActionLoading(false);
+        return;
+      }
+
+      // 2. Delete any existing assignments for these ideas (so they are unassigned from whoever has them)
+      const { error: delErr } = await supabase
+        .from('evaluator_assignments')
+        .delete()
+        .in('idea_id', targetIdeaIds);
+
+      if (delErr) throw delErr;
+
+      // 3. If targetEvaluatorEmail is provided, assign all these ideas to this evaluator!
+      if (targetEvaluatorEmail) {
+        const evaluatorObj = evaluators.find(e => e.email === targetEvaluatorEmail);
+        if (!evaluatorObj) throw new Error('Evaluator profile not found in active evaluators list.');
+
+        const newAssignments = targetSubmissions.map(sub => ({
+          evaluator_id: evaluatorObj.id,
+          evaluator_email: evaluatorObj.email,
+          idea_id: sub.idea_id,
+          team_id: sub.team_id
+        }));
+
+        const { error: insErr } = await supabase
+          .from('evaluator_assignments')
+          .insert(newAssignments);
+
+        if (insErr) throw insErr;
+        
+        await fetchAllAdminData();
+        alert(`Assigned all ${targetSubmissions.length} ideas of PS ${psCode} to ${evaluatorObj.name}!`);
+      } else {
+        await fetchAllAdminData();
+        alert(`Unassigned all ideas of PS ${psCode}.`);
+      }
+    } catch (err) {
+      console.error("PS Assignment Error:", err);
+      alert(`Assignment error: ${err.message}`);
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
   // --- CHANGE REQUESTS & LIVE DIRECT SUPABASE UPDATES ---
   const parseChangeRequestPayload = (description) => {
     if (!description) return null;
@@ -1346,6 +1399,82 @@ export default function AdminDashboard() {
                 + Create New Evaluator
               </button>
             </div>
+
+            {/* Quick PS-level Assignment Matrix */}
+            <div style={{ background: '#0a1d33', border: '1px solid rgba(255,153,51,0.2)', borderRadius: 14, padding: 20, marginBottom: 24 }}>
+              <h2 style={{ margin: '0 0 4px', color: '#FF9933', fontFamily: 'Montserrat,sans-serif', fontSize: 17, fontWeight: 800 }}>
+                Direct Problem Statement Assignment Matrix
+              </h2>
+              <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: 12, margin: '0 0 16px' }}>
+                Quickly assign all submissions under a Problem Statement (PS) to a single evaluator. Selecting an evaluator from the dropdown will instantly reassign all submissions under that PS.
+              </p>
+
+              <div style={{ overflowX: 'auto' }}>
+                <table style={{ width: '100%', borderCollapse: 'collapse', color: '#fff', fontSize: 12.5 }}>
+                  <thead>
+                    <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.1)', textAlign: 'left', color: 'rgba(255,255,255,0.7)' }}>
+                      <th style={{ padding: '10px 12px', color: '#FF9933' }}>PS Code</th>
+                      <th style={{ padding: '10px 12px' }}>Problem Statement Title</th>
+                      <th style={{ padding: '10px 12px', textAlign: 'center' }}>Category</th>
+                      <th style={{ padding: '10px 12px', textAlign: 'center' }}>Submissions</th>
+                      <th style={{ padding: '10px 12px' }}>Assigned Evaluator</th>
+                      <th style={{ padding: '10px 12px', textAlign: 'right' }}>Assign Evaluator</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {STATEMENTS.map(ps => {
+                      const psSubmissions = submissions.filter(s => s.problem_code === ps.id);
+                      const psIdeaIds = psSubmissions.map(s => s.idea_id);
+                      const psAssignments = assignments.filter(a => psIdeaIds.includes(a.idea_id));
+                      const assignedEmails = [...new Set(psAssignments.map(a => a.evaluator_email))];
+                      
+                      let statusText = 'Unassigned';
+                      let statusColor = 'rgba(255,255,255,0.4)';
+                      let currentAssignedEmail = '';
+
+                      if (assignedEmails.length === 1) {
+                        const evalObj = evaluators.find(e => e.email === assignedEmails[0]);
+                        statusText = evalObj ? `${evalObj.name} (${evalObj.email})` : assignedEmails[0];
+                        statusColor = '#4ade80';
+                        currentAssignedEmail = assignedEmails[0];
+                      } else if (assignedEmails.length > 1) {
+                        statusText = 'Split Assignment';
+                        statusColor = '#f472b6';
+                      }
+
+                      return (
+                        <tr key={ps.id} style={{ borderBottom: '1px solid rgba(255,255,255,0.04)', background: currentAssignedEmail ? 'rgba(74,222,128,0.02)' : 'transparent' }}>
+                          <td style={{ padding: '10px 12px', fontWeight: 800, fontFamily: 'Courier New, monospace', color: '#FF9933' }}>{ps.id}</td>
+                          <td style={{ padding: '10px 12px', fontWeight: 600, maxWidth: 280, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{ps.title}</td>
+                          <td style={{ padding: '10px 12px', textAlign: 'center', color: 'rgba(255,255,255,0.6)', fontSize: 11.5 }}>{ps.category}</td>
+                          <td style={{ padding: '10px 12px', textAlign: 'center', fontWeight: 700, color: '#38bdf8' }}>{psSubmissions.length}</td>
+                          <td style={{ padding: '10px 12px', color: statusColor, fontWeight: currentAssignedEmail ? 600 : 400 }}>{statusText}</td>
+                          <td style={{ padding: '10px 12px', textAlign: 'right' }}>
+                            <select
+                              value={currentAssignedEmail}
+                              disabled={actionLoading}
+                              onChange={(e) => handleAssignPsToEvaluator(ps.id, e.target.value)}
+                              style={{ padding: '5px 8px', borderRadius: 6, border: '1px solid rgba(255,255,255,0.15)', background: 'rgba(0,0,0,0.3)', color: '#fff', fontSize: 11.5, outline: 'none' }}
+                            >
+                              <option value="" style={{ color: '#000' }}>-- Unassign / Select --</option>
+                              {evaluators.map(ev => (
+                                <option key={ev.id} value={ev.email} style={{ color: '#000' }}>
+                                  {ev.name || ev.email}
+                                </option>
+                              ))}
+                            </select>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <h3 style={{ margin: '0 0 12px', color: '#fff', fontFamily: 'Montserrat,sans-serif', fontSize: 16, fontWeight: 700 }}>
+              Evaluator-wise Granular Assignments
+            </h3>
 
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 16, marginBottom: 24 }}>
               {evaluators.map(ev => {
