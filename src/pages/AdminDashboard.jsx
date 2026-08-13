@@ -1002,6 +1002,40 @@ export default function AdminDashboard() {
     }).sort((a, b) => b.score - a.score);
   }, [submissions, evaluations, selectedPsForResults]);
 
+  // Group teams with exactly 2 submissions for Submission Tracker
+  const doubleSubmissionTeams = useMemo(() => {
+    const teamSubMap = {};
+    submissions.forEach(sub => {
+      if (!teamSubMap[sub.team_id]) {
+        teamSubMap[sub.team_id] = [];
+      }
+      teamSubMap[sub.team_id].push(sub);
+    });
+
+    const list = [];
+    Object.keys(teamSubMap).forEach(teamId => {
+      const subs = teamSubMap[teamId];
+      if (subs.length === 2) {
+        const teamObj = teams.find(t => t.id === teamId) || { id: teamId, team_name: 'Unknown Team' };
+        list.push({
+          team: teamObj,
+          subs: subs
+        });
+      }
+    });
+
+    return list;
+  }, [submissions, teams]);
+
+  const filteredDoubleSubmissionTeams = useMemo(() => {
+    if (!searchQuery.trim()) return doubleSubmissionTeams;
+    const q = searchQuery.toLowerCase();
+    return doubleSubmissionTeams.filter(item =>
+      item.team.id.toLowerCase().includes(q) ||
+      (item.team.team_name && item.team.team_name.toLowerCase().includes(q))
+    );
+  }, [doubleSubmissionTeams, searchQuery]);
+
   // Filtered Submissions for Evaluator Assignment tab
   const visibleSubmissionsForAssignment = useMemo(() => {
     let list = submissions;
@@ -1094,6 +1128,7 @@ export default function AdminDashboard() {
             { id: 'analytics', label: 'Dashboard & Analytics' },
             { id: 'teams', label: 'Teams & Members', count: teams.length },
             { id: 'submissions', label: 'Idea Submissions', count: submissions.length },
+            { id: 'submissionTracker', label: 'Submission Tracker', count: doubleSubmissionTeams.length },
             { id: 'evaluators', label: 'Evaluators & Assignments', count: evaluators.length },
             { id: 'leaderboard', label: 'PS Scores & Leaderboard', count: evaluations.length },
             { id: 'results', label: 'Manage Results' },
@@ -1846,6 +1881,103 @@ export default function AdminDashboard() {
                     </tbody>
                   </table>
                 </div>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* TAB 8: SUBMISSION TRACKER (TEAMS WITH 2 SUBMISSIONS) */}
+        {activeTab === 'submissionTracker' && (
+          <div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 18, flexWrap: 'wrap', gap: 12 }}>
+              <div>
+                <h1 style={{ fontFamily: 'Montserrat,sans-serif', fontWeight: 800, color: '#fff', fontSize: 24, margin: 0 }}>
+                  Double Submissions Tracker ({filteredDoubleSubmissionTeams.length})
+                </h1>
+                <p style={{ color: 'rgba(255,255,255,0.5)', fontSize: 12, margin: '2px 0 0 0' }}>
+                  Monitoring all teams that have successfully submitted both of their allowed ideas.
+                </p>
+              </div>
+
+              <input
+                type="text"
+                placeholder="Search Team ID or Name..."
+                value={searchQuery}
+                onChange={e => setSearchQuery(e.target.value)}
+                style={{ padding: '8px 14px', borderRadius: 8, border: '1px solid rgba(255,255,255,0.15)', background: 'rgba(0,0,0,0.3)', color: '#fff', outline: 'none', width: 260, fontSize: 12 }}
+              />
+            </div>
+
+            {filteredDoubleSubmissionTeams.length === 0 ? (
+              <div style={{ padding: '60px 20px', textAlign: 'center', background: '#0a1d33', borderRadius: 14, color: 'rgba(255,255,255,0.4)', fontSize: 13, border: '1px solid rgba(255,255,255,0.06)' }}>
+                No teams found with exactly 2 submissions matching search query.
+              </div>
+            ) : (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+                {filteredDoubleSubmissionTeams.map((item, idx) => {
+                  return (
+                    <div key={item.team.id || idx} style={{ background: '#0a1d33', border: '1px solid rgba(255,153,51,0.2)', borderRadius: 16, padding: 20 }}>
+                      
+                      {/* Team Header Info */}
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid rgba(255,255,255,0.06)', paddingBottom: 12, marginBottom: 16, flexWrap: 'wrap', gap: 10 }}>
+                        <div>
+                          <span style={{ fontSize: 10, textTransform: 'uppercase', color: '#FF9933', fontWeight: 800, letterSpacing: 0.5 }}>Team Details</span>
+                          <h2 style={{ margin: '2px 0 0', color: '#fff', fontSize: 17, fontWeight: 800, fontFamily: 'Montserrat, sans-serif' }}>
+                            {item.team.team_name}
+                          </h2>
+                          <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: 11.5 }}>
+                            Email: {item.team.email || '-'} | Password: {item.team.password || '-'}
+                          </div>
+                        </div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                          <span style={{ background: 'rgba(255,153,51,0.15)', color: '#FF9933', fontSize: 11, fontWeight: 800, padding: '4px 10px', borderRadius: 6, fontFamily: 'Courier New, monospace' }}>
+                            Team ID: {item.team.id}
+                          </span>
+                          <button
+                            onClick={() => openViewTeamModal(item.team)}
+                            style={{ background: 'rgba(255,255,255,0.08)', color: '#fff', border: '1px solid rgba(255,255,255,0.15)', padding: '5px 10px', borderRadius: 6, cursor: 'pointer', fontSize: 11, fontWeight: 600 }}
+                          >
+                            View Members
+                          </button>
+                        </div>
+                      </div>
+
+                      {/* Submissions side-by-side or grid */}
+                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 16 }}>
+                        {item.subs.map((sub, sIdx) => {
+                          return (
+                            <div key={sub.id || sIdx} style={{ background: 'rgba(0,0,0,0.2)', border: '1px solid rgba(255,255,255,0.04)', borderRadius: 12, padding: 16 }}>
+                              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
+                                <span style={{ background: '#FF9933', color: '#000', fontWeight: 800, padding: '2px 8px', borderRadius: 6, fontSize: 10.5, fontFamily: 'Courier New, monospace' }}>
+                                  Idea #{sIdx + 1}: {sub.idea_id}
+                                </span>
+                                <span style={{ color: '#FF9933', fontWeight: 800, fontSize: 11.5 }}>{sub.problem_code}</span>
+                              </div>
+
+                              <h3 style={{ margin: '0 0 6px', color: '#fff', fontSize: 14.5, fontWeight: 700 }}>{sub.idea_title}</h3>
+                              <p style={{ fontSize: 12, color: 'rgba(255,255,255,0.7)', margin: '0 0 8px' }}><strong>Problem:</strong> {sub.problem_statement}</p>
+                              
+                              <div style={{ display: 'flex', flexDirection: 'column', gap: 4, background: 'rgba(0,0,0,0.15)', padding: 10, borderRadius: 8, fontSize: 11.5, color: 'rgba(255,255,255,0.8)' }}>
+                                {sub.use_case && <div><strong>Use Case:</strong> {sub.use_case}</div>}
+                                {sub.target_audience && <div><strong>Audience:</strong> {sub.target_audience}</div>}
+                                {sub.innovative_features && <div><strong>Innovations:</strong> {sub.innovative_features}</div>}
+                                {sub.technical_description && <div><strong>Tech Description:</strong> {sub.technical_description}</div>}
+                              </div>
+
+                              {/* Media links */}
+                              <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginTop: 12, paddingTop: 12, borderTop: '1px solid rgba(255,255,255,0.05)' }}>
+                                {sub.ppt_url && <a href={sub.ppt_url} target="_blank" rel="noreferrer" style={{ color: '#4ade80', fontSize: 11, textDecoration: 'none', background: 'rgba(74,222,128,0.12)', padding: '4px 8px', borderRadius: 6, border: '1px solid rgba(74,222,128,0.25)', fontWeight: 600 }}>PPT PDF</a>}
+                                {sub.yt_link && <a href={sub.yt_link} target="_blank" rel="noreferrer" style={{ color: '#ef4444', fontSize: 11, textDecoration: 'none', background: 'rgba(239,68,68,0.12)', padding: '4px 8px', borderRadius: 6, border: '1px solid rgba(239,68,68,0.25)', fontWeight: 600 }}>Video</a>}
+                                {sub.document_link && <a href={sub.document_link} target="_blank" rel="noreferrer" style={{ color: '#38bdf8', fontSize: 11, textDecoration: 'none', background: 'rgba(56,189,248,0.12)', padding: '4px 8px', borderRadius: 6, border: '1px solid rgba(56,189,248,0.25)', fontWeight: 600 }}>Drive Doc</a>}
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+
+                    </div>
+                  );
+                })}
               </div>
             )}
           </div>

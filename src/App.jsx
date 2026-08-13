@@ -19,6 +19,7 @@ import TestEmail from './pages/TestEmail';
 import ComingSoon from './pages/ComingSoon';
 import IDCard from './components/IDCard';
 import MentorConnect from './pages/MentorConnect';
+import Results from './pages/Results';
 
 function AppContent() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -145,6 +146,7 @@ function AppContent() {
           <Route path="/coming-soon" element={<ComingSoon />} />
           <Route path="/id-card" element={<IDCard />} />
           <Route path="/mentor-connect" element={<MentorConnect />} />
+          <Route path="/results" element={<Results />} />
         </Routes>
       </main>
       {!isDashboard && <Footer />}
