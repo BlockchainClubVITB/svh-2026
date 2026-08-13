@@ -29,6 +29,7 @@ export default function AdminDashboard() {
   const [selectedPsFilter, setSelectedPsFilter] = useState('ALL');
   const [selectedEvaluatorFilter, setSelectedEvaluatorFilter] = useState('ALL');
   const [changeReqStatusFilter, setChangeReqStatusFilter] = useState('ALL');
+  const [selectedPsForResults, setSelectedPsForResults] = useState('');
 
   // Modals state
   const [viewingTeamDetailsModal, setViewingTeamDetailsModal] = useState(null); // { team, members }
@@ -57,7 +58,7 @@ export default function AdminDashboard() {
   const [emailIsHtml, setEmailIsHtml] = useState(true);
   const [emailPsFilter, setEmailPsFilter] = useState('ALL');
   const [emailToOverride, setEmailToOverride] = useState('blockchainvitb@gmail.com');
-  
+
   // BCC Target Checkboxes
   const [bccTargetLeaders, setBccTargetLeaders] = useState(true);
   const [bccTargetMembers, setBccTargetMembers] = useState(false);
@@ -153,9 +154,9 @@ export default function AdminDashboard() {
         throw new Error(data.message || 'Error occurred while broadcasting emails.');
       }
 
-      setEmailSendStatus({ 
-        success: true, 
-        message: data.message || `Successfully sent email broadcast to ${computedBccRecipients.length} recipients!` 
+      setEmailSendStatus({
+        success: true,
+        message: data.message || `Successfully sent email broadcast to ${computedBccRecipients.length} recipients!`
       });
       setEmailSubject('');
       setEmailBody('');
@@ -728,7 +729,7 @@ export default function AdminDashboard() {
           .insert(newAssignments);
 
         if (insErr) throw insErr;
-        
+
         await fetchAllAdminData();
         alert(`Assigned all ${targetSubmissions.length} ideas of PS ${psCode} to ${evaluatorObj.name}!`);
       } else {
@@ -738,6 +739,40 @@ export default function AdminDashboard() {
     } catch (err) {
       console.error("PS Assignment Error:", err);
       alert(`Assignment error: ${err.message}`);
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  const handleToggleNextRound = async (submissionObj, isChecked) => {
+    const selectedCount = submissions.filter(s => s.problem_code === submissionObj.problem_code && s.next_round_selected).length;
+
+    if (isChecked && selectedCount >= 6) {
+      alert("Enforced Limit: A maximum of 6 teams can be selected for the next round per Problem Statement!");
+      return;
+    }
+
+    setActionLoading(true);
+    try {
+      const { error } = await supabase
+        .from('submissions')
+        .update({ next_round_selected: isChecked })
+        .eq('idea_id', submissionObj.idea_id);
+
+      if (error) throw error;
+
+      // Update local state instantly so UI updates
+      setSubmissions(prev => prev.map(s => {
+        if (s.idea_id === submissionObj.idea_id) {
+          return { ...s, next_round_selected: isChecked };
+        }
+        return s;
+      }));
+
+      alert(`Submission ${submissionObj.idea_id} ${isChecked ? 'selected for' : 'removed from'} next round successfully!`);
+    } catch (err) {
+      console.error("Error toggling next round selection:", err);
+      alert(`Error updating next round status: ${err.message}`);
     } finally {
       setActionLoading(false);
     }
@@ -949,6 +984,24 @@ export default function AdminDashboard() {
     );
   }, [teams, searchQuery]);
 
+  // Computed Submissions ranking for Manage Results tab
+  const submissionsForSelectedPs = useMemo(() => {
+    if (!selectedPsForResults) return [];
+
+    const getIdeaScore = (ideaId) => {
+      const evs = evaluations.filter(e => e.idea_id === ideaId);
+      if (evs.length === 0) return 0;
+      const sum = evs.reduce((acc, curr) => acc + (curr.total_score || 0), 0);
+      return parseFloat((sum / evs.length).toFixed(1));
+    };
+
+    const list = submissions.filter(s => s.problem_code === selectedPsForResults);
+    return list.map(sub => {
+      const score = getIdeaScore(sub.idea_id);
+      return { ...sub, score };
+    }).sort((a, b) => b.score - a.score);
+  }, [submissions, evaluations, selectedPsForResults]);
+
   // Filtered Submissions for Evaluator Assignment tab
   const visibleSubmissionsForAssignment = useMemo(() => {
     let list = submissions;
@@ -1043,6 +1096,7 @@ export default function AdminDashboard() {
             { id: 'submissions', label: 'Idea Submissions', count: submissions.length },
             { id: 'evaluators', label: 'Evaluators & Assignments', count: evaluators.length },
             { id: 'leaderboard', label: 'PS Scores & Leaderboard', count: evaluations.length },
+            { id: 'results', label: 'Manage Results' },
             { id: 'changeRequests', label: 'Change Requests', count: overallStats.pendingChangeReqs, highlight: overallStats.pendingChangeReqs > 0 },
             { id: 'export', label: 'Export Data Tools' },
             { id: 'emailSender', label: 'Email Broadcaster' }
@@ -1271,7 +1325,7 @@ export default function AdminDashboard() {
               <h1 style={{ fontFamily: 'Montserrat,sans-serif', fontWeight: 800, color: '#fff', fontSize: 24, margin: 0 }}>
                 All Idea Submissions Received ({visibleSubmissionsForAssignment.length})
               </h1>
-              
+
               <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', alignItems: 'center' }}>
                 <select
                   value={selectedPsFilter}
@@ -1427,7 +1481,7 @@ export default function AdminDashboard() {
                       const psIdeaIds = psSubmissions.map(s => s.idea_id);
                       const psAssignments = assignments.filter(a => psIdeaIds.includes(a.idea_id));
                       const assignedEmails = [...new Set(psAssignments.map(a => a.evaluator_email))];
-                      
+
                       let statusText = 'Unassigned';
                       let statusColor = 'rgba(255,255,255,0.4)';
                       let currentAssignedEmail = '';
@@ -1684,6 +1738,116 @@ export default function AdminDashboard() {
                 </tbody>
               </table>
             </div>
+          </div>
+        )}
+
+        {/* TAB 4.5: MANAGE RESULTS (NEXT ROUND SELECTIONS) */}
+        {activeTab === 'results' && (
+          <div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 18, flexWrap: 'wrap', gap: 12 }}>
+              <div>
+                <h1 style={{ fontFamily: 'Montserrat,sans-serif', fontWeight: 800, color: '#fff', fontSize: 24, margin: 0 }}>
+                  Manage Results & Next Round Promotions
+                </h1>
+                <p style={{ color: 'rgba(255,255,255,0.5)', fontSize: 12, margin: '2px 0 0 0' }}>
+                  Select a Problem Statement below to rank teams by score and promote up to 6 teams to the next round.
+                </p>
+              </div>
+
+              <select
+                value={selectedPsForResults}
+                onChange={e => setSelectedPsForResults(e.target.value)}
+                style={{ padding: '8px 12px', borderRadius: 8, border: '1px solid rgba(255,255,255,0.15)', background: 'rgba(0,0,0,0.3)', color: '#fff', fontSize: 12, minWidth: 220 }}
+              >
+                <option value="" style={{ color: '#000' }}>-- Choose Problem Statement --</option>
+                {STATEMENTS.map(s => (
+                  <option key={s.id} value={s.id} style={{ color: '#000' }}>
+                    {s.id} - {s.title.substring(0, 35)}...
+                  </option>
+                ))}
+              </select>
+            </div>
+
+
+
+            {!selectedPsForResults ? (
+              <div style={{ padding: '60px 20px', textAlign: 'center', background: '#0a1d33', borderRadius: 14, color: 'rgba(255,255,255,0.4)', fontSize: 13, border: '1px solid rgba(255,255,255,0.06)' }}>
+                Please select a Problem Statement from the dropdown in the top-right to view ranking and select teams.
+              </div>
+            ) : (
+              <div>
+                {/* Counter and stats */}
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#0a1d33', border: '1px solid rgba(255,255,255,0.06)', padding: '12px 18px', borderRadius: 10, marginBottom: 16 }}>
+                  <div>
+                    <span style={{ fontSize: 11.5, color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase', letterSpacing: 0.5 }}>Active Selection</span>
+                    <div style={{ fontSize: 16, fontWeight: 700, color: '#fff', fontFamily: 'Montserrat, sans-serif' }}>
+                      {selectedPsForResults} - {STATEMENTS.find(s => s.id === selectedPsForResults)?.title}
+                    </div>
+                  </div>
+                  <div style={{ textAlign: 'right' }}>
+                    <span style={{ fontSize: 11.5, color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase', letterSpacing: 0.5 }}>Selected Teams</span>
+                    <div style={{ fontSize: 20, fontWeight: 800, color: submissions.filter(s => s.problem_code === selectedPsForResults && s.next_round_selected).length >= 6 ? '#ef4444' : '#FF9933' }}>
+                      {submissions.filter(s => s.problem_code === selectedPsForResults && s.next_round_selected).length} / 6
+                    </div>
+                  </div>
+                </div>
+
+                <div style={{ background: '#0a1d33', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 14, padding: 16, overflowX: 'auto' }}>
+                  <table style={{ width: '100%', borderCollapse: 'collapse', color: '#fff', fontSize: 12.5 }}>
+                    <thead>
+                      <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.1)', textAlign: 'left', color: 'rgba(255,255,255,0.7)' }}>
+                        <th style={{ padding: '10px 12px', width: 60 }}>Rank</th>
+                        <th style={{ padding: '10px 12px', color: '#FF9933' }}>Team Name / ID</th>
+                        <th style={{ padding: '10px 12px' }}>Idea Title</th>
+                        <th style={{ padding: '10px 12px', textAlign: 'center' }}>Evaluated Score</th>
+                        <th style={{ padding: '10px 12px', textAlign: 'center', width: 140 }}>Promote Next Round</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {submissionsForSelectedPs.length === 0 ? (
+                        <tr>
+                          <td colSpan="5" style={{ padding: '32px 16px', color: 'rgba(255,255,255,0.4)', textAlign: 'center', fontSize: 13 }}>
+                            No submissions received yet for this Problem Statement.
+                          </td>
+                        </tr>
+                      ) : (
+                        submissionsForSelectedPs.map((sub, idx) => {
+                          const isPromoted = !!sub.next_round_selected;
+                          const teamObj = teams.find(t => t.id === sub.team_id) || { team_name: sub.team_name || 'Unknown Team' };
+
+                          return (
+                            <tr key={sub.id || sub.idea_id} style={{ borderBottom: '1px solid rgba(255,255,255,0.04)', background: isPromoted ? 'rgba(74,222,128,0.03)' : 'transparent' }}>
+                              <td style={{ padding: '10px 12px', fontWeight: 800, color: idx === 0 ? '#fbbf24' : idx === 1 ? '#94a3b8' : idx === 2 ? '#b45309' : '#fff' }}>
+                                #{idx + 1}
+                              </td>
+                              <td style={{ padding: '10px 12px' }}>
+                                <div style={{ fontWeight: 700 }}>{teamObj.team_name}</div>
+                                <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.5)', fontFamily: 'Courier New, monospace' }}>ID: {sub.team_id}</div>
+                              </td>
+                              <td style={{ padding: '10px 12px', fontWeight: 600 }}>{sub.idea_title}</td>
+                              <td style={{ padding: '10px 12px', textAlign: 'center' }}>
+                                <span style={{ background: sub.score > 0 ? 'rgba(56,189,248,0.15)' : 'rgba(255,255,255,0.06)', color: sub.score > 0 ? '#38bdf8' : 'rgba(255,255,255,0.4)', padding: '3px 8px', borderRadius: 6, fontWeight: 700, fontSize: 11.5 }}>
+                                  {sub.score > 0 ? `${sub.score} / 50` : 'Not Evaluated'}
+                                </span>
+                              </td>
+                              <td style={{ padding: '10px 12px', textAlign: 'center' }}>
+                                <input
+                                  type="checkbox"
+                                  checked={isPromoted}
+                                  disabled={actionLoading}
+                                  onChange={(e) => handleToggleNextRound(sub, e.target.checked)}
+                                  style={{ width: 18, height: 18, cursor: 'pointer', accentColor: '#FF9933' }}
+                                />
+                              </td>
+                            </tr>
+                          );
+                        })
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            )}
           </div>
         )}
 
