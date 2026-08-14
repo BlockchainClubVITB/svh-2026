@@ -221,6 +221,16 @@ export default function AdminDashboard() {
       { id: 'evaluator_name', label: 'Evaluator Name', default: true },
       { id: 'evaluator_email', label: 'Evaluator Email', default: true },
       { id: 'created_at', label: 'Created At', default: true }
+    ],
+    results: [
+      { id: 'problem_code', label: 'Problem ID', default: true },
+      { id: 'problem_statement', label: 'Problem Statement Title', default: true },
+      { id: 'theme', label: 'Theme', default: true },
+      { id: 'team_id', label: 'Team ID', default: true },
+      { id: 'team_name', label: 'Team Name', default: true },
+      { id: 'leader_name', label: 'Team Leader', default: true },
+      { id: 'score', label: 'Evaluated Score', default: true },
+      { id: 'status', label: 'Status', default: true }
     ]
   }), []);
 
@@ -349,6 +359,40 @@ export default function AdminDashboard() {
         if (selectedColumns['evaluator_name']) row['evaluator_name'] = ev.name;
         if (selectedColumns['evaluator_email']) row['evaluator_email'] = ev.email;
         if (selectedColumns['created_at']) row['created_at'] = new Date(ev.created_at).toLocaleString();
+        rowsData.push(row);
+      });
+    } else if (exportType === 'results') {
+      const shortlistedSubs = submissions.filter(s => s.next_round_selected === true);
+      shortlistedSubs.forEach(sub => {
+        const teamObj = teams.find(t => t.id === sub.team_id) || {};
+        const leaderObj = profiles.find(p => p.team_id === sub.team_id && p.is_team_leader) || {};
+        const psDetail = STATEMENTS.find(s => s.id === sub.problem_code) || {};
+
+        if (exportPsFilter !== 'ALL' && sub.problem_code !== exportPsFilter) return;
+
+        if (exportSearchQuery.trim()) {
+          const q = exportSearchQuery.toLowerCase();
+          const matchSub = sub.team_id.toLowerCase().includes(q) ||
+                          (teamObj.team_name && teamObj.team_name.toLowerCase().includes(q)) ||
+                          sub.problem_code.toLowerCase().includes(q) ||
+                          (leaderObj.full_name && leaderObj.full_name.toLowerCase().includes(q));
+          if (!matchSub) return;
+        }
+
+        const evs = evaluations.filter(e => e.idea_id === sub.idea_id);
+        const avgScore = evs.length > 0
+          ? parseFloat((evs.reduce((acc, curr) => acc + (curr.total_score || 0), 0) / evs.length).toFixed(1))
+          : 0;
+
+        const row = {};
+        if (selectedColumns['problem_code']) row['problem_code'] = sub.problem_code;
+        if (selectedColumns['problem_statement']) row['problem_statement'] = sub.problem_statement || psDetail.title || '-';
+        if (selectedColumns['theme']) row['theme'] = sub.theme || psDetail.category || '-';
+        if (selectedColumns['team_id']) row['team_id'] = sub.team_id;
+        if (selectedColumns['team_name']) row['team_name'] = teamObj.team_name || sub.team_name || '-';
+        if (selectedColumns['leader_name']) row['leader_name'] = leaderObj.full_name || '-';
+        if (selectedColumns['score']) row['score'] = avgScore > 0 ? avgScore : 'Not Evaluated';
+        if (selectedColumns['status']) row['status'] = 'Shortlisted for Finale';
         rowsData.push(row);
       });
     }
@@ -2168,6 +2212,7 @@ export default function AdminDashboard() {
                     { id: 'submissions', label: 'Idea Submissions', desc: 'Round 1 ideas, PS selections, YT links, and PPT attachments.', icon: '💡' },
                     { id: 'evaluations', label: 'Evaluations & Scores', desc: 'Evaluator scorecards, alignment, scalability, and remarks.', icon: '📊' },
                     { id: 'evaluators', label: 'Evaluator Accounts', desc: 'Evaluator system logins, credentials, and names.', icon: '👨‍🏫' },
+                    { id: 'results', label: 'Shortlisted Results', desc: 'Teams promoted/shortlisted for the Grand Finale and their evaluation average scores.', icon: '🏆' },
                   ].map(opt => {
                     const isSelected = exportType === opt.id;
                     return (
@@ -2262,7 +2307,7 @@ export default function AdminDashboard() {
                       />
                     </div>
 
-                    {(exportType === 'submissions' || exportType === 'evaluations') && (
+                    {(exportType === 'submissions' || exportType === 'evaluations' || exportType === 'results') && (
                       <div>
                         <label style={{ display: 'block', color: 'rgba(255,255,255,0.7)', fontSize: 11.5, marginBottom: 4 }}>Problem Statement Filter</label>
                         <select
