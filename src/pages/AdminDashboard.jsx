@@ -789,13 +789,6 @@ export default function AdminDashboard() {
   };
 
   const handleToggleNextRound = async (submissionObj, isChecked) => {
-    const selectedCount = submissions.filter(s => s.problem_code === submissionObj.problem_code && s.next_round_selected).length;
-
-    if (isChecked && selectedCount >= 6) {
-      alert("Enforced Limit: A maximum of 6 teams can be selected for the next round per Problem Statement!");
-      return;
-    }
-
     setActionLoading(true);
     try {
       const { error } = await supabase
@@ -1829,7 +1822,7 @@ export default function AdminDashboard() {
                   Manage Results & Next Round Promotions
                 </h1>
                 <p style={{ color: 'rgba(255,255,255,0.5)', fontSize: 12, margin: '2px 0 0 0' }}>
-                  Select a Problem Statement below to rank teams by score and promote up to 6 teams to the next round.
+                  Select a Problem Statement below to rank teams by score and promote teams to the next round.
                 </p>
               </div>
 
@@ -1865,8 +1858,8 @@ export default function AdminDashboard() {
                   </div>
                   <div style={{ textAlign: 'right' }}>
                     <span style={{ fontSize: 11.5, color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase', letterSpacing: 0.5 }}>Selected Teams</span>
-                    <div style={{ fontSize: 20, fontWeight: 800, color: submissions.filter(s => s.problem_code === selectedPsForResults && s.next_round_selected).length >= 6 ? '#ef4444' : '#FF9933' }}>
-                      {submissions.filter(s => s.problem_code === selectedPsForResults && s.next_round_selected).length} / 6
+                    <div style={{ fontSize: 20, fontWeight: 800, color: '#FF9933' }}>
+                      {submissions.filter(s => s.problem_code === selectedPsForResults && s.next_round_selected).length}
                     </div>
                   </div>
                 </div>

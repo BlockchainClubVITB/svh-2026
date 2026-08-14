@@ -111,7 +111,7 @@ export default function Results() {
       padding: '40px 16px',
       fontFamily: 'Poppins, sans-serif'
     }}>
-      /*<div style={{ maxWidth: 1200, margin: '0 auto' }}>
+      <div style={{ maxWidth: 1200, margin: '0 auto' }}>
 
         {/* Banner Headers */}
         <div style={{ textAlign: 'center', marginBottom: 40 }}>
@@ -330,6 +330,6 @@ export default function Results() {
 
       </div>
     </section>
-    // <div>will be back soon </div>
+
   );
 }
