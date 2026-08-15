@@ -84,9 +84,9 @@ export const STATIC_RESULTS = [
     "problemCode": "SVH26003",
     "problemStatement": "Real-Time Public Transport Tracking for Small Cities",
     "theme": "Transportation & Logistics",
-    "teamId": "svh-1",
-    "teamName": "-",
-    "leaderName": "-",
+    "teamId": "svh-10205",
+    "teamName": "Weird Together",
+    "leaderName": "Abhilash Shah",
     "status": "Shortlisted for Finale"
   },
   {
