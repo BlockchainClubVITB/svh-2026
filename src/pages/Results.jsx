@@ -1,69 +1,23 @@
 import { useState, useEffect, useMemo } from 'react';
-import { supabase } from '../supabaseClient';
 import { STATEMENTS } from '../data/problemStatements';
+import { STATIC_RESULTS } from '../data/staticResults';
 
 export default function Results() {
-  const [submissions, setSubmissions] = useState([]);
-  const [teams, setTeams] = useState([]);
-  const [profiles, setProfiles] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedPsFilter, setSelectedPsFilter] = useState('ALL');
-  const [error, setError] = useState(null);
 
   useEffect(() => {
-    async function fetchResultsData() {
-      setLoading(true);
-      setError(null);
-      try {
-        const [
-          { data: subsData, error: subsErr },
-          { data: teamsData, error: teamsErr },
-          { data: profilesData, error: profilesErr }
-        ] = await Promise.all([
-          // Load only shortlisted submissions where next_round_selected is true
-          supabase.from('submissions').select('*').eq('next_round_selected', true),
-          supabase.from('teams').select('*').limit(5000),
-          supabase.from('profiles').select('*').eq('is_team_leader', true).limit(5000)
-        ]);
-
-        if (subsErr) throw subsErr;
-        if (teamsErr) throw teamsErr;
-        if (profilesErr) throw profilesErr;
-
-        setSubmissions(subsData || []);
-        setTeams(teamsData || []);
-        setProfiles(profilesData || []);
-      } catch (err) {
-        console.error('Error fetching results data:', err);
-        setError(err.message || err.toString());
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    fetchResultsData();
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 250);
+    return () => clearTimeout(timer);
   }, []);
 
-  // Compute matched data list
+  // Compute matched data list directly from static results
   const resultsList = useMemo(() => {
-    return submissions.map(sub => {
-      const teamObj = teams.find(t => t.id === sub.team_id) || {};
-      const leaderObj = profiles.find(p => p.team_id === sub.team_id) || {};
-      const psDetail = STATEMENTS.find(s => s.id === sub.problem_code) || {};
-
-      return {
-        ideaId: sub.idea_id,
-        teamId: sub.team_id,
-        teamName: teamObj.team_name || sub.team_name || 'Unknown Team',
-        leaderName: leaderObj.full_name || 'Team Leader',
-        problemCode: sub.problem_code,
-        problemStatement: sub.problem_statement || psDetail.title || 'Unknown Statement',
-        theme: sub.theme || psDetail.category || 'General',
-        status: 'Shortlisted for Finale'
-      };
-    });
-  }, [submissions, teams, profiles]);
+    return STATIC_RESULTS;
+  }, []);
 
   // Filter list by selected problem statement and search query
   const filteredResults = useMemo(() => {
@@ -151,22 +105,6 @@ export default function Results() {
             Congratulations to all the selected teams! Below is the list of teams shortlisted to present their innovations at the Smart VIT Hackathon 2026 Grand Finale.
           </p>
         </div>
-
-        {error && (
-          <div style={{
-            padding: 16,
-            background: 'rgba(239, 68, 68, 0.15)',
-            border: '1px solid rgba(239, 68, 68, 0.4)',
-            color: '#ff8a8a',
-            borderRadius: 10,
-            fontSize: 13,
-            marginBottom: 24,
-            lineHeight: 1.5
-          }}>
-            <strong style={{ color: '#ff4d4d', display: 'block', marginBottom: 4 }}>⚠️ Supabase Database Read Error</strong>
-            {error}
-          </div>
-        )}
 
         {/* Filter Bar */}
         <div style={{
