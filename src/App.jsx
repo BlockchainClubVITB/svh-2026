@@ -18,6 +18,7 @@ import SuperEvaluatorDashboard from './pages/AdminDashboard';
 import TestEmail from './pages/TestEmail';
 import ComingSoon from './pages/ComingSoon';
 import IDCard from './components/IDCard';
+import CertificateDownload from './components/CertificateDownload';
 import MentorConnect from './pages/MentorConnect';
 import Results from './pages/Results';
 
@@ -51,7 +52,8 @@ function AppContent() {
                 { label: '❓ FAQs', url: 'https://drive.google.com/file/d/1uArUM1izOY9tYd3Vkfu-JEwU575jz2yD/view?usp=drive_link' },
                 { label: '⚖️ Rules', url: 'https://drive.google.com/file/d/1bHVw_gNub44fYBw_mBqQ_f99ymqzUhHs/view?usp=drive_link' },
                 { label: '📊 Problem Statements', url: 'https://drive.google.com/file/d/18qqRV16SGclaXetUdcRS6GcrDV-o-esD/view?usp=drive_link' },
-                { label: '👤 ID Card', url: '', route: "/id-card" }
+                { label: '👤 ID Card', url: '', route: "/id-card" },
+                { label: '📜 Certificate', url: '', route: "/certificate" }
               ].map((item, idx) => {
                 if (item.route) {
                   return (<Link
@@ -145,6 +147,7 @@ function AppContent() {
           <Route path="/test-email" element={<TestEmail />} />
           <Route path="/coming-soon" element={<ComingSoon />} />
           <Route path="/id-card" element={<IDCard />} />
+          <Route path="/certificate" element={<CertificateDownload />} />
           <Route path="/mentor-connect" element={<MentorConnect />} />
           <Route path="/results" element={<Results />} />
         </Routes>

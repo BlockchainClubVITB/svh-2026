@@ -51,6 +51,14 @@ function apiDevServerPlugin() {
               console.log(`\x1b[32m[API Dev Server] Response: ${req.url} -> Status ${res.statusCode || 200}\x1b[0m`);
               return res;
             };
+            res.send = function (data) {
+              if (typeof data === 'object' && !Buffer.isBuffer(data)) {
+                return res.json(data);
+              }
+              res.end(data);
+              console.log(`\x1b[32m[API Dev Server] Response: ${req.url} -> Status ${res.statusCode || 200}\x1b[0m`);
+              return res;
+            };
 
             if (apiName === 'login') {
               const { default: handler } = await server.ssrLoadModule('./api/login.js');
@@ -66,6 +74,10 @@ function apiDevServerPlugin() {
               return;
             } else if (apiName === 'bulkSendEmail') {
               const { default: handler } = await server.ssrLoadModule('./api/bulkSendEmail.js');
+              await handler(req, res);
+              return;
+            } else if (apiName === 'downloadCertificate') {
+              const { default: handler } = await server.ssrLoadModule('./api/downloadCertificate.js');
               await handler(req, res);
               return;
             }
