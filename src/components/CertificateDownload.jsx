@@ -371,15 +371,15 @@ const CertificateDownload = () => {
                   <div
                     className="absolute pointer-events-none select-none drop-shadow-sm"
                     style={{
-                      top: '54.0%',
+                      top: '53.8%',
                       left: '14.6%',
                       right: '25%',
                       color: '#0f2942',
                       fontFamily: '"Times New Roman", Times, Georgia, serif',
                       fontWeight: 700,
                       fontStyle: 'italic',
-                      fontSize: 'clamp(8px, 1.5vw, 12px)',
-                      lineHeight: 1,
+                      fontSize: 'clamp(11px, 2.2vw, 24px)',
+                      lineHeight: 1.1,
                       whiteSpace: 'nowrap',
                       overflow: 'hidden',
                       textOverflow: 'ellipsis',

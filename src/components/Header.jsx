@@ -116,25 +116,28 @@ export default function Header() {
       <header id="svh-nav" style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 1000, width: '100%' }}>
 
         {/* Announcement Banner */}
-        <div style={{
-          background: 'linear-gradient(90deg, #0284c7, #0369a1)',
+        <Link to="/results" style={{
+          background: 'linear-gradient(90deg, #FF9933, #e07800)',
           color: '#fff',
           textAlign: 'center',
-          padding: '6px 16px',
+          padding: '7px 16px',
           fontSize: 13,
           fontFamily: 'Montserrat,sans-serif',
-          fontWeight: 700,
-          letterSpacing: 1,
-          boxShadow: '0 2px 10px rgba(2,132,199,0.3)',
+          fontWeight: 800,
+          letterSpacing: 0.5,
+          textDecoration: 'none',
+          boxShadow: '0 2px 12px rgba(255,153,51,0.4)',
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
-          gap: 12
+          gap: 10,
+          cursor: 'pointer',
+          transition: 'all 0.2s ease',
         }}>
-          <span style={{ fontSize: 16 }}>⚖️</span>
-          <span>PPT Submission Phase is Closed · PPT Evaluation Phase is Currently Ongoing (10–15 Aug 2026)!</span>
-          <span style={{ fontSize: 16 }}>⚖️</span>
-        </div>
+          <span style={{ fontSize: 15 }}>🏆</span>
+          <span>Round 1 PPT Evaluation Completed · Click to Check Round 1 Shortlisted Results!</span>
+          <span style={{ fontSize: 15 }}>➡️</span>
+        </Link>
         {/* ── MAIN NAV ── */}
         <nav style={{
           background: scrolled ? 'rgba(7,25,44,0.97)' : '#0f2942',
@@ -254,7 +257,7 @@ export default function Header() {
               >
                 Register
               </a>
-              
+
               {/* Hamburger — shown only on mobile */}
               <button
                 className="hamburger-btn"

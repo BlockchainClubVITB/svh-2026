@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import blockchainLogo from '../assets/Blockchain.png';
-import svhLogo        from '../assets/svh.jpeg';
+import svhLogo from '../assets/svh.jpeg';
 
 const socials = [
   {
@@ -17,23 +17,23 @@ const socials = [
   },
   {
     label: 'YouTube', href: 'https://youtube.com/@blockchainclubvitb',
-    icon: <svg viewBox="0 0 24 24" fill="currentColor" style={{ width: 16, height: 16 }}><path d="M22.54 6.42a2.78 2.78 0 0 0-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46a2.78 2.78 0 0 0-1.95 1.96A29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58A2.78 2.78 0 0 0 3.41 19.54C5.12 20 12 20 12 20s6.88 0 8.59-.46a2.78 2.78 0 0 0 1.95-1.96A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58zM9.75 15.02V8.98L15.5 12l-5.75 3.02z"/></svg>,
+    icon: <svg viewBox="0 0 24 24" fill="currentColor" style={{ width: 16, height: 16 }}><path d="M22.54 6.42a2.78 2.78 0 0 0-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46a2.78 2.78 0 0 0-1.95 1.96A29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58A2.78 2.78 0 0 0 3.41 19.54C5.12 20 12 20 12 20s6.88 0 8.59-.46a2.78 2.78 0 0 0 1.95-1.96A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58zM9.75 15.02V8.98L15.5 12l-5.75 3.02z" /></svg>,
   },
 ];
 
 const quickLinks = [
-  { label: 'Home',                to: '/' },
-  { label: 'Guidelines',         to: '/guidelines' },
+  { label: 'Home', to: '/' },
+  { label: 'Guidelines', to: '/guidelines' },
   { label: 'Problem Statements', to: '/problem-statements' },
-  { label: 'FAQs',               to: '/faq' },
-  { label: 'Contact Us',         to: '/contact' },
+  { label: 'FAQs', to: '/faq' },
+  { label: 'Contact Us', to: '/contact' },
 ];
 
 const timelineLinks = [
-  { label: 'Registration: 1–25 July 2026',        phase: 'Closed' },
+  { label: 'Registration: 1–25 July 2026', phase: 'Closed' },
   { label: 'PPT Submission: 20 Jul – 10 Aug 2026', phase: 'Closed' },
-  { label: 'PPT Evaluation: 10–15 Aug 2026',      phase: 'Ongoing' },
-  { label: 'Grand Finale: 24–25 Aug 2026',        phase: 'Upcoming' },
+  { label: 'PPT Evaluation: 10–15 Aug 2026', phase: 'Ongoing' },
+  { label: 'Grand Finale: 24–25 Aug 2026', phase: 'Upcoming' },
 ];
 
 export default function Footer() {

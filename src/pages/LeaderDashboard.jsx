@@ -497,9 +497,9 @@ export default function LeaderDashboard() {
             </div>
           </div>
           <div style={{ background: 'rgba(56, 189, 248, 0.1)', border: '1px solid rgba(56, 189, 248, 0.25)', borderRadius: 8, padding: '8px 10px', marginTop: 10, display: 'flex', alignItems: 'center', gap: 6 }}>
-            <span style={{ fontSize: 13 }}>⚖️</span>
-            <span style={{ color: '#38bdf8', fontSize: 10.5, fontWeight: 700, fontFamily: 'Montserrat, sans-serif' }}>
-              PPT Evaluation Phase Ongoing
+            <span style={{ fontSize: 13 }}>🚀</span>
+            <span style={{ color: '#4ade80', fontSize: 10.5, fontWeight: 700, fontFamily: 'Montserrat, sans-serif' }}>
+              PPT Evaluation Completed — Finals Ready
             </span>
           </div>
         </div>
@@ -667,8 +667,8 @@ export default function LeaderDashboard() {
               <p style={{ color: 'rgba(255,255,255,0.8)', fontSize: 14, margin: '0 auto 20px', maxWidth: 520, lineHeight: 1.6 }}>
                 The Round 1 PPT submission deadline was <strong>10th August 2026 (11:59 PM)</strong>. Idea submissions are now closed as our judging panel evaluates all submitted presentations.
               </p>
-              <div style={{ background: 'rgba(56,189,248,0.1)', border: '1px solid rgba(56,189,248,0.3)', padding: '12px 20px', borderRadius: 8, display: 'inline-block', color: '#38bdf8', fontSize: 13, fontWeight: 600, marginBottom: 20 }}>
-                ⚖️ PPT Evaluation Phase is Currently Ongoing (10 – 15 Aug 2026)
+              <div style={{ background: 'rgba(74,222,128,0.1)', border: '1px solid rgba(74,222,128,0.3)', padding: '12px 20px', borderRadius: 8, display: 'inline-block', color: '#4ade80', fontSize: 13, fontWeight: 600, marginBottom: 20 }}>
+                🚀 PPT Evaluation Phase Completed! Finalist Teams Ready for Grand Finale (24 – 25 Aug 2026)
               </div>
               <div style={{ display: 'flex', justifyContent: 'center', gap: 12 }}>
                 <button onClick={() => setActiveTab('review')} style={{ background: '#FF9933', color: '#000', padding: '10px 24px', borderRadius: 8, border: 'none', fontWeight: 700, fontSize: 13, cursor: 'pointer' }}>

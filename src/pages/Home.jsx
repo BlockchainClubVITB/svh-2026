@@ -133,7 +133,7 @@ function CountdownTimer() {
   } else if (now >= pptCloses && now < evalCloses) {
     phase = { label: 'PPT Evaluation Ongoing — Shortlist Announcement In', target: '2026-08-15T23:59:59+05:30', color: '#38bdf8' };
   } else if (now >= evalCloses && now < finaleStarts) {
-    phase = { label: 'Grand Finale Begins In', target: '2026-08-24T09:00:00+05:30', color: '#06038D' };
+    phase = { label: 'Grand Finale Begins In', target: '2026-08-24T09:00:00+05:30', color: '#FF9933' };
   } else {
     phase = { label: 'Event Ongoing', target: '2026-08-25T18:00:00+05:30', color: '#FF9933' };
   }
@@ -1241,15 +1241,20 @@ function RegistrationCTA() {
         ) : (
           <>
             <p style={{ color: 'rgba(255,255,255,0.85)', fontSize: 16, fontFamily: 'Poppins,sans-serif', lineHeight: 1.75, marginBottom: 24, maxWidth: 620, margin: '0 auto 24px' }}>
-              PPT Submission phase has ended. <strong style={{ color: '#38bdf8' }}>PPT Evaluation Phase</strong> is currently ongoing by our panel of evaluators (10–15 August 2026).
+              PPT Evaluation phase is completed! <strong style={{ color: '#4ade80' }}>Shortlisted Finalist Teams</strong> are ready for the Grand Finale (24–25 August 2026).
             </p>
             <div style={{ display: 'flex', gap: 14, justifyContent: 'center', flexWrap: 'wrap', alignItems: 'center' }}>
-              <Link to="/login" style={{ padding: '14px 40px', background: 'linear-gradient(135deg, #0284c7, #0369a1)', color: '#fff', borderRadius: 8, fontSize: 13, fontFamily: 'Montserrat,sans-serif', fontWeight: 800, textDecoration: 'none', textTransform: 'uppercase', letterSpacing: 1.5, boxShadow: '0 6px 24px rgba(2,132,199,0.4)', transition: 'all 0.25s', display: 'inline-block' }}
+              <Link to="/results" style={{ padding: '14px 32px', background: 'linear-gradient(135deg, #FF9933, #e07800)', color: '#fff', borderRadius: 8, fontSize: 13, fontFamily: 'Montserrat,sans-serif', fontWeight: 800, textDecoration: 'none', textTransform: 'uppercase', letterSpacing: 1.5, boxShadow: '0 6px 24px rgba(255,153,51,0.4)', transition: 'all 0.25s', display: 'inline-block' }}
+                onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 12px 34px rgba(255,153,51,0.6)'; }}
+                onMouseLeave={e => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = '0 6px 24px rgba(255,153,51,0.4)'; }}>
+                🏆 View Shortlisted Results
+              </Link>
+              <Link to="/login" style={{ padding: '14px 32px', background: 'linear-gradient(135deg, #0284c7, #0369a1)', color: '#fff', borderRadius: 8, fontSize: 13, fontFamily: 'Montserrat,sans-serif', fontWeight: 800, textDecoration: 'none', textTransform: 'uppercase', letterSpacing: 1.5, boxShadow: '0 6px 24px rgba(2,132,199,0.4)', transition: 'all 0.25s', display: 'inline-block' }}
                 onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 12px 34px rgba(2,132,199,0.6)'; }}
                 onMouseLeave={e => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = '0 6px 24px rgba(2,132,199,0.4)'; }}>
                 Team Leader Portal
               </Link>
-              <a href="https://chat.whatsapp.com/L7lXF9VZQRDCx0aXXwBhGw?s=sw&p=a&mlu=2" target="_blank" rel="noopener noreferrer" style={{ padding: '14px 40px', background: '#16a34a', color: '#fff', borderRadius: 8, fontSize: 13, fontFamily: 'Montserrat,sans-serif', fontWeight: 800, textDecoration: 'none', textTransform: 'uppercase', letterSpacing: 1.5, boxShadow: '0 6px 24px rgba(22,163,74,0.4)', transition: 'all 0.25s', display: 'inline-block' }}
+              <a href="https://chat.whatsapp.com/L7lXF9VZQRDCx0aXXwBhGw?s=sw&p=a&mlu=2" target="_blank" rel="noopener noreferrer" style={{ padding: '14px 32px', background: '#16a34a', color: '#fff', borderRadius: 8, fontSize: 13, fontFamily: 'Montserrat,sans-serif', fontWeight: 800, textDecoration: 'none', textTransform: 'uppercase', letterSpacing: 1.5, boxShadow: '0 6px 24px rgba(22,163,74,0.4)', transition: 'all 0.25s', display: 'inline-block' }}
                 onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 12px 34px rgba(22,163,74,0.6)'; }}
                 onMouseLeave={e => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = '0 6px 24px rgba(22,163,74,0.4)'; }}>
                 Join WhatsApp Group
@@ -1423,7 +1428,7 @@ function OrientationModal() {
           }}>
             <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#FF9933', display: 'inline-block' }} />
             <span style={{ color: '#FF9933', fontSize: 10, fontFamily: 'Montserrat,sans-serif', fontWeight: 800, letterSpacing: 1.5, textTransform: 'uppercase' }}>
-              Important Notice
+              🎉 Round 1 Results Out
             </span>
           </div>
 
@@ -1436,7 +1441,7 @@ function OrientationModal() {
             margin: '0 0 10px',
             letterSpacing: -0.5
           }}>
-            PPT Evaluation Phase Ongoing!
+            🏆 Check Round 1 Shortlisted Results!
           </h3>
 
           <p style={{
@@ -1447,47 +1452,52 @@ function OrientationModal() {
             margin: '0 0 16px',
             textAlign: 'left'
           }}>
-            📢 Attention all registered teams! PPT submission for <strong>SVH 2026</strong> is now <strong>CLOSED</strong>. Our judging panel is actively evaluating all submitted presentations. Shortlisted finalist teams will be announced post 15th August 2026.
+            📢 Attention participants! The Round 1 PPT Evaluation phase has been officially <strong>COMPLETED</strong>. Click below to view the official list of teams shortlisted for the SVH 2026 Grand Finale!
           </p>
-
-          <div style={{
-            background: 'rgba(255, 255, 255, 0.04)',
-            border: '1px solid rgba(255, 255, 255, 0.1)',
-            borderRadius: 12,
-            padding: '14px 18px',
-            marginBottom: 20,
-            textAlign: 'left',
-            display: 'flex',
-            flexDirection: 'column',
-            gap: 10
-          }}>
-            <div style={{ display: 'flex', gap: 10, alignItems: 'center', fontSize: 13, color: '#fff', fontFamily: 'Poppins,sans-serif' }}>
-              <span>✍️</span>
-              <span>Registration: <strong style={{ color: '#FF9933' }}>Closed (25th July 2026)</strong></span>
-            </div>
-            <div style={{ display: 'flex', gap: 10, alignItems: 'center', fontSize: 13, color: '#fff', fontFamily: 'Poppins,sans-serif' }}>
-              <span>📊</span>
-              <span>PPT Submissions: <strong style={{ color: '#ef4444' }}>Closed (10th August 2026)</strong></span>
-            </div>
-            <div style={{ display: 'flex', gap: 10, alignItems: 'center', fontSize: 13, color: '#fff', fontFamily: 'Poppins,sans-serif' }}>
-              <span>⚖️</span>
-              <span>PPT Evaluation: <strong style={{ color: '#38bdf8' }}>Ongoing (10th – 15th August 2026)</strong></span>
-            </div>
-          </div>
 
           {/* Action Buttons */}
           <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', justifyContent: 'center' }}>
             <Link
-              to="/login"
+              to="/results"
               style={{
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: 8,
-                padding: '11px 22px',
+                padding: '12px 24px',
+                background: 'linear-gradient(135deg, #FF9933 0%, #e07800 100%)',
+                color: '#fff',
+                borderRadius: 8,
+                fontSize: 13,
+                fontFamily: 'Montserrat,sans-serif',
+                fontWeight: 900,
+                textDecoration: 'none',
+                boxShadow: '0 6px 20px rgba(255, 153, 51, 0.4)',
+                transition: 'all 0.25s',
+                textTransform: 'uppercase'
+              }}
+              onMouseEnter={e => {
+                e.currentTarget.style.transform = 'translateY(-2px)';
+                e.currentTarget.style.boxShadow = '0 8px 24px rgba(255, 153, 51, 0.6)';
+              }}
+              onMouseLeave={e => {
+                e.currentTarget.style.transform = 'none';
+                e.currentTarget.style.boxShadow = '0 6px 20px rgba(255, 153, 51, 0.4)';
+              }}
+            >
+              🏆 Check Round 1 Results
+            </Link>
+
+            <Link
+              to="/certificate"
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 8,
+                padding: '12px 20px',
                 background: 'linear-gradient(135deg, #0284c7 0%, #0369a1 100%)',
                 color: '#fff',
                 borderRadius: 8,
-                fontSize: 12,
+                fontSize: 12.5,
                 fontFamily: 'Montserrat,sans-serif',
                 fontWeight: 800,
                 textDecoration: 'none',
@@ -1504,7 +1514,7 @@ function OrientationModal() {
                 e.currentTarget.style.boxShadow = '0 4px 14px rgba(2, 132, 199, 0.3)';
               }}
             >
-              🔐 Team Leader Portal
+              📜 Claim Certificate
             </Link>
 
             <a
