@@ -85,10 +85,11 @@ export default async function handler(req, res) {
 
     // Locate PDF template file
     const candidatePaths = [
+      path.join(process.cwd(), 'public/svh-certificate-participation.pdf'),
+      path.join(process.cwd(), 'public/svh-certificate-participant.pdf'),
       path.join(process.cwd(), 'src/assets/svh-certificate-participation.pdf'),
       path.join(process.cwd(), 'src/assets/svh-certificate-participant.pdf'),
       path.join(process.cwd(), 'assets/svh-certificate-participant.pdf'),
-      path.join(process.cwd(), 'public/svh-certificate-participant.pdf'),
     ];
 
     let pdfPath = candidatePaths.find((p) => fs.existsSync(p));

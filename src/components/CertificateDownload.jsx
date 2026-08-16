@@ -358,7 +358,7 @@ const CertificateDownload = () => {
             <div className="flex-1 flex flex-col justify-center items-center p-4 bg-slate-50 rounded-2xl border border-slate-200/80">
               <div className="relative rounded-2xl overflow-hidden shadow-xl border border-slate-200 max-w-full bg-white">
                 <img
-                  src="/scratch/svh-certificate-participation.pdf.png"
+                  src="/certificate-template.png"
                   alt="Certificate Template Preview"
                   className="w-auto h-auto max-w-full max-h-[380px] block rounded-2xl object-contain"
                   onError={(e) => {
@@ -371,14 +371,14 @@ const CertificateDownload = () => {
                   <div
                     className="absolute pointer-events-none select-none drop-shadow-sm"
                     style={{
-                      top: '53.8%',
+                      top: '53.0%',
                       left: '14.6%',
                       right: '25%',
                       color: '#0f2942',
                       fontFamily: '"Times New Roman", Times, Georgia, serif',
                       fontWeight: 700,
                       fontStyle: 'italic',
-                      fontSize: 'clamp(11px, 2.2vw, 24px)',
+                      fontSize: 'clamp(8px, 1.5vw, 11px)',
                       lineHeight: 1.1,
                       whiteSpace: 'nowrap',
                       overflow: 'hidden',
