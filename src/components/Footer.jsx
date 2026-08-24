@@ -33,7 +33,7 @@ const timelineLinks = [
   { label: 'Registration: 1–25 July 2026', phase: 'Closed' },
   { label: 'PPT Submission: 20 Jul – 10 Aug 2026', phase: 'Closed' },
   { label: 'PPT Evaluation: 10–15 Aug 2026', phase: 'Ongoing' },
-  { label: 'Grand Finale: 24–25 Aug 2026', phase: 'Upcoming' },
+  { label: 'Grand Finale: 5–6 Sep 2026', phase: 'Upcoming' },
 ];
 
 export default function Footer() {

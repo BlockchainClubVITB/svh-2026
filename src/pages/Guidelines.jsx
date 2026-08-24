@@ -357,7 +357,7 @@ export default function Guidelines() {
                   <RuleCard num="01" title="Shortlist" desc="A maximum of 5 teams will be shortlisted from each problem statement." color="#06038D" />
                   <RuleCard num="02" title="Prototype" desc="Qualifiers must develop and present a functional working prototype of their proposed idea." color="#06038D" />
                   <RuleCard num="03" title="Format" desc="The finale spans 12 development hours over 2 days, differing from the 36-hour SIH format." color="#06038D" />
-                  <RuleCard num="04" title="Schedule" desc="The event schedule (tentatively 24–25 Aug) is subject to official institute OD approval." color="#06038D" />
+                  <RuleCard num="04" title="Schedule" desc="The event schedule (tentatively 5–6 Sep) is subject to official institute OD approval." color="#06038D" />
                   <RuleCard num="05" title="Evaluation" desc="Final evaluation focuses on functionality, technical scalability, and user experience. Detailed info will be shared later." color="#06038D" />
                 </div>
               </AccordionItem>

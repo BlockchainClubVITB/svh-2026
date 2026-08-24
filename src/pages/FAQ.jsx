@@ -137,7 +137,7 @@ const faqCategories = [
       },
       {
         q: 'What happens in Round 2 (Grand Finale)?',
-        a: 'Qualifiers must develop a functional working prototype. The finale involves 12 development hours over 2 days, tentatively scheduled for August 24–25.',
+        a: 'Qualifiers must develop a functional working prototype. The finale involves 12 development hours over 2 days, tentatively scheduled for September 5–6.',
       },
       {
         q: 'How will we be notified of results?',

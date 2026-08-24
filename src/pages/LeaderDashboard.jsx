@@ -668,7 +668,7 @@ export default function LeaderDashboard() {
                 The Round 1 PPT submission deadline was <strong>10th August 2026 (11:59 PM)</strong>. Idea submissions are now closed as our judging panel evaluates all submitted presentations.
               </p>
               <div style={{ background: 'rgba(74,222,128,0.1)', border: '1px solid rgba(74,222,128,0.3)', padding: '12px 20px', borderRadius: 8, display: 'inline-block', color: '#4ade80', fontSize: 13, fontWeight: 600, marginBottom: 20 }}>
-                🚀 PPT Evaluation Phase Completed! Finalist Teams Ready for Grand Finale (24 – 25 Aug 2026)
+                🚀 PPT Evaluation Phase Completed! Finalist Teams Ready for Grand Finale (5 – 6 Sep 2026)
               </div>
               <div style={{ display: 'flex', justifyContent: 'center', gap: 12 }}>
                 <button onClick={() => setActiveTab('review')} style={{ background: '#FF9933', color: '#000', padding: '10px 24px', borderRadius: 8, border: 'none', fontWeight: 700, fontSize: 13, cursor: 'pointer' }}>

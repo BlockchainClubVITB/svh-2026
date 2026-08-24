@@ -446,7 +446,7 @@ export default function ContactUs() {
                 { icon: '💰', label: 'Fee', val: '₹75/member · ₹450/team' },
                 { icon: '👥', label: 'Team Size', val: '6 members (min. 1 female)' },
                 { icon: '📋', label: 'Problem Statements', val: '12 total (10 SW + 2 HW)' },
-                { icon: '🚀', label: 'Grand Finale', val: '24–25 Aug 2026 (Tentative)' },
+                { icon: '🚀', label: 'Grand Finale', val: '5–6 Sep 2026 (Tentative)' },
               ].map((item, i) => (
                 <div key={i} style={{ display: 'flex', gap: 12, alignItems: 'center', padding: '10px 14px', background: 'rgba(255,255,255,0.04)', borderRadius: 10, border: '1px solid rgba(255,255,255,0.06)' }}>
                   <span style={{ fontSize: 18, flexShrink: 0 }}>{item.icon}</span>

@@ -120,7 +120,7 @@ function CountdownTimer() {
   const regCloses = new Date('2026-07-25T23:59:59+05:30');
   const pptCloses = new Date('2026-08-10T23:59:59+05:30');
   const evalCloses = new Date('2026-08-15T23:59:59+05:30');
-  const finaleStarts = new Date('2026-08-24T09:00:00+05:30');
+  const finaleStarts = new Date('2026-09-05T09:00:00+05:30');
 
   let phase = { label: 'Registration Opens In', target: '2026-07-01T00:00:00+05:30', color: '#FF9933' };
 
@@ -133,9 +133,9 @@ function CountdownTimer() {
   } else if (now >= pptCloses && now < evalCloses) {
     phase = { label: 'PPT Evaluation Ongoing — Shortlist Announcement In', target: '2026-08-15T23:59:59+05:30', color: '#38bdf8' };
   } else if (now >= evalCloses && now < finaleStarts) {
-    phase = { label: 'Grand Finale Begins In', target: '2026-08-24T09:00:00+05:30', color: '#FF9933' };
+    phase = { label: 'Grand Finale Begins In', target: '2026-09-05T09:00:00+05:30', color: '#FF9933' };
   } else {
-    phase = { label: 'Event Ongoing', target: '2026-08-25T18:00:00+05:30', color: '#FF9933' };
+    phase = { label: 'Event Ongoing', target: '2026-09-06T18:00:00+05:30', color: '#FF9933' };
   }
 
   const t = useCountdown(phase.target);
@@ -503,7 +503,7 @@ function NewsTicker() {
               PPT Submission: <strong style={{ color: '#FF9933' }}>22 July – 10 Aug 2026</strong> &nbsp;·&nbsp;
               Team: <strong style={{ color: '#FF9933' }}>6 Members (Min. 1 Female)</strong> &nbsp;·&nbsp;
               Fee: <strong style={{ color: '#FF9933' }}>₹75/Member · ₹450/Team</strong> &nbsp;·&nbsp;
-              Grand Finale: <strong style={{ color: '#138808' }}>24–25 Aug 2026 (Tentative)</strong> &nbsp;·&nbsp;
+              Grand Finale: <strong style={{ color: '#138808' }}>5–6 Sep 2026 (Tentative)</strong> &nbsp;·&nbsp;
               Venue: <strong style={{ color: '#138808' }}>VIT Bhopal University</strong> &nbsp;·&nbsp;
               <strong style={{ color: '#FF9933' }}>10 Software + 2 Hardware</strong> Problem Statements &nbsp;·&nbsp;
               blockchainclub@vitbhopal.ac.in
@@ -615,7 +615,7 @@ const rounds = [
   },
   {
     num: 2, label: 'ROUND 2', title: 'Grand Finale', subtitle: 'Prototype Development Phase',
-    date: '24 – 25 Aug 2026 (Tentative)', color: '#138808', borderColor: 'rgba(19,136,8,0.25)',
+    date: '5 – 6 Sep 2026 (Tentative)', color: '#138808', borderColor: 'rgba(19,136,8,0.25)',
     bgAccent: 'rgba(19,136,8,0.04)', icon: '🚀',
     description: 'Shortlisted finalist teams build and demonstrate a fully functional prototype at VIT Bhopal University. A 2-day, 12-hour intensive offline hackathon. Participation subject to OD approval from the institute.',
     what: [
@@ -886,7 +886,7 @@ const timelinePhases = [
   { num: 2, title: 'PPT Submission', date: '22 July – 10 Aug 2026', desc: 'Submission phase completed on 10th August. All presentation decks submitted by registered teams.', icon: '📊', color: '#138808' },
   { num: 3, title: 'PPT Evaluation (Ongoing)', date: '10 – 15 Aug 2026', desc: 'Ongoing phase. Internal judging panel evaluates all submitted presentations. Top 5 teams per problem statement will be shortlisted for the Grand Finale.', icon: '⚖️', color: '#38bdf8' },
   { num: 4, title: 'Results', date: 'Post 15 Aug 2026', desc: 'Shortlisted finalist teams officially announced. Teams notified through internal college channels and official platforms.', icon: '📢', color: '#FF9933' },
-  { num: 5, title: 'Grand Finale', date: '24 – 25 Aug 2026', desc: 'Finalists build a functional prototype at VIT Bhopal. 2-day, 12-hr offline format. Subject to OD approval from the institute.', icon: '🚀', color: '#138808' },
+  { num: 5, title: 'Grand Finale', date: '5 – 6 Sep 2026', desc: 'Finalists build a functional prototype at VIT Bhopal. 2-day, 12-hr offline format. Subject to OD approval from the institute.', icon: '🚀', color: '#138808' },
 ];
 
 function TimelineItem({ phase, index }) {
@@ -1084,7 +1084,7 @@ function EvaluationSection() {
       desc: 'Teams submit a comprehensive presentation covering their solution approach, technical architecture, impact, and implementation roadmap.',
     },
     {
-      round: 'Round 2', sub: 'Grand Finale — Prototype', date: '24–25 Aug 2026', color: '#138808', bg: 'rgba(19,136,8,0.06)',
+      round: 'Round 2', sub: 'Grand Finale — Prototype', date: '5–6 Sep 2026', color: '#138808', bg: 'rgba(19,136,8,0.06)',
       criteria: ['Technical Implementation', 'Functionality & Working Prototype', 'Innovation & Scalability', 'User Experience', 'Final Demonstration'],
       desc: 'Shortlisted teams build and demonstrate a functional prototype. A 2-day, 12-hour hands-on development sprint.',
     },
@@ -1241,7 +1241,7 @@ function RegistrationCTA() {
         ) : (
           <>
             <p style={{ color: 'rgba(255,255,255,0.85)', fontSize: 16, fontFamily: 'Poppins,sans-serif', lineHeight: 1.75, marginBottom: 24, maxWidth: 620, margin: '0 auto 24px' }}>
-              PPT Evaluation phase is completed! <strong style={{ color: '#4ade80' }}>Shortlisted Finalist Teams</strong> are ready for the Grand Finale (24–25 August 2026).
+              PPT Evaluation phase is completed! <strong style={{ color: '#4ade80' }}>Shortlisted Finalist Teams</strong> are ready for the Grand Finale (5–6 September 2026).
             </p>
             <div style={{ display: 'flex', gap: 14, justifyContent: 'center', flexWrap: 'wrap', alignItems: 'center' }}>
               <Link to="/results" style={{ padding: '14px 32px', background: 'linear-gradient(135deg, #FF9933, #e07800)', color: '#fff', borderRadius: 8, fontSize: 13, fontFamily: 'Montserrat,sans-serif', fontWeight: 800, textDecoration: 'none', textTransform: 'uppercase', letterSpacing: 1.5, boxShadow: '0 6px 24px rgba(255,153,51,0.4)', transition: 'all 0.25s', display: 'inline-block' }}
