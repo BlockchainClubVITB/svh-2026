@@ -2,6 +2,7 @@ import { useState, useMemo, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../supabaseClient';
 import { STATEMENTS } from '../data/problemStatements';
+import { STATIC_RESULTS } from '../data/staticResults';
 
 import svhLogo from '../assets/svh.jpeg';
 import vitbLogo from '../assets/vitblogo.png';
@@ -51,6 +52,7 @@ export default function AdminDashboard() {
   const [exportGenderFilter, setExportGenderFilter] = useState('ALL');
   const [exportSearchQuery, setExportSearchQuery] = useState('');
   const [selectedColumns, setSelectedColumns] = useState({});
+  const [exportShortlistedOnly, setExportShortlistedOnly] = useState(false);
 
   // Email Broadcaster tab states
   const [emailSubject, setEmailSubject] = useState('');
@@ -58,6 +60,7 @@ export default function AdminDashboard() {
   const [emailIsHtml, setEmailIsHtml] = useState(true);
   const [emailPsFilter, setEmailPsFilter] = useState('ALL');
   const [emailToOverride, setEmailToOverride] = useState('blockchainvitb@gmail.com');
+  const [emailShortlistedOnly, setEmailShortlistedOnly] = useState(false);
 
   // BCC Target Checkboxes
   const [bccTargetLeaders, setBccTargetLeaders] = useState(true);
@@ -72,9 +75,15 @@ export default function AdminDashboard() {
   const computedBccRecipients = useMemo(() => {
     let list = [];
     let targetTeamIds = teams.map(t => t.id);
+
+    if (emailShortlistedOnly) {
+      targetTeamIds = STATIC_RESULTS.map(r => r.teamId);
+    }
+
     if (emailPsFilter !== 'ALL') {
       const psSubs = submissions.filter(s => s.problem_code === emailPsFilter);
-      targetTeamIds = Array.from(new Set(psSubs.map(s => s.team_id)));
+      const psIds = Array.from(new Set(psSubs.map(s => s.team_id)));
+      targetTeamIds = targetTeamIds.filter(id => psIds.includes(id));
     }
 
     // 1. Team Leaders
@@ -253,7 +262,13 @@ export default function AdminDashboard() {
     let rowsData = [];
 
     if (exportType === 'teams_members') {
-      teams.forEach(t => {
+      let filteredTeams = teams;
+      if (exportShortlistedOnly) {
+        const shortlistedIds = STATIC_RESULTS.map(r => r.teamId);
+        filteredTeams = teams.filter(t => shortlistedIds.includes(t.id));
+      }
+
+      filteredTeams.forEach(t => {
         const teamMembers = profiles.filter(p => p.team_id === t.id);
 
         if (exportSearchQuery.trim()) {
@@ -2317,19 +2332,32 @@ export default function AdminDashboard() {
                     )}
 
                     {exportType === 'teams_members' && (
-                      <div>
-                        <label style={{ display: 'block', color: 'rgba(255,255,255,0.7)', fontSize: 11.5, marginBottom: 4 }}>Gender Filter (Members)</label>
-                        <select
-                          value={exportGenderFilter}
-                          onChange={e => setExportGenderFilter(e.target.value)}
-                          style={{ width: '100%', padding: '8px 10px', borderRadius: 6, border: '1px solid rgba(255,255,255,0.15)', background: 'rgba(0,0,0,0.3)', color: '#fff', fontSize: 12 }}
-                        >
-                          <option value="ALL">All Genders</option>
-                          <option value="Male">Male</option>
-                          <option value="Female">Female</option>
-                          <option value="Other">Other</option>
-                        </select>
-                      </div>
+                      <>
+                        <div>
+                          <label style={{ display: 'block', color: 'rgba(255,255,255,0.7)', fontSize: 11.5, marginBottom: 4 }}>Gender Filter (Members)</label>
+                          <select
+                            value={exportGenderFilter}
+                            onChange={e => setExportGenderFilter(e.target.value)}
+                            style={{ width: '100%', padding: '8px 10px', borderRadius: 6, border: '1px solid rgba(255,255,255,0.15)', background: 'rgba(0,0,0,0.3)', color: '#fff', fontSize: 12 }}
+                          >
+                            <option value="ALL">All Genders</option>
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                            <option value="Other">Other</option>
+                          </select>
+                        </div>
+                        <div style={{ marginTop: 12 }}>
+                          <label style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 12, color: '#fff', cursor: 'pointer' }}>
+                            <input
+                              type="checkbox"
+                              checked={exportShortlistedOnly}
+                              onChange={e => setExportShortlistedOnly(e.target.checked)}
+                              style={{ accentColor: '#FF9933', width: 15, height: 15 }}
+                            />
+                            <span>Shortlisted Teams Only</span>
+                          </label>
+                        </div>
+                      </>
                     )}
                   </div>
 
@@ -2501,6 +2529,15 @@ export default function AdminDashboard() {
                           style={{ accentColor: '#FF9933', width: 15, height: 15 }}
                         />
                         <span>All Evaluators</span>
+                      </label>
+                      <label style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 12, color: '#FF9933', cursor: 'pointer', marginTop: 4, borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: 10 }}>
+                        <input
+                          type="checkbox"
+                          checked={emailShortlistedOnly}
+                          onChange={e => setEmailShortlistedOnly(e.target.checked)}
+                          style={{ accentColor: '#FF9933', width: 15, height: 15 }}
+                        />
+                        <span style={{ fontWeight: 600 }}>Shortlisted Teams Only</span>
                       </label>
                     </div>
                   </div>

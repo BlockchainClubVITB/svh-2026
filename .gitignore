@@ -23,3 +23,6 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+SVH_2026_Badges.pdf
+SVH-place card.pdf
+generate_badges.py
