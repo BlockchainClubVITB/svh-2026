@@ -52,12 +52,14 @@ export default function Header() {
   }, [mobileOpen]);
 
   const aboutDropdown = [
+    { label: 'Grand Finale Schedule', href: '/#finale-schedule' },
     { label: 'SVH Process Flow', href: '/#process-flow' },
     { label: 'Event Structure', href: '/#event-structure' },
     { label: 'Organizers', href: '/#organizers' },
   ];
 
   const guidelinesDropdown = [
+    { label: 'Grand Finale Schedule & Rules', href: '/guidelines#grand-finale' },
     { label: 'General Rules', href: '/guidelines#general-rules' },
     { label: 'PPT Submission Guidelines', href: '/guidelines#ppt-submission' },
   ];

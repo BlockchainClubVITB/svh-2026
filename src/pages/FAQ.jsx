@@ -137,7 +137,7 @@ const faqCategories = [
       },
       {
         q: 'What happens in Round 2 (Grand Finale)?',
-        a: 'Qualifiers must develop a functional working prototype. The finale involves 12 development hours over 2 days, tentatively scheduled for September 5–6.',
+        a: 'Qualifiers develop and pitch a functional prototype over a 2-day offline hackathon on September 5–6, 2026 at VIT Bhopal. Day 1 is held at AB 2 Audi 1 & 2 (check-in starts at 01:30 PM), and Day 2 at AB 1 Audi 1 & 2 featuring mentoring, panel judging, and prize distribution.',
       },
       {
         q: 'How will we be notified of results?',

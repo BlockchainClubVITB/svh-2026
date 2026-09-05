@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { PDFDocument } from 'pdf-lib';
 import { supabase } from '../supabaseClient';
 import { STATEMENTS } from '../data/problemStatements';
+import GrandFinaleSchedule from '../components/GrandFinaleSchedule';
 
 import svhLogo from '../assets/svh.jpeg';
 import vitbLogo from '../assets/vitblogo.png';
@@ -508,6 +509,7 @@ export default function LeaderDashboard() {
         <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
           {[
             { id: 'teamDetails', label: 'Team Details', count: members.length },
+            { id: 'schedule', label: 'Grand Finale Schedule', highlight: true },
             { id: 'review', label: 'Review Submissions', count: userSubmissions.length },
             { id: 'changeRequest', label: 'Change Requests', count: teamChangeRequests.length },
             { id: 'contacts', label: 'Contact Support' }
@@ -897,6 +899,13 @@ export default function LeaderDashboard() {
                 </div>
               </div>
             </div>
+          </div>
+        )}
+
+        {/* TAB 6: GRAND FINALE SCHEDULE */}
+        {activeTab === 'schedule' && (
+          <div>
+            <GrandFinaleSchedule dark={true} showHeader={true} id="dashboard-finale-schedule" />
           </div>
         )}
       </main>

@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { supabase } from '../supabaseClient';
+import GrandFinaleSchedule from '../components/GrandFinaleSchedule';
+import { getActiveFinaleMilestone } from '../data/finaleSchedule';
 
 import blockchainLogo from '../assets/Blockchain.png';
 import iicLogo from '../assets/IIC Logo.png';
@@ -115,28 +117,14 @@ function useCountdown(targetDate) {
 }
 
 function CountdownTimer() {
-  const now = new Date();
-  const opens = new Date('2026-07-01T00:00:00+05:30');
-  const regCloses = new Date('2026-07-25T23:59:59+05:30');
-  const pptCloses = new Date('2026-08-10T23:59:59+05:30');
-  const evalCloses = new Date('2026-08-15T23:59:59+05:30');
-  const finaleStarts = new Date('2026-09-05T09:00:00+05:30');
+  const [phase, setPhase] = useState(() => getActiveFinaleMilestone(new Date()));
 
-  let phase = { label: 'Registration Opens In', target: '2026-07-01T00:00:00+05:30', color: '#FF9933' };
-
-  if (now < opens) {
-    phase = { label: 'Registration Opens In', target: '2026-07-01T00:00:00+05:30', color: '#FF9933' };
-  } else if (now >= opens && now < regCloses) {
-    phase = { label: 'Registration Closes In', target: '2026-07-25T23:59:59+05:30', color: '#FF9933' };
-  } else if (now >= regCloses && now < pptCloses) {
-    phase = { label: 'PPT Submission Closes In', target: '2026-08-10T23:59:59+05:30', color: '#138808' };
-  } else if (now >= pptCloses && now < evalCloses) {
-    phase = { label: 'PPT Evaluation Ongoing — Shortlist Announcement In', target: '2026-08-15T23:59:59+05:30', color: '#38bdf8' };
-  } else if (now >= evalCloses && now < finaleStarts) {
-    phase = { label: 'Grand Finale Begins In', target: '2026-09-05T09:00:00+05:30', color: '#FF9933' };
-  } else {
-    phase = { label: 'Event Ongoing', target: '2026-09-06T18:00:00+05:30', color: '#FF9933' };
-  }
+  useEffect(() => {
+    const checkInterval = setInterval(() => {
+      setPhase(getActiveFinaleMilestone(new Date()));
+    }, 1000);
+    return () => clearInterval(checkInterval);
+  }, []);
 
   const t = useCountdown(phase.target);
   const units = [
@@ -148,9 +136,67 @@ function CountdownTimer() {
 
   return (
     <div style={{ textAlign: 'center' }}>
-      <p style={{ color: phase.color, fontSize: 11, fontWeight: 700, fontFamily: 'Montserrat,sans-serif', letterSpacing: 3, textTransform: 'uppercase', marginBottom: 14 }}>
-        {phase.label}
-      </p>
+      <div style={{
+        display: 'inline-flex',
+        alignItems: 'center',
+        gap: 8,
+        padding: '6px 18px',
+        background: `${phase.color}15`,
+        border: `1.5px solid ${phase.color}45`,
+        borderRadius: 30,
+        marginBottom: 14,
+        backdropFilter: 'blur(8px)',
+      }}>
+        {phase.status === 'live' && (
+          <span style={{
+            width: 8,
+            height: 8,
+            borderRadius: '50%',
+            background: '#ef4444',
+            boxShadow: '0 0 8px #ef4444',
+            display: 'inline-block'
+          }} />
+        )}
+        <span style={{
+          color: phase.color,
+          fontSize: 12,
+          fontWeight: 800,
+          fontFamily: 'Montserrat,sans-serif',
+          letterSpacing: 1.5,
+          textTransform: 'uppercase',
+        }}>
+          {phase.label}
+        </span>
+      </div>
+
+      {phase.venue && (
+        <div style={{ marginBottom: 16 }}>
+          <a
+            href="#finale-schedule"
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: 6,
+              fontSize: 12,
+              color: 'rgba(255,255,255,0.85)',
+              background: 'rgba(255,255,255,0.08)',
+              padding: '5px 14px',
+              borderRadius: 20,
+              textDecoration: 'none',
+              border: '1px solid rgba(255,255,255,0.18)',
+              fontFamily: 'Montserrat,sans-serif',
+              fontWeight: 600,
+              transition: 'all 0.2s',
+            }}
+            onMouseEnter={e => { e.currentTarget.style.borderColor = phase.color; e.currentTarget.style.background = 'rgba(255,255,255,0.15)'; }}
+            onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.18)'; e.currentTarget.style.background = 'rgba(255,255,255,0.08)'; }}
+          >
+            <span>📍 Venue:</span> <strong style={{ color: '#fff' }}>{phase.venue}</strong>
+            <span style={{ color: phase.color, fontSize: 11, marginLeft: 4 }}>• View Timeline ↓</span>
+          </a>
+        </div>
+      )}
+
       <div style={{ display: 'flex', gap: 10, justifyContent: 'center', flexWrap: 'wrap' }}>
         {units.map((u, i) => (
           <div key={i} style={{
@@ -498,14 +544,12 @@ function NewsTicker() {
             onMouseEnter={e => e.currentTarget.style.animationPlayState = 'paused'}
             onMouseLeave={e => e.currentTarget.style.animationPlayState = 'running'}>
             <span style={{ color: 'rgba(255,255,255,0.82)', fontFamily: 'Montserrat,sans-serif', fontSize: 13, fontWeight: 500 }}>
-              &nbsp;&nbsp;&nbsp;SVH 2026 by Blockchain Club, VIT Bhopal — Inspired by Smart India Hackathon &nbsp;·&nbsp;
-              Registration: <strong style={{ color: '#FF9933' }}>1–25 July 2026</strong> &nbsp;·&nbsp;
-              PPT Submission: <strong style={{ color: '#FF9933' }}>22 July – 10 Aug 2026</strong> &nbsp;·&nbsp;
-              Team: <strong style={{ color: '#FF9933' }}>6 Members (Min. 1 Female)</strong> &nbsp;·&nbsp;
-              Fee: <strong style={{ color: '#FF9933' }}>₹75/Member · ₹450/Team</strong> &nbsp;·&nbsp;
-              Grand Finale: <strong style={{ color: '#138808' }}>5–6 Sep 2026 (Tentative)</strong> &nbsp;·&nbsp;
-              Venue: <strong style={{ color: '#138808' }}>VIT Bhopal University</strong> &nbsp;·&nbsp;
-              <strong style={{ color: '#FF9933' }}>10 Software + 2 Hardware</strong> Problem Statements &nbsp;·&nbsp;
+              &nbsp;&nbsp;&nbsp;🚀 <strong style={{ color: '#FF9933' }}>SVH 2026 Grand Finale: 5–6 September 2026</strong> &nbsp;·&nbsp;
+              Day 1 (5 Sep): <strong style={{ color: '#FF9933' }}>AB 2 Audi 1 & Audi 2 (Entry: 01:30 PM)</strong> &nbsp;·&nbsp;
+              Day 2 (6 Sep): <strong style={{ color: '#138808' }}>AB 1 Audi 1 & Audi 2 (Huddle: 10:00 AM)</strong> &nbsp;·&nbsp;
+              Evaluation & Judging: <strong style={{ color: '#38bdf8' }}>6 Sep, 01:30 PM – 04:30 PM</strong> &nbsp;·&nbsp;
+              Prize Distribution: <strong style={{ color: '#FF9933' }}>6 Sep, 04:30 PM – 06:00 PM</strong> &nbsp;·&nbsp;
+              Theme: <strong style={{ color: '#fff' }}>INNOVATE. COLLABORATE. CREATE IMPACT.</strong> &nbsp;·&nbsp;
               blockchainclub@vitbhopal.ac.in
               &nbsp;&nbsp;&nbsp;
             </span>
@@ -884,9 +928,9 @@ function AboutSection() {
 const timelinePhases = [
   { num: 1, title: 'Registration', date: '1 – 25 July 2026', desc: 'Teams of 6 register online. Minimum 1 female member mandatory. Fee: ₹75/member (₹450/team). Register through the official Google Form.', icon: '✍️', color: '#FF9933' },
   { num: 2, title: 'PPT Submission', date: '22 July – 10 Aug 2026', desc: 'Submission phase completed on 10th August. All presentation decks submitted by registered teams.', icon: '📊', color: '#138808' },
-  { num: 3, title: 'PPT Evaluation (Ongoing)', date: '10 – 15 Aug 2026', desc: 'Ongoing phase. Internal judging panel evaluates all submitted presentations. Top 5 teams per problem statement will be shortlisted for the Grand Finale.', icon: '⚖️', color: '#38bdf8' },
-  { num: 4, title: 'Results', date: 'Post 15 Aug 2026', desc: 'Shortlisted finalist teams officially announced. Teams notified through internal college channels and official platforms.', icon: '📢', color: '#FF9933' },
-  { num: 5, title: 'Grand Finale', date: '5 – 6 Sep 2026', desc: 'Finalists build a functional prototype at VIT Bhopal. 2-day, 12-hr offline format. Subject to OD approval from the institute.', icon: '🚀', color: '#138808' },
+  { num: 3, title: 'PPT Evaluation (Completed)', date: '10 – 15 Aug 2026', desc: 'Internal judging panel evaluated all submitted presentations. Top 5 teams per problem statement shortlisted for the Grand Finale.', icon: '⚖️', color: '#38bdf8' },
+  { num: 4, title: 'Shortlist Results', date: '16 Aug 2026', desc: 'Shortlisted finalist teams officially announced and notified across 12 problem statements.', icon: '📢', color: '#FF9933' },
+  { num: 5, title: 'Grand Finale (Live)', date: '5 – 6 Sep 2026', desc: '2-Day offline finale at VIT Bhopal. Day 1 (AB 2 Audi 1 & 2): Registration 1:30 PM, Inauguration & Coding. Day 2 (AB 1 Audi 1 & 2): Mentoring, Judging & Awards.', icon: '🚀', color: '#138808' },
 ];
 
 function TimelineItem({ phase, index }) {
@@ -1556,6 +1600,17 @@ function OrientationModal() {
 }
 
 /* ═══════════════════════════════════════════════
+   GRAND FINALE SCHEDULE SECTION
+   ═══════════════════════════════════════════════ */
+function FinaleScheduleSection() {
+  return (
+    <section id="finale-schedule" style={{ background: '#f8fafc', padding: '90px 20px', borderBottom: '1px solid #e2e8f0' }}>
+      <GrandFinaleSchedule dark={false} showHeader={true} />
+    </section>
+  );
+}
+
+/* ═══════════════════════════════════════════════
    HOME PAGE
    ═══════════════════════════════════════════════ */
 export default function Home() {
@@ -1567,6 +1622,7 @@ export default function Home() {
       <LiveStatsSection />
       <MentorConnectSection />
       <EventRoundsCarousel />
+      <FinaleScheduleSection />
       <AboutSection />
       <TimelineSection />
       <WhySVHSection />

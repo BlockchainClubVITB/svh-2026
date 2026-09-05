@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
+import GrandFinaleSchedule from '../components/GrandFinaleSchedule';
 
 /* ═══════════════════════════════════════════════
    SHARED UTILITIES (mirrored from Home.jsx)
@@ -352,28 +353,34 @@ export default function Guidelines() {
             }}>
               <SectionHeading badge="Round 2" title="Grand" highlight="Finale" badgeColor="#06038D" highlightColor="#06038D" />
 
-              <AccordionItem icon="🚀" title="Round 2 Rules" defaultOpen={true} accentColor="#06038D">
+              <AccordionItem icon="🚀" title="Round 2 Rules & Schedule Overview" defaultOpen={true} accentColor="#06038D">
                 <div style={{ display: 'grid', gap: 10, marginTop: 8 }}>
-                  <RuleCard num="01" title="Shortlist" desc="A maximum of 5 teams will be shortlisted from each problem statement." color="#06038D" />
+                  <RuleCard num="01" title="Shortlist" desc="Top 5 teams shortlisted per problem statement (total 60 teams) advance to the Grand Finale." color="#06038D" />
                   <RuleCard num="02" title="Prototype" desc="Qualifiers must develop and present a functional working prototype of their proposed idea." color="#06038D" />
-                  <RuleCard num="03" title="Format" desc="The finale spans 12 development hours over 2 days, differing from the 36-hour SIH format." color="#06038D" />
-                  <RuleCard num="04" title="Schedule" desc="The event schedule (tentatively 5–6 Sep) is subject to official institute OD approval." color="#06038D" />
-                  <RuleCard num="05" title="Evaluation" desc="Final evaluation focuses on functionality, technical scalability, and user experience. Detailed info will be shared later." color="#06038D" />
+                  <RuleCard num="03" title="Format" desc="2-Day offline hackathon at VIT Bhopal University. Day 1 (AB 2 Audi 1 & 2) and Day 2 (AB 1 Audi 1 & 2)." color="#06038D" />
+                  <RuleCard num="04" title="Reporting & Entry" desc="Day 1 check-in begins at 01:30 PM on 5th September 2026 at AB 2 Audi 1 & Audi 2." color="#06038D" />
+                  <RuleCard num="05" title="Evaluation & Judging" desc="Final judging takes place on Day 2 from 01:30 PM to 04:30 PM followed by prize distribution." color="#06038D" />
                 </div>
               </AccordionItem>
 
-              <AccordionItem icon="🏆" title="Prizes" accentColor="#FF9933">
-                <div style={{ display: 'grid', gap: 10, marginTop: 8 }}>
-                  <RuleCard num="01" title="Real-World Exposure" desc="All the problem statements are from previous SIH therefore providing real world problems and exposure to SIH like environment." color="#FF9933" />
-                  <RuleCard num="02" title="One Winner per PS" desc="There will be only one single winning team per Problem statement." color="#FF9933" />
-                  <RuleCard num="03" title="Innovation Encouraged" desc="Teams are encouraged to make innovative projects and think out of the box." color="#FF9933" />
+              <AccordionItem icon="⏱️" title="Grand Finale Official Timeline & Schedule" defaultOpen={true} accentColor="#FF9933">
+                <div style={{ marginTop: 12 }}>
+                  <GrandFinaleSchedule dark={false} showHeader={false} id="guidelines-finale-schedule" />
                 </div>
               </AccordionItem>
 
-              <AccordionItem icon="📌" title="General Rules" accentColor="#138808">
+              <AccordionItem icon="🏆" title="Prizes" accentColor="#138808">
                 <div style={{ display: 'grid', gap: 10, marginTop: 8 }}>
-                  <RuleCard num="01" title="Rulebook Override" desc="SVH 2026 follows SIH guidelines, though SVH-specific rules override SIH defaults where specified." color="#138808" />
-                  <RuleCard num="02" title="Organizers' Discretion" desc="Organizers reserve the right to share additional clarifications with registered teams beforehand." color="#138808" />
+                  <RuleCard num="01" title="Real-World Exposure" desc="All the problem statements are from previous SIH therefore providing real world problems and exposure to SIH like environment." color="#138808" />
+                  <RuleCard num="02" title="One Winner per PS" desc="There will be only one single winning team per Problem statement." color="#138808" />
+                  <RuleCard num="03" title="Innovation Encouraged" desc="Teams are encouraged to make innovative projects and think out of the box." color="#138808" />
+                </div>
+              </AccordionItem>
+
+              <AccordionItem icon="📌" title="General Rules" accentColor="#06038D">
+                <div style={{ display: 'grid', gap: 10, marginTop: 8 }}>
+                  <RuleCard num="01" title="Rulebook Override" desc="SVH 2026 follows SIH guidelines, though SVH-specific rules override SIH defaults where specified." color="#06038D" />
+                  <RuleCard num="02" title="Organizers' Discretion" desc="Organizers reserve the right to share additional clarifications with registered teams beforehand." color="#06038D" />
                 </div>
               </AccordionItem>
             </section>

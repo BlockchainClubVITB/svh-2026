@@ -30,10 +30,10 @@ const quickLinks = [
 ];
 
 const timelineLinks = [
-  { label: 'Registration: 1–25 July 2026', phase: 'Closed' },
-  { label: 'PPT Submission: 20 Jul – 10 Aug 2026', phase: 'Closed' },
-  { label: 'PPT Evaluation: 10–15 Aug 2026', phase: 'Ongoing' },
-  { label: 'Grand Finale: 5–6 Sep 2026', phase: 'Upcoming' },
+  { label: 'Registration: 1–25 July 2026', phase: 'Closed', color: 'rgba(255,255,255,0.4)' },
+  { label: 'PPT Submission: 22 Jul – 10 Aug 2026', phase: 'Closed', color: 'rgba(255,255,255,0.4)' },
+  { label: 'PPT Evaluation: 10–15 Aug 2026', phase: 'Done', color: '#38bdf8' },
+  { label: 'Grand Finale: 5–6 Sep 2026', phase: 'Live Now', color: '#4ade80', href: '/#finale-schedule' },
 ];
 
 export default function Footer() {
@@ -108,8 +108,29 @@ export default function Footer() {
           </h4>
           <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: 10 }}>
             {timelineLinks.map((l, i) => (
-              <li key={i} style={{ color: 'rgba(255,255,255,0.6)', fontSize: 13, fontFamily: 'Poppins,sans-serif', fontWeight: 500, lineHeight: 1.5 }}>
-                {l.label}
+              <li key={i} style={{ color: 'rgba(255,255,255,0.7)', fontSize: 13, fontFamily: 'Poppins,sans-serif', fontWeight: 500, lineHeight: 1.5, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8 }}>
+                {l.href ? (
+                  <a href={l.href} style={{ color: '#fff', textDecoration: 'none', fontWeight: 600, display: 'flex', alignItems: 'center', gap: 6 }}
+                    onMouseEnter={e => e.currentTarget.style.color = '#FF9933'}
+                    onMouseLeave={e => e.currentTarget.style.color = '#fff'}>
+                    <span>{l.label}</span>
+                    <span style={{ fontSize: 10, color: '#FF9933' }}>↓</span>
+                  </a>
+                ) : (
+                  <span>{l.label}</span>
+                )}
+                <span style={{
+                  fontSize: 10,
+                  fontWeight: 700,
+                  fontFamily: 'Montserrat, sans-serif',
+                  padding: '2px 7px',
+                  borderRadius: 6,
+                  background: 'rgba(255,255,255,0.06)',
+                  color: l.color,
+                  border: `1px solid ${l.color}30`
+                }}>
+                  {l.phase}
+                </span>
               </li>
             ))}
           </ul>

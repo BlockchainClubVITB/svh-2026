@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { STATEMENTS } from '../data/problemStatements';
 import { STATIC_RESULTS } from '../data/staticResults';
+import GrandFinaleSchedule from '../components/GrandFinaleSchedule';
 
 export default function Results() {
   const [loading, setLoading] = useState(true);
@@ -264,6 +265,11 @@ export default function Results() {
               </tbody>
             </table>
           )}
+        </div>
+
+        {/* Grand Finale Schedule & Guidelines Reference for Finalists */}
+        <div style={{ marginTop: 48 }}>
+          <GrandFinaleSchedule dark={true} showHeader={true} id="results-finale-schedule" />
         </div>
 
       </div>
